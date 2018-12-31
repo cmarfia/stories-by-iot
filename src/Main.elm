@@ -13,6 +13,9 @@ import Components exposing (..)
 import Dict exposing (Dict)
 import List.Zipper as Zipper exposing (Zipper)
 import Browser
+import Json.Encode
+
+port speak : Json.Encode.Value -> Cmd msg
 
 
 {- This is the kernel of the whole app.  It glues everything together and handles some logic such as choosing the correct narrative to display.
@@ -45,7 +48,7 @@ init =
           , narrativeContent = Dict.map (\k v ->  getNarrative (k, v)) Rules.rules
           , endingCountDown = 0
           }
-        , Cmd.none
+        , speak (Json.Encode.string Narrative.startingNarrative.narrative)
         )
 
 
@@ -112,7 +115,7 @@ update msg model =
                         , narrativeContent = updatedContent
                         , endingCountDown = updatedEndingCountDown
                       }
-                    , Cmd.none
+                    , speak (Json.Encode.string "Text Updated")
                     )
 
 
