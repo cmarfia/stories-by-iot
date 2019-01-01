@@ -1,22 +1,26 @@
-port module Main exposing (..)
+port module Main exposing (Model, findEntity, init, loaded, main, speak, update, view)
 
-import Engine exposing (..)
-import Manifest
-import Rules
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Tuple
-import Theme.Layout
+import Browser
+import Browser.Navigation
 import ClientTypes exposing (..)
-import Narrative
 import Components exposing (..)
 import Dict exposing (Dict)
-import List.Zipper as Zipper exposing (Zipper)
-import Browser
+import Engine exposing (..)
+import Html exposing (..)
+import Html.Attributes exposing (..)
 import Json.Encode
+import Manifest
+import Narrative
+import Rules
+import Theme.Layout
+import Tuple
+
 
 port speak : Json.Encode.Value -> Cmd msg
+
+
 port loaded : (Bool -> msg) -> Sub msg
+
 
 
 {- This is the kernel of the whole app.  It glues everything together and handles some logic such as choosing the correct narrative to display.
@@ -28,8 +32,7 @@ type alias Model =
     { engineModel : Engine.Model
     , loaded : Bool
     , storyLine : List StorySnippet
-    , narrativeContent : Dict String (Zipper String)
-    , endingCountDown : Int
+    , narrativeContent : Dict String String
     }
 
 
@@ -42,17 +45,16 @@ init =
                 , locations = List.map Tuple.first Manifest.locations
                 , characters = List.map Tuple.first Manifest.characters
                 }
-                (Dict.map (\k v -> getRuleData (k, v)) Rules.rules)
+                (Dict.map (\k v -> getRuleData ( k, v )) Rules.rules)
                 |> Engine.changeWorld Rules.startingState
     in
-        ( { engineModel = engineModel
-          , loaded = False
-          , storyLine = [ Narrative.startingNarrative ]
-          , narrativeContent = Dict.map (\k v ->  getNarrative (k, v)) Rules.rules
-          , endingCountDown = 0
-          }
-        , Cmd.none
-        )
+    ( { engineModel = engineModel
+      , loaded = False
+      , storyLine = [ Narrative.startingNarrative ]
+      , narrativeContent = Dict.map (\k v -> getNarrative ( k, v )) Rules.rules
+      }
+    , Cmd.none
+    )
 
 
 findEntity : String -> Entity
@@ -65,73 +67,43 @@ findEntity id =
 
 update : ClientTypes.Msg -> Model -> ( Model, Cmd ClientTypes.Msg )
 update msg model =
-    if Engine.getEnding model.engineModel /= Nothing then
-        ( model, Cmd.none )
-    else
-        case msg of
-            Interact interactableId ->
-                let
-                    ( newEngineModel, maybeMatchedRuleId ) =
-                        Engine.update interactableId model.engineModel
+    case msg of
+        Interact interactableId ->
+            let
+                ( newEngineModel, maybeMatchedRuleId ) =
+                    Engine.update interactableId model.engineModel
 
-                    {- If the engine found a matching rule, look up the narrative content component for that rule if possible.  The description from the display info component for the entity that was interacted with is used as a default. -}
-                    narrativeForThisInteraction =
-                        { interactableName = findEntity interactableId |> getDisplayInfo |> .name
-                        , interactableCssSelector = findEntity interactableId |> getClassName
-                        , narrative =
-                            maybeMatchedRuleId
-                                |> Maybe.andThen (\id -> Dict.get id model.narrativeContent)
-                                |> Maybe.map Zipper.current
-                                |> Maybe.withDefault (findEntity interactableId |> getDisplayInfo |> .description)
-                        }
-
-                    {- If a rule matched, attempt to move to the next associated narrative content for next time. -}
-                    updateNarrativeContent : Maybe (Zipper String) -> Maybe (Zipper String)
-                    updateNarrativeContent =
-                        Maybe.map (\narrative -> Zipper.next narrative |> Maybe.withDefault narrative)
-
-                    updatedContent =
+                narrativeForThisInteraction =
+                    { interactableName = findEntity interactableId |> getName
+                    , interactableCssSelector = findEntity interactableId |> getClassName
+                    , narrative =
                         maybeMatchedRuleId
-                            |> Maybe.map (\id -> Dict.update id updateNarrativeContent model.narrativeContent)
-                            |> Maybe.withDefault model.narrativeContent
+                            |> Maybe.andThen (\id -> Dict.get id model.narrativeContent)
+                            |> Maybe.withDefault (List.head model.storyLine |> Maybe.map .narrative |> Maybe.withDefault "")
+                    }
 
-                    {- This part about the `endingCountDown` and `checkEnd` is a hack to make the player interact with the wolf three times before ending the story, which currently is not possible in the rules matching system.  It also demonstrates how to mix state from the client's model to effect the story.
-                       I have plans in the next release of the engine to include a "quality-based system" that would allow you to do logic like this as part of the normal rules.
-                    -}
-                    updatedEndingCountDown =
-                        case maybeMatchedRuleId of
-                            Just "Little Red Riding Hood's demise" ->
-                                model.endingCountDown + 1
-
-                            _ ->
-                                model.endingCountDown
-
-                    checkEnd =
-                        if updatedEndingCountDown == 3 then
+                checkEnd =
+                    case maybeMatchedRuleId of
+                        Just "Ending" ->
                             Engine.changeWorld [ endStory "The End" ]
-                        else
-                            identity
 
-                    cmd =
-                        case maybeMatchedRuleId of 
-                            Just id ->
-                                Dict.get id updatedContent
-                                    |> Maybe.map (speak << Json.Encode.string << Zipper.current)
-                                    |> Maybe.withDefault Cmd.none
-                            Nothing -> Cmd.none
-                in
-                    ( { model
-                        | engineModel = newEngineModel |> checkEnd
-                        , storyLine = narrativeForThisInteraction :: model.storyLine
-                        , narrativeContent = updatedContent
-                        , endingCountDown = updatedEndingCountDown
-                      }
-                    , cmd
-                    )
-            Loaded ->
-                ( { model | loaded = True }
-                , speak (Json.Encode.string Narrative.startingNarrative.narrative)
-                )
+                        _ ->
+                            identity
+            in
+            ( { model
+                | engineModel = newEngineModel |> checkEnd
+                , storyLine = narrativeForThisInteraction :: model.storyLine
+              }
+            , speak (Json.Encode.string narrativeForThisInteraction.narrative)
+            )
+
+        Loaded ->
+            ( { model | loaded = True }
+            , speak (Json.Encode.string Narrative.startingNarrative.narrative)
+            )
+
+        Restart ->
+            ( { model | loaded = False }, Browser.Navigation.reload )
 
 
 view : Model -> Html ClientTypes.Msg
@@ -148,12 +120,6 @@ view model =
             , charactersInCurrentLocation =
                 Engine.getCharactersInCurrentLocation model.engineModel
                     |> List.map findEntity
-            , exits =
-                getExits currentLocation
-                    |> List.map
-                        (\( direction, id ) ->
-                            ( direction, findEntity id )
-                        )
             , itemsInInventory =
                 Engine.getItemsInInventory model.engineModel
                     |> List.map findEntity
@@ -163,10 +129,12 @@ view model =
                 model.storyLine
             }
     in
-        if not model.loaded then
-            div [ class "Loading" ] [ text "Loading..." ]
-        else
-            Theme.Layout.view displayState
+    if not model.loaded then
+        div [ class "Loading" ] [ text "Loading..." ]
+
+    else
+        Theme.Layout.view displayState
+
 
 main : Program () Model ClientTypes.Msg
 main =
@@ -174,5 +142,5 @@ main =
         { init = \_ -> init
         , view = view
         , update = update
-        , subscriptions = \_ ->  loaded <| always Loaded
+        , subscriptions = \_ -> loaded <| always Loaded
         }

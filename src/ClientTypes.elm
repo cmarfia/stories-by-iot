@@ -1,9 +1,10 @@
-module ClientTypes exposing (..)
+module ClientTypes exposing (Msg(..), StorySnippet)
 
 
 type Msg
     = Interact String
     | Loaded
+    | Restart
 
 
 type alias StorySnippet =

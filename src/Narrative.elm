@@ -1,6 +1,7 @@
-module Narrative exposing (..)
+module Narrative exposing (enteringVillage, startingNarrative, theEnd)
 
 import ClientTypes exposing (..)
+
 
 
 {- Here is where you can write all of your story text, which keeps the Rules.elm file a little cleaner.
@@ -19,6 +20,12 @@ startingNarrative =
     , narrative = """Once upon a time there was a village of light that thrived far up in the mountains."""
     }
 
+
 enteringVillage : String
-enteringVillage = 
+enteringVillage =
     """Unbenounced to the villagers came a wondering traveler"""
+
+
+theEnd : String
+theEnd =
+    """This is the ending"""

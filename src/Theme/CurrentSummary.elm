@@ -1,10 +1,10 @@
-module Theme.CurrentSummary exposing (..)
+module Theme.CurrentSummary exposing (view)
 
+import ClientTypes exposing (..)
+import Components exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import ClientTypes exposing (..)
-import Components exposing (..)
 
 
 view :
@@ -22,7 +22,7 @@ view currentLocation props characters =
                 [ class "CurrentSummary__StoryElement u-selectable"
                 , onClick <| msg <| Tuple.first entity
                 ]
-                [ text <| .name <| getDisplayInfo entity ]
+                [ text <| getName entity ]
 
         format list =
             let
@@ -31,12 +31,13 @@ view currentLocation props characters =
                         (List.take (List.length list - 1) list
                             |> List.intersperse (text ", ")
                         )
-                            ++ (text " and ")
-                            :: (List.drop (List.length list - 1) list)
+                            ++ text " and "
+                            :: List.drop (List.length list - 1) list
+
                     else
                         List.intersperse (text " and ") list
             in
-                interactables ++ [ text "." ]
+            interactables ++ [ text "." ]
 
         charactersList =
             if not <| List.isEmpty characters then
@@ -45,15 +46,16 @@ view currentLocation props characters =
                     |> format
                     |> (::) (text "Characters here: ")
                     |> p []
+
             else
                 span [] []
-        
+
         interactableViewImage msg entity =
             img
                 [ src <| getImage entity
                 , onClick <| msg <| Tuple.first entity
                 ]
-                [  ]
+                []
 
         characterImages =
             if not <| List.isEmpty characters then
@@ -62,9 +64,9 @@ view currentLocation props characters =
                     |> format
                     |> (::) (text "Characters here: ")
                     |> p []
+
             else
                 span [] []
-        
 
         propsList =
             if not <| List.isEmpty props then
@@ -73,14 +75,17 @@ view currentLocation props characters =
                     |> format
                     |> (::) (text "Items here: ")
                     |> p []
+
             else
                 span [] []
     in
-        div [ class "CurrentSummary" ] <|
-            [ h1 [ class "Current-location" ]
-                [ text <| .name <| getDisplayInfo currentLocation ]
-            ]
-                ++ if isEmpty then
+    div [ class "CurrentSummary" ] <|
+        [ h1 [ class "Current-location" ]
+            [ text <| getName currentLocation ]
+        ]
+            ++ (if isEmpty then
                     [ text "Nothing here." ]
-                   else
+
+                else
                     [ charactersList, propsList, characterImages ]
+               )

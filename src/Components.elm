@@ -1,7 +1,7 @@
-module Components exposing (..)
+module Components exposing (Component(..), Components, Entity, SpeakingPosition(..), addClassName, addComponent, addImage, addName, addNarrative, addRuleData, addSpeakingPosition, entity, getClassName, getImage, getName, getNarrative, getRuleData, getSpeakingPosition)
 
-import Engine
 import Dict exposing (..)
+import Engine
 
 
 {-| An entity is simply an id associated with some potential components and their data.
@@ -13,6 +13,7 @@ type alias Entity =
 
 type alias Components =
     Dict String Component
+
 
 type Component
     = Name String
@@ -39,11 +40,12 @@ addComponent componentId component ( id, components ) =
 
 
 addName : String -> Entity -> Entity
-addName name = 
+addName name =
     addComponent "name" <| Name name
 
+
 getName : Entity -> String
-getName (id, components) =
+getName ( id, components ) =
     case Dict.get "name" components of
         Just (Name name) ->
             name
@@ -51,12 +53,14 @@ getName (id, components) =
         _ ->
             id
 
+
 addImage : String -> Entity -> Entity
 addImage url =
     addComponent "image" <| Image url
 
+
 getImage : Entity -> String
-getImage (id, components) = 
+getImage ( id, components ) =
     case Dict.get "image" components of
         Just (Image url) ->
             url
@@ -64,38 +68,41 @@ getImage (id, components) =
         _ ->
             ""
 
+
 addSpeakingPosition : SpeakingPosition -> Entity -> Entity
 addSpeakingPosition speakingPosition =
     addComponent "position" <| SpeakingPosition speakingPosition
 
 
 getSpeakingPosition : Entity -> SpeakingPosition
-getSpeakingPosition  (id, components) =
+getSpeakingPosition ( id, components ) =
     case Dict.get "position" components of
         Just (SpeakingPosition speakingPosition) ->
             speakingPosition
-        
+
         _ ->
             Right
 
+
 addClassName : String -> Entity -> Entity
-addClassName  className = 
+addClassName className =
     addComponent "classname" <| ClassName className
 
 
 getClassName : Entity -> String
-getClassName (id, components) = 
+getClassName ( id, components ) =
     case Dict.get "classname" components of
         Just (ClassName className) ->
             className
-        
-        _ -> 
+
+        _ ->
             ""
 
 
 addNarrative : String -> Entity -> Entity
 addNarrative narrative =
     addComponent "narrative" <| Narrative narrative
+
 
 getNarrative : Entity -> String
 getNarrative ( id, components ) =
@@ -106,9 +113,11 @@ getNarrative ( id, components ) =
         _ ->
             id
 
+
 addRuleData : Engine.Rule -> Entity -> Entity
 addRuleData ruleData =
     addComponent "ruleData" <| RuleData ruleData
+
 
 getRuleData : Entity -> Engine.Rule
 getRuleData ( id, components ) =

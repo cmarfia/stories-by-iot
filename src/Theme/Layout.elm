@@ -1,20 +1,18 @@
-module Theme.Layout exposing (..)
+module Theme.Layout exposing (view)
 
+import ClientTypes exposing (..)
+import Components exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Theme.CurrentSummary exposing (..)
-import Theme.Storyline exposing (..)
-import Theme.Locations exposing (..)
 import Theme.Inventory exposing (..)
-import ClientTypes exposing (..)
-import Components exposing (..)
+import Theme.Storyline exposing (..)
 
 
 view :
     { currentLocation : Entity
     , itemsInCurrentLocation : List Entity
     , charactersInCurrentLocation : List Entity
-    , exits : List ( Direction, Entity )
     , itemsInInventory : List Entity
     , ending : Maybe String
     , storyLine : List StorySnippet
@@ -37,10 +35,7 @@ view displayState =
                     displayState.ending
                 ]
             , div [ class "Layout__Sidebar" ]
-                [ Theme.Locations.view
-                    displayState.exits
-                    displayState.currentLocation
-                , Theme.Inventory.view
+                [ Theme.Inventory.view
                     displayState.itemsInInventory
                 ]
             ]

@@ -1,6 +1,7 @@
-module Manifest exposing (items, locations, characters)
+module Manifest exposing (characters, items, locations)
 
 import Components exposing (..)
+
 
 
 {- Here is where you define your manifest -- all of the items, characters, and locations in your story. You can add what ever components you wish to each entity.  Note that the first argument to `entity` is the id for that entity, which is the id you must refer to in your rules.
@@ -10,7 +11,7 @@ import Components exposing (..)
 
 items : List Entity
 items =
-    [ entity "pervious"
+    [ entity "previous"
     , entity "next"
     ]
 
@@ -29,7 +30,7 @@ characters =
         |> addClassName "speaker--secondary"
     ]
 
- 
+
 locations : List Entity
 locations =
     [ entity "light-village"
