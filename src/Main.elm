@@ -31,6 +31,7 @@ port loaded : (Bool -> msg) -> Sub msg
 type alias Model =
     { engineModel : Engine.Model
     , loaded : Bool
+    , title : String
     , storyLine : List StorySnippet
     , narrativeContent : Dict String String
     }
@@ -50,6 +51,7 @@ init =
     in
     ( { engineModel = engineModel
       , loaded = False
+      , title = Narrative.storyTitle
       , storyLine = [ Narrative.startingNarrative ]
       , narrativeContent = Dict.map (\k v -> getNarrative ( k, v )) Rules.rules
       }
@@ -85,7 +87,7 @@ update msg model =
                 checkEnd =
                     case maybeMatchedRuleId of
                         Just "Ending" ->
-                            Engine.changeWorld [ endStory "The End" ]
+                            Engine.changeWorld [ endStory "" ]
 
                         _ ->
                             identity
@@ -103,7 +105,11 @@ update msg model =
             )
 
         Restart ->
-            ( { model | loaded = False }, Browser.Navigation.reload )
+            let
+                ( initModel, cmds ) =
+                    init
+            in
+            ( { initModel | loaded = True }, cmds )
 
 
 view : Model -> Html ClientTypes.Msg

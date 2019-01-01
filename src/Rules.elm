@@ -8,8 +8,8 @@ import Narrative
 
 startingState : List Engine.ChangeWorldCommand
 startingState =
-    [ moveTo "light-village"
-    , moveItemToLocation "next" "light-village"
+    [ moveTo "forest"
+    , moveItemToLocation "next" "forest"
     ]
 
 
@@ -26,42 +26,70 @@ Note that the ids used in the rules must match the ids set in `Manifest.elm`.
 -}
 rules : Dict String Components
 rules =
-    [ rule "back to begining"
-        { interaction = with "previous"
-        , conditions =
-            [ currentLocationIs "light-village"
-            , characterIsInLocation "laz" "light-village"
-            ]
-        , changes =
-            [ moveItemOffScreen "previous"
-            , moveCharacterOffScreen "laz"
-            ]
-        }
-        Narrative.startingNarrative.narrative
-
-    -- Scene 1
-    , rule "entering the village"
+    [ rule "entering the forest"
         { interaction = with "next"
         , conditions =
-            [ currentLocationIs "light-village"
-            , characterIsNotInLocation "laz" "light-village"
+            [ currentLocationIs "forest"
+            , characterIsNotInLocation "jarald" "forest"
             ]
         , changes =
-            [ moveCharacterToLocation "laz" "light-village"
-            , moveItemToLocation "previous" "light-village"
+            [ moveCharacterToLocation "jarald" "forest"
             ]
         }
-        Narrative.enteringVillage
+        Narrative.jaraldHearsASounds
+    , rule
+        "Introduction to tenzin"
+        { interaction = with "next"
+        , conditions =
+            [ currentLocationIs "forest"
+            , characterIsInLocation "jarald" "forest"
+            , characterIsNotInLocation "tenzin" "forest"
+            ]
+        , changes =
+            [ moveCharacterToLocation "tenzin" "forest"
+            , moveCharacterOffScreen "jarald"
+            ]
+        }
+        Narrative.tenzinIntro
+    , rule
+        "through the clearing"
+        { interaction = with "next"
+        , conditions =
+            [ currentLocationIs "forest"
+            , characterIsNotInLocation "jarald" "forest"
+            , characterIsInLocation "tenzin" "forest"
+            ]
+        , changes =
+            [ moveCharacterToLocation "jarald" "forest"
+            ]
+        }
+        Narrative.throughTheClearing
+    , rule
+        "enters clearing"
+        { interaction = with "next"
+        , conditions =
+            [ currentLocationIs "forest"
+            , characterIsInLocation "jarald" "forest"
+            , characterIsInLocation "tenzin" "forest"
+            ]
+        , changes =
+            [ moveCharacterToLocation "jarald" "castle"
+            , moveCharacterToLocation "tenzin" "castle"
+            , moveTo "castle"
+            ]
+        }
+        Narrative.entersClearing
 
     -- Scene End
     , rule "Ending"
         { interaction = with "next"
         , conditions =
-            [ currentLocationIs "light-village"
-            , characterIsInLocation "laz" "light-village"
+            [ currentLocationIs "castle"
+            , characterIsInLocation "jarald" "castle"
+            , characterIsInLocation "tenzin" "castle"
             ]
         , changes =
-            [ moveItemOffScreen "next", moveItemOffScreen "previous" ]
+            [ moveItemOffScreen "next" ]
         }
         Narrative.theEnd
     ]

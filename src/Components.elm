@@ -59,14 +59,14 @@ addImage url =
     addComponent "image" <| Image url
 
 
-getImage : Entity -> String
+getImage : Entity -> Maybe String
 getImage ( id, components ) =
     case Dict.get "image" components of
         Just (Image url) ->
-            url
+            Just url
 
         _ ->
-            ""
+            Nothing
 
 
 addSpeakingPosition : SpeakingPosition -> Entity -> Entity

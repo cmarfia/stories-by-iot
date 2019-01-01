@@ -1,4 +1,4 @@
-module Narrative exposing (enteringVillage, startingNarrative, theEnd)
+module Narrative exposing (entersClearing, jaraldHearsASounds, startingNarrative, storyTitle, tenzinIntro, theEnd, throughTheClearing)
 
 import ClientTypes exposing (..)
 
@@ -11,21 +11,54 @@ import ClientTypes exposing (..)
 -}
 
 
+storyTitle : String
+storyTitle =
+    "How Jarald and Tenzin Met"
+
+
 {-| The text that will show when the story first starts, before the player interacts with anythin.
 -}
 startingNarrative : StorySnippet
 startingNarrative =
-    { interactableName = "Once upon a time..."
+    { interactableName = ""
     , interactableCssSelector = "opening"
-    , narrative = """Once upon a time there was a village of light that thrived far up in the mountains."""
+    , narrative = """Once upon a time there was a peaceful forest..."""
     }
 
 
-enteringVillage : String
-enteringVillage =
-    """Unbenounced to the villagers came a wondering traveler"""
+jaraldHearsASounds : String
+jaraldHearsASounds =
+    """A giraffe named Jarald was walking through that forest on his way to a mightly castle.
+
+Just when everything seems calm Jarald heard a noise. "What was that" cried Jarald."""
+
+
+tenzinIntro : String
+tenzinIntro =
+    """ "It's only me!" said tenzin. 
+
+"Why are you always so scared?"
+"""
+
+
+throughTheClearing : String
+throughTheClearing =
+    """ "Don't scare me like that Tenzin" said jarald. 
+
+He look we are almost there.
+"""
+
+
+entersClearing : String
+entersClearing =
+    """ "Wow" they both said.
+
+"Should we go inside?" ask Tenzin with much excitement.
+
+"Last one there cooks dinner" Jarald yelled as he took a head start.
+"""
 
 
 theEnd : String
 theEnd =
-    """This is the ending"""
+    """To Be Continued..."""

@@ -4,7 +4,8 @@ import ClientTypes exposing (..)
 import Components exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Theme.CurrentSummary exposing (..)
+import Html.Events exposing (..)
+import Theme.Characters exposing (..)
 import Theme.Inventory exposing (..)
 import Theme.Storyline exposing (..)
 
@@ -19,24 +20,16 @@ view :
     }
     -> Html Msg
 view displayState =
-    div [ class <| "GamePage GamePage--" ++ Components.getClassName displayState.currentLocation ]
-        [ div
-            -- this is useful if you want to add a full-screen background image via the ClassName component
-            [ class <| "GamePage__background GamePage__background--" ++ Components.getClassName displayState.currentLocation ]
-            []
-        , div [ class "Layout" ]
-            [ div [ class "Layout__Main" ] <|
-                [ Theme.CurrentSummary.view
-                    displayState.currentLocation
-                    displayState.itemsInCurrentLocation
-                    displayState.charactersInCurrentLocation
-                , Theme.Storyline.view
-                    displayState.storyLine
-                    displayState.ending
-                ]
-            , div [ class "Layout__Sidebar" ]
-                [ Theme.Inventory.view
-                    displayState.itemsInInventory
+    div [ class <| "Location Location--" ++ Components.getClassName displayState.currentLocation, style "background-image" ("url(" ++ (Maybe.withDefault "" <| Components.getImage displayState.currentLocation) ++ ")") ]
+        [ div [ class "Layout" ]
+            [ Theme.Characters.view displayState.charactersInCurrentLocation
+            , div [ class "Layout__Main" ] <|
+                [ Theme.Storyline.view displayState.storyLine displayState.ending
+                , if displayState.ending /= Nothing then
+                    h5 [ class "StoryRestart", onClick Restart ] [ text "Restart" ]
+
+                  else
+                    h5 [ class "StoryContinue", onClick (Interact "next") ] [ text "Continue" ]
                 ]
             ]
         ]
