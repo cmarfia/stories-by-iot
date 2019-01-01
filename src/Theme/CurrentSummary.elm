@@ -47,6 +47,24 @@ view currentLocation props characters =
                     |> p []
             else
                 span [] []
+        
+        interactableViewImage msg entity =
+            img
+                [ src <| getImage entity
+                , onClick <| msg <| Tuple.first entity
+                ]
+                [  ]
+
+        characterImages =
+            if not <| List.isEmpty characters then
+                characters
+                    |> List.map (interactableViewImage Interact)
+                    |> format
+                    |> (::) (text "Characters here: ")
+                    |> p []
+            else
+                span [] []
+        
 
         propsList =
             if not <| List.isEmpty props then
@@ -65,4 +83,4 @@ view currentLocation props characters =
                 ++ if isEmpty then
                     [ text "Nothing here." ]
                    else
-                    [ charactersList, propsList ]
+                    [ charactersList, propsList, characterImages ]

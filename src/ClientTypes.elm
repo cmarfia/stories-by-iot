@@ -3,6 +3,7 @@ module ClientTypes exposing (..)
 
 type Msg
     = Interact String
+    | Loaded
 
 
 type alias StorySnippet =

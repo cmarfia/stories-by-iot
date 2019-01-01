@@ -16,6 +16,7 @@ import Browser
 import Json.Encode
 
 port speak : Json.Encode.Value -> Cmd msg
+port loaded : (Bool -> msg) -> Sub msg
 
 
 {- This is the kernel of the whole app.  It glues everything together and handles some logic such as choosing the correct narrative to display.
@@ -25,6 +26,7 @@ port speak : Json.Encode.Value -> Cmd msg
 
 type alias Model =
     { engineModel : Engine.Model
+    , loaded : Bool
     , storyLine : List StorySnippet
     , narrativeContent : Dict String (Zipper String)
     , endingCountDown : Int
@@ -44,11 +46,12 @@ init =
                 |> Engine.changeWorld Rules.startingState
     in
         ( { engineModel = engineModel
+          , loaded = False
           , storyLine = [ Narrative.startingNarrative ]
           , narrativeContent = Dict.map (\k v ->  getNarrative (k, v)) Rules.rules
           , endingCountDown = 0
           }
-        , speak (Json.Encode.string Narrative.startingNarrative.narrative)
+        , Cmd.none
         )
 
 
@@ -108,6 +111,14 @@ update msg model =
                             Engine.changeWorld [ endStory "The End" ]
                         else
                             identity
+
+                    cmd =
+                        case maybeMatchedRuleId of 
+                            Just id ->
+                                Dict.get id updatedContent
+                                    |> Maybe.map (speak << Json.Encode.string << Zipper.current)
+                                    |> Maybe.withDefault Cmd.none
+                            Nothing -> Cmd.none
                 in
                     ( { model
                         | engineModel = newEngineModel |> checkEnd
@@ -115,8 +126,12 @@ update msg model =
                         , narrativeContent = updatedContent
                         , endingCountDown = updatedEndingCountDown
                       }
-                    , speak (Json.Encode.string "Text Updated")
+                    , cmd
                     )
+            Loaded ->
+                ( { model | loaded = True }
+                , speak (Json.Encode.string Narrative.startingNarrative.narrative)
+                )
 
 
 view : Model -> Html ClientTypes.Msg
@@ -148,8 +163,10 @@ view model =
                 model.storyLine
             }
     in
-    Theme.Layout.view displayState
-
+        if not model.loaded then
+            div [ class "Loading" ] [ text "Loading..." ]
+        else
+            Theme.Layout.view displayState
 
 main : Program () Model ClientTypes.Msg
 main =
@@ -157,5 +174,5 @@ main =
         { init = \_ -> init
         , view = view
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = \_ ->  loaded <| always Loaded
         }
