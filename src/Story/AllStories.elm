@@ -9,4 +9,8 @@ allStories : List StoryInfo
 allStories =
     [ StoryOne.storyInfo
     , StoryTwo.storyInfo
+    , StoryOne.storyInfo
+    , StoryTwo.storyInfo
+    , StoryOne.storyInfo
+    , StoryTwo.storyInfo
     ]

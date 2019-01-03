@@ -10,7 +10,7 @@ storyInfo : StoryInfo
 storyInfo =
     { title = "How Jarald and Tenzin Met"
     , slug = "how-jarald-and-tenzin-met"
-    , cover = "/img/how-jarald-and-tenzin-met-cover.png"
+    , cover = "https://via.placeholder.com/150x200?text=How Jarald and Tenzin Met"
     , manifest =
         { items = Manifest.items
         , characters = Manifest.characters

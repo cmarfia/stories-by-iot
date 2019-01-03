@@ -1,11 +1,14 @@
 module Page.Home exposing (Model, Msg(..), init, update, view)
 
+import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Route
 import Story
 import Story.AllStories exposing (..)
 import Story.Components exposing (..)
+import Url exposing (Url)
 
 
 
@@ -29,25 +32,36 @@ init =
 view : Model -> { title : String, content : Html Msg }
 view model =
     { title = "Story Telling"
-    , content = div [] (List.map viewStory model.stories)
+    , content =
+        div [ class "page page__home" ]
+            [ div [ class "story__list" ]
+                (List.map viewStory model.stories)
+            ]
     }
 
 
 viewStory : StoryInfo -> Html Msg
 viewStory storyInfo =
-    a [ Route.toHref (Route.Story (Story.toStory storyInfo)) ] [ text storyInfo.title ]
+    div [ class "story__item", onClick <| SelectedStory storyInfo.slug ]
+        [ img [ src storyInfo.cover, alt storyInfo.title ] []
+        ]
 
 
 
+-- a [ Route.toHref (Route.Story (Story.toStory storyInfo)) ] [ text storyInfo.title ]
 -- Update
 
 
 type Msg
-    = NoOp
+    = SelectedStory String
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey msg model =
     case msg of
-        _ ->
-            ( model, Cmd.none )
+        SelectedStory slug ->
+            let
+                url =
+                    "#/" ++ slug
+            in
+            ( model, Nav.pushUrl navKey url )

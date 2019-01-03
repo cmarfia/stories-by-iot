@@ -10,7 +10,7 @@ storyInfo : StoryInfo
 storyInfo =
     { title = "The Adventures Of Laz The Cat"
     , slug = "the-adventures-of-laz-the-cat"
-    , cover = "/img/the-adventures-of-laz-the-cat-cover.png"
+    , cover = "https://via.placeholder.com/150x200?text=The Adventures of Laz The Cat"
     , manifest =
         { items = Manifest.items
         , characters = Manifest.characters

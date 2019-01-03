@@ -89,15 +89,15 @@ update msg model =
             changeRouteTo (Route.fromUrl url) model
 
         ( GotNotFoundMsg subMsg, NotFound navKey notFoundModel ) ->
-            NotFound.update subMsg notFoundModel
+            NotFound.update navKey subMsg notFoundModel
                 |> updateWith (NotFound navKey) GotNotFoundMsg model
 
         ( GotHomeMsg subMsg, Home navKey homeModel ) ->
-            Home.update subMsg homeModel
+            Home.update navKey subMsg homeModel
                 |> updateWith (Home navKey) GotHomeMsg model
 
         ( GotStoryMsg subMsg, Story navKey storyModel ) ->
-            Story.update subMsg storyModel
+            Story.update navKey subMsg storyModel
                 |> updateWith (Story navKey) GotStoryMsg model
 
         ( _, _ ) ->

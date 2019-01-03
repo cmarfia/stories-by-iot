@@ -1,5 +1,6 @@
 module Page.NotFound exposing (Model, Msg(..), init, update, view)
 
+import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
 
@@ -36,8 +37,8 @@ type Msg
     = NoOp
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey msg model =
     case msg of
         _ ->
             ( model, Cmd.none )

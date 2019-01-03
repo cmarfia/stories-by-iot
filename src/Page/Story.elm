@@ -1,6 +1,7 @@
 module Page.Story exposing (Model, Msg(..), init, update, view)
 
 import Browser
+import Browser.Navigation as Nav
 import Dict exposing (Dict)
 import Engine exposing (..)
 import Html exposing (..)
@@ -143,8 +144,8 @@ type Msg
     | Restart
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey msg model =
     case msg of
         Interact interactableId ->
             let
