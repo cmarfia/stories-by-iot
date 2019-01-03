@@ -1,6 +1,6 @@
-module Manifest exposing (characters, items, locations)
+module Story.HowJaraldandTenzinMet.Manifest exposing (characters, items, locations)
 
-import Components exposing (..)
+import Story.Components exposing (..)
 
 
 

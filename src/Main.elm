@@ -1,152 +1,160 @@
-port module Main exposing (Model, findEntity, init, loaded, main, speak, update, view)
+port module Main exposing (main)
 
 import Browser
-import Browser.Navigation
-import ClientTypes exposing (..)
-import Components exposing (..)
-import Dict exposing (Dict)
-import Engine exposing (..)
+import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Json.Encode
-import Manifest
-import Narrative
-import Rules
-import Theme.Layout
+import Page.Home as Home
+import Page.NotFound as NotFound
+import Page.Story as Story
+import Port exposing (..)
+import Route exposing (Route)
 import Tuple
-
-
-port speak : Json.Encode.Value -> Cmd msg
-
-
-port loaded : (Bool -> msg) -> Sub msg
+import Url exposing (Url)
 
 
 
-{- This is the kernel of the whole app.  It glues everything together and handles some logic such as choosing the correct narrative to display.
-   You shouldn't need to change anything in this file, unless you want some kind of different behavior.
--}
+-- MODEL
 
 
-type alias Model =
-    { engineModel : Engine.Model
-    , loaded : Bool
-    , title : String
-    , storyLine : List StorySnippet
-    , narrativeContent : Dict String String
-    }
+type Model
+    = NotFound Nav.Key NotFound.Model
+    | Home Nav.Key Home.Model
+    | Story Nav.Key Story.Model
 
 
-init : ( Model, Cmd ClientTypes.Msg )
-init =
+init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url navKey =
+    changeRouteTo (Route.fromUrl url) (NotFound navKey {})
+
+
+
+-- VIEW
+
+
+view : Model -> Browser.Document Msg
+view model =
     let
-        engineModel =
-            Engine.init
-                { items = List.map Tuple.first Manifest.items
-                , locations = List.map Tuple.first Manifest.locations
-                , characters = List.map Tuple.first Manifest.characters
-                }
-                (Dict.map (\k v -> getRuleData ( k, v )) Rules.rules)
-                |> Engine.changeWorld Rules.startingState
+        viewPage { title, content } toMsg =
+            { title = title
+            , body = [ Html.map toMsg content ]
+            }
     in
-    ( { engineModel = engineModel
-      , loaded = False
-      , title = Narrative.storyTitle
-      , storyLine = [ Narrative.startingNarrative ]
-      , narrativeContent = Dict.map (\k v -> getNarrative ( k, v )) Rules.rules
-      }
-    , Cmd.none
+    case model of
+        NotFound _ notFoundModel ->
+            viewPage (NotFound.view notFoundModel) (always Ignored)
+
+        Home _ homeModel ->
+            viewPage (Home.view homeModel) GotHomeMsg
+
+        Story _ storyModel ->
+            viewPage (Story.view storyModel) GotStoryMsg
+
+
+
+-- UPDATE
+
+
+type Msg
+    = Ignored
+    | Loaded Bool
+    | RequestedUrl Browser.UrlRequest
+    | ChangedUrl Url.Url
+    | GotHomeMsg Home.Msg
+    | GotStoryMsg Story.Msg
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case ( msg, model ) of
+        ( Ignored, _ ) ->
+            ( model, Cmd.none )
+
+        ( RequestedUrl urlRequest, _ ) ->
+            case urlRequest of
+                Browser.Internal url ->
+                    case url.fragment of
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                        Just _ ->
+                            ( model, Nav.pushUrl (getNavKey model) (Url.toString url) )
+
+                Browser.External href ->
+                    ( model, Nav.load href )
+
+        ( ChangedUrl url, _ ) ->
+            changeRouteTo (Route.fromUrl url) model
+
+        ( GotHomeMsg subMsg, Home navKey homeModel ) ->
+            Home.update subMsg homeModel
+                |> updateWith (Home navKey) GotHomeMsg model
+
+        ( GotStoryMsg subMsg, Story navKey storyModel ) ->
+            Story.update subMsg storyModel
+                |> updateWith (Story navKey) GotStoryMsg model
+
+        ( _, _ ) ->
+            -- Disregard messages that arrived for the wrong page.
+            ( model, Cmd.none )
+
+
+getNavKey : Model -> Nav.Key
+getNavKey model =
+    case model of
+        NotFound navKey _ ->
+            navKey
+
+        Home navKey _ ->
+            navKey
+
+        Story navKey _ ->
+            navKey
+
+
+changeRouteTo : Maybe Route -> Model -> ( Model, Cmd Msg )
+changeRouteTo maybeRoute model =
+    let
+        navKey =
+            getNavKey model
+    in
+    case maybeRoute of
+        Nothing ->
+            let
+                ( notFoundModel, cmds ) =
+                    NotFound.init
+            in
+            ( NotFound navKey notFoundModel, Cmd.map (always Ignored) cmds )
+
+        Just Route.Home ->
+            Home.init
+                |> updateWith (Home navKey) GotHomeMsg model
+
+        Just (Route.Story story) ->
+            Story.init story
+                |> updateWith (Story navKey) GotStoryMsg model
+
+
+updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
+updateWith toModel toMsg model ( subModel, subCmd ) =
+    ( toModel subModel
+    , Cmd.map toMsg subCmd
     )
 
 
-findEntity : String -> Entity
-findEntity id =
-    (Manifest.items ++ Manifest.locations ++ Manifest.characters)
-        |> List.filter (Tuple.first >> (==) id)
-        |> List.head
-        |> Maybe.withDefault (entity id)
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 
-update : ClientTypes.Msg -> Model -> ( Model, Cmd ClientTypes.Msg )
-update msg model =
-    case msg of
-        Interact interactableId ->
-            let
-                ( newEngineModel, maybeMatchedRuleId ) =
-                    Engine.update interactableId model.engineModel
-
-                narrativeForThisInteraction =
-                    { interactableName = findEntity interactableId |> getName
-                    , interactableCssSelector = findEntity interactableId |> getClassName
-                    , narrative =
-                        maybeMatchedRuleId
-                            |> Maybe.andThen (\id -> Dict.get id model.narrativeContent)
-                            |> Maybe.withDefault (List.head model.storyLine |> Maybe.map .narrative |> Maybe.withDefault "")
-                    }
-
-                checkEnd =
-                    case maybeMatchedRuleId of
-                        Just "Ending" ->
-                            Engine.changeWorld [ endStory "" ]
-
-                        _ ->
-                            identity
-            in
-            ( { model
-                | engineModel = newEngineModel |> checkEnd
-                , storyLine = narrativeForThisInteraction :: model.storyLine
-              }
-            , speak (Json.Encode.string narrativeForThisInteraction.narrative)
-            )
-
-        Loaded ->
-            ( { model | loaded = True }
-            , speak (Json.Encode.string Narrative.startingNarrative.narrative)
-            )
-
-        Restart ->
-            let
-                ( initModel, cmds ) =
-                    init
-            in
-            ( { initModel | loaded = True }, cmds )
-
-
-view : Model -> Html ClientTypes.Msg
-view model =
-    let
-        currentLocation =
-            Engine.getCurrentLocation model.engineModel |> findEntity
-
-        displayState =
-            { currentLocation = currentLocation
-            , itemsInCurrentLocation =
-                Engine.getItemsInCurrentLocation model.engineModel
-                    |> List.map findEntity
-            , charactersInCurrentLocation =
-                Engine.getCharactersInCurrentLocation model.engineModel
-                    |> List.map findEntity
-            , itemsInInventory =
-                Engine.getItemsInInventory model.engineModel
-                    |> List.map findEntity
-            , ending =
-                Engine.getEnding model.engineModel
-            , storyLine =
-                model.storyLine
-            }
-    in
-    if not model.loaded then
-        div [ class "Loading" ] [ text "Loading..." ]
-
-    else
-        Theme.Layout.view displayState
-
-
-main : Program () Model ClientTypes.Msg
+main : Program () Model Msg
 main =
-    Browser.element
-        { init = \_ -> init
+    Browser.application
+        { init = init
         , view = view
         , update = update
-        , subscriptions = \_ -> loaded <| always Loaded
+        , subscriptions = subscriptions
+        , onUrlChange = ChangedUrl
+        , onUrlRequest = RequestedUrl
         }

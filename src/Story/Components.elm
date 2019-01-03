@@ -1,7 +1,56 @@
-module Components exposing (Component(..), Components, Entity, SpeakingPosition(..), addClassName, addComponent, addImage, addName, addNarrative, addRuleData, addSpeakingPosition, entity, getClassName, getImage, getName, getNarrative, getRuleData, getSpeakingPosition)
+module Story.Components exposing
+    ( Component(..)
+    , Components
+    , Entity
+    , Manifest
+    , Snippet
+    , SpeakingPosition(..)
+    , StoryInfo
+    , addClassName
+    , addComponent
+    , addImage
+    , addName
+    , addNarrative
+    , addRuleData
+    , addSpeakingPosition
+    , createRule
+    , entity
+    , findEntity
+    , getClassName
+    , getImage
+    , getName
+    , getNarrative
+    , getRuleData
+    , getSpeakingPosition
+    )
 
 import Dict exposing (..)
 import Engine
+
+
+type alias Manifest =
+    { items : List Entity
+    , characters : List Entity
+    , locations : List Entity
+    }
+
+
+type alias StoryInfo =
+    { title : String
+    , slug : String
+    , cover : String
+    , manifest : Manifest
+    , startingNarrative : Snippet
+    , startingState : List Engine.ChangeWorldCommand
+    , rules : Dict String Components
+    }
+
+
+type alias Snippet =
+    { interactableName : String
+    , interactableCssSelector : String
+    , narrative : String
+    }
 
 
 {-| An entity is simply an id associated with some potential components and their data.
@@ -104,8 +153,8 @@ addNarrative narrative =
     addComponent "narrative" <| Narrative narrative
 
 
-getNarrative : Entity -> String
-getNarrative ( id, components ) =
+getNarrative : String -> Components -> String
+getNarrative id components =
     case Dict.get "narrative" components of
         Just (Narrative narrative) ->
             narrative
@@ -119,8 +168,8 @@ addRuleData ruleData =
     addComponent "ruleData" <| RuleData ruleData
 
 
-getRuleData : Entity -> Engine.Rule
-getRuleData ( id, components ) =
+getRuleData : String -> Components -> Engine.Rule
+getRuleData id components =
     case Dict.get "ruleData" components of
         Just (RuleData rule) ->
             rule
@@ -130,3 +179,18 @@ getRuleData ( id, components ) =
             , conditions = []
             , changes = []
             }
+
+
+createRule : String -> Engine.Rule -> String -> Entity
+createRule id ruleData narrative =
+    entity id
+        |> addRuleData ruleData
+        |> addNarrative narrative
+
+
+findEntity : Manifest -> String -> Entity
+findEntity manifest id =
+    (manifest.items ++ manifest.locations ++ manifest.characters)
+        |> List.filter (Tuple.first >> (==) id)
+        |> List.head
+        |> Maybe.withDefault (entity id)

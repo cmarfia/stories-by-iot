@@ -10,20 +10,18 @@
             "elm/core": "1.0.0",
             "elm/html": "1.0.0",
             "elm/json": "1.0.0",
-            "jschomay/elm-narrative-engine": "3.0.1",
+            "elm/url": "1.0.0",
             "elm-explorations/markdown": "1.0.0",
+            "jschomay/elm-narrative-engine": "3.0.1",
             "wernerdegroot/listzipper": "3.1.1"
         },
         "indirect": {
             "elm/time": "1.0.0",
-            "elm/url": "1.0.0",
             "elm/virtual-dom": "1.0.2"
         }
     },
     "test-dependencies": {
-        "direct": {
-        },
-        "indirect": {
-        }
+        "direct": {},
+        "indirect": {}
     }
 }
