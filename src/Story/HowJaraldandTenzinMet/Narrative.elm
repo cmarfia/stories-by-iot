@@ -1,4 +1,7 @@
-module Story.HowJaraldandTenzinMet.Narrative exposing (entersClearing, jaraldHearsASounds, startingNarrative, storyTitle, tenzinIntro, theEnd, throughTheClearing)
+module Story.HowJaraldandTenzinMet.Narrative exposing (entersClearing, jaraldHearsASounds, startingNarrative, tenzinIntro, theEnd, throughTheClearing)
+
+{-| The text that will show when the story first starts, before the player interacts with anythin.
+-}
 
 {- Here is where you can write all of your story text, which keeps the Rules.elm file a little cleaner.
    The narrative that you add to a rule will be shown when that rule matches.  If you give a list of strings, each time the rule matches, it will show the next narrative in the list, which is nice for adding variety and texture to your story.
@@ -7,13 +10,6 @@ module Story.HowJaraldandTenzinMet.Narrative exposing (entersClearing, jaraldHea
 -}
 
 
-storyTitle : String
-storyTitle =
-    "How Jarald and Tenzin Met"
-
-
-{-| The text that will show when the story first starts, before the player interacts with anythin.
--}
 startingNarrative : { interactableName : String, interactableCssSelector : String, narrative : String }
 startingNarrative =
     { interactableName = ""

@@ -61,6 +61,7 @@ type Msg
     | Loaded Bool
     | RequestedUrl Browser.UrlRequest
     | ChangedUrl Url.Url
+    | GotNotFoundMsg NotFound.Msg
     | GotHomeMsg Home.Msg
     | GotStoryMsg Story.Msg
 
@@ -86,6 +87,10 @@ update msg model =
 
         ( ChangedUrl url, _ ) ->
             changeRouteTo (Route.fromUrl url) model
+
+        ( GotNotFoundMsg subMsg, NotFound navKey notFoundModel ) ->
+            NotFound.update subMsg notFoundModel
+                |> updateWith (NotFound navKey) GotNotFoundMsg model
 
         ( GotHomeMsg subMsg, Home navKey homeModel ) ->
             Home.update subMsg homeModel

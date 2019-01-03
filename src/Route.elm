@@ -1,4 +1,4 @@
-module Route exposing (Route(..), fromUrl)
+module Route exposing (Route(..), fromUrl, toHref)
 
 import Html exposing (Attribute)
 import Html.Attributes exposing (href)

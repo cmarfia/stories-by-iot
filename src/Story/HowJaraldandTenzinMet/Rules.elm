@@ -75,7 +75,7 @@ rules =
 
     -- Scene End
     , createRule
-        "Ending"
+        "TheEnd"
         { interaction = with "next"
         , conditions =
             [ currentLocationIs "castle"

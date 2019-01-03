@@ -165,7 +165,7 @@ update msg model =
 
                 checkEnd =
                     case maybeMatchedRuleId of
-                        Just "Ending" ->
+                        Just "TheEnd" ->
                             Engine.changeWorld [ endStory "" ]
 
                         _ ->

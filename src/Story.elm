@@ -6,11 +6,13 @@ module Story exposing
     , getStartingState
     , getTitle
     , parser
+    , toStory
     , toUrlString
     )
 
 import Dict exposing (Dict)
 import Engine exposing (..)
+import Story.AllStories exposing (allStories)
 import Story.Components exposing (..)
 import Story.HowJaraldandTenzinMet.StoryInfo as HowJaraldandTenzinMet
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, string)
@@ -20,11 +22,18 @@ type Story
     = Story StoryInfo
 
 
+toStory : StoryInfo -> Story
+toStory =
+    Story
+
+
 parser : Parser (Story -> a) a
 parser =
-    oneOf
-        [ Parser.map (Story HowJaraldandTenzinMet.storyInfo) (s HowJaraldandTenzinMet.storyInfo.slug)
-        ]
+    let
+        toParser storyInfo =
+            Parser.map (Story storyInfo) (s storyInfo.slug)
+    in
+    oneOf (List.map toParser allStories)
 
 
 toUrlString : Story -> String

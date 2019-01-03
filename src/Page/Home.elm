@@ -2,6 +2,10 @@ module Page.Home exposing (Model, Msg(..), init, update, view)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Route
+import Story
+import Story.AllStories exposing (..)
+import Story.Components exposing (..)
 
 
 
@@ -9,12 +13,13 @@ import Html.Attributes exposing (..)
 
 
 type alias Model =
-    {}
+    { stories : List StoryInfo
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    ( { stories = allStories }, Cmd.none )
 
 
 
@@ -24,8 +29,13 @@ init =
 view : Model -> { title : String, content : Html Msg }
 view model =
     { title = "Story Telling"
-    , content = a [ href "#/how-jarald-and-tenzin-met" ] [ text "How Jarald And Tenzin Met" ]
+    , content = div [] (List.map viewStory model.stories)
     }
+
+
+viewStory : StoryInfo -> Html Msg
+viewStory storyInfo =
+    a [ Route.toHref (Route.Story (Story.toStory storyInfo)) ] [ text storyInfo.title ]
 
 
 

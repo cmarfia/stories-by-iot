@@ -41,9 +41,9 @@ html, body { height: 100%; }
 body {
   margin: 0px;
   padding: 0px;
-  background-color: black;
+  background-color: white;
   font-family: 'Oswald', sans-serif;
-  color: #cacaca;
+  color: black;
 }
 
 img {
