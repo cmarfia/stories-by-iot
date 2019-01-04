@@ -1,40 +1,40 @@
-void function (Elm) {
-  var imagesPreloaded = [];
-  var imagesToPreload = [];
-  var synthVoice = null;
-  var app = Elm.Main.init({ node: document.getElementsByTagName('main')[0] });
+void (function(Elm) {
+  var imagesPreloaded = []
+  var imagesToPreload = []
+  var synthVoice = null
+  var app = Elm.Main.init({ node: document.getElementsByTagName('main')[0] })
 
   function sendToElm(command, data = {}) {
-    app.ports.fromJavaScript.send({ command, data });
+    app.ports.fromJavaScript.send({ command, data })
   }
 
   function assetLoaded(image) {
-    return function () {
-      var imageIndex = imagesToPreload.indexOf(image);
+    return function() {
+      var imageIndex = imagesToPreload.indexOf(image)
       if (imageIndex === -1) {
-        return;
+        return
       }
 
-      imagesToPreload.splice(imageIndex, 1);
-      imagesPreloaded.push(image);
+      imagesToPreload.splice(imageIndex, 1)
+      imagesPreloaded.push(image)
       if (imagesToPreload.length === 0) {
         sendToElm('IMAGES_LOADED')
       }
-    };
+    }
   }
 
   function loadImage(image) {
-    var img = new Image();
-    img.src = image;
-    img.onload = assetLoaded(image);
-    return img;
+    var img = new Image()
+    img.src = image
+    img.onload = assetLoaded(image)
+    return img
   }
 
   function preloadImages(images) {
     for (var i = 0; i < images.length; ++i) {
-      var image = images[i];
+      var image = images[i]
       if (imagesPreloaded.indexOf(image) && imagesToPreload.indexOf(image)) {
-        imagesToPreload.push(image);
+        imagesToPreload.push(image)
       }
     }
 
@@ -43,63 +43,63 @@ void function (Elm) {
     }
 
     for (var i = 0; i < imagesToPreload.length; ++i) {
-      loadImage(imagesToPreload[i]);
+      loadImage(imagesToPreload[i])
     }
   }
 
   function populateVoiceList() {
     if (synthVoice !== null) {
-      return;
+      return
     }
 
-    synthVoice = undefined;
-    var voices = window.speechSynthesis.getVoices();
-    for(var i = 0; i < voices.length ; i++) {
-      var voice = voices[i];
+    synthVoice = undefined
+    var voices = window.speechSynthesis.getVoices()
+    for (var i = 0; i < voices.length; i++) {
+      var voice = voices[i]
       if (voice.name === 'Google US English') {
-        synthVoice = voice;
+        synthVoice = voice
       }
     }
-    
-    sendToElm('VOICE_LOADED');
+
+    sendToElm('VOICE_LOADED')
   }
 
-  function speak(text){
-    window.speechSynthesis.cancel();
+  function speak(text) {
+    window.speechSynthesis.cancel()
 
     if (text === '') {
-      return;
+      return
     }
 
-    var utterance = new window.SpeechSynthesisUtterance(text);
+    var utterance = new window.SpeechSynthesisUtterance(text)
 
-    if (voice) {
-      utterance.voice = voice;
+    if (synthVoice) {
+      utterance.voice = synthVoice
     }
-    
-    window.speechSynthesis.speak(utterance);
+
+    window.speechSynthesis.speak(utterance)
   }
 
   if (window.speechSynthesis && !window.speechSynthesis.onvoiceschanged) {
-      speechSynthesis.onvoiceschanged = populateVoiceList;
+    speechSynthesis.onvoiceschanged = populateVoiceList
   }
 
-  app.ports.toJavaScript.subscribe(function (msg) {
+  app.ports.toJavaScript.subscribe(function(msg) {
     switch (msg.command) {
-      case "PRELOAD_IMAGES":
+      case 'PRELOAD_IMAGES':
         if (!Array.isArray(msg.data)) {
-          return;
+          return
         }
 
         if (msg.data.length > 0) {
-          preloadImages(msg.data);
+          preloadImages(msg.data)
         } else if (imagesToPreload.length === 0) {
           sendToElm('IMAGES_LOADED')
         }
-        break;
-      case "SPEAK":
-        speak(msg.data || '');
-        break;
+        break
+      case 'SPEAK':
+        speak(msg.data || '')
+        break
     }
-  });
-}(window.Elm);
+  })
+})(window.Elm)

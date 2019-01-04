@@ -68,17 +68,21 @@ type alias DisplayState =
     }
 
 
-view : Model -> { title : String, content : Html Msg }
-view model =
+view : Bool -> Model -> { title : String, content : Html Msg }
+view voiceLoaded model =
     { title = Story.getTitle model.story
-    , content = viewLayout (getDisplayState model)
+    , content = viewLayout voiceLoaded (getDisplayState model)
     }
 
 
-viewLayout : DisplayState -> Html Msg
-viewLayout displayState =
+viewLayout : Bool -> DisplayState -> Html Msg
+viewLayout voiceLoaded displayState =
     div [ class <| "Location Location--" ++ getClassName displayState.currentLocation, style "background-image" ("url(" ++ (Maybe.withDefault "" <| getImage displayState.currentLocation) ++ ")") ]
         [ button [ onClick GoHome ] [ text "Go Home" ]
+        , if voiceLoaded then
+            button [ onClick Speak ] [ text "Speak" ]
+        else 
+            text ""
         , div
             [ class "Layout" ]
             [ viewCharacters displayState.charactersInCurrentLocation
@@ -148,6 +152,7 @@ type Msg
     = Interact String
     | Restart
     | GoHome
+    | Speak
 
 
 update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
@@ -190,6 +195,25 @@ update navKey msg model =
 
         GoHome ->
             ( model, Nav.pushUrl navKey "/" )
+
+        Speak ->
+            let
+                maybeNarrative =
+                    model.storyLine
+                        |> List.head
+                        |> Maybe.map .narrative
+                
+                cmds = 
+                    case maybeNarrative of 
+                        Just narrative ->
+                            Port.Speak narrative
+                                |> Port.encode
+                                |> Port.toJavaScript
+                        
+                        Nothing ->
+                            Cmd.none
+            in
+            ( model, cmds)          
 
 
 

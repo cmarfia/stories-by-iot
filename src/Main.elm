@@ -70,7 +70,7 @@ view model =
 
         Story storyModel ->
             if model.loaded then
-                viewPage (Story.view storyModel) GotStoryMsg
+                viewPage (Story.view model.voiceLoaded storyModel) GotStoryMsg
 
             else
                 viewLoading
