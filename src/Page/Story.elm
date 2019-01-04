@@ -85,10 +85,10 @@ viewLayout displayState =
             , div [ class "Layout__Main" ] <|
                 [ viewStoryLine displayState.storyLine displayState.ending
                 , if displayState.ending /= Nothing then
-                    h5 [ class "StoryRestart", onClick Restart ] [ text "Restart" ]
+                    button [ class "StoryRestart", onClick Restart ] [ text "Restart" ]
 
                   else
-                    h5 [ class "StoryContinue", onClick (Interact "next") ] [ text "Continue" ]
+                    button [ class "StoryContinue", onClick (Interact "next") ] [ text "Continue" ]
                 ]
             ]
         ]
