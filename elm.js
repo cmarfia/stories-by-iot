@@ -770,11 +770,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.U.D === region.ac.D)
+	if (region.U.D === region.af.D)
 	{
 		return 'on line ' + region.U.D;
 	}
-	return 'on lines ' + region.U.D + ' through ' + region.ac.D;
+	return 'on lines ' + region.U.D + ' through ' + region.af.D;
 }
 
 
@@ -1842,8 +1842,8 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 		flagDecoder,
 		args,
 		impl.aR,
-		impl.a5,
-		impl.a3,
+		impl.a6,
+		impl.a4,
 		function() { return function() {} }
 	);
 });
@@ -3885,10 +3885,10 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 		flagDecoder,
 		args,
 		impl.aR,
-		impl.a5,
-		impl.a3,
+		impl.a6,
+		impl.a4,
 		function(sendToApp, initialModel) {
-			var view = impl.a7;
+			var view = impl.a8;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3921,11 +3921,11 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 		flagDecoder,
 		args,
 		impl.aR,
-		impl.a5,
-		impl.a3,
+		impl.a6,
+		impl.a4,
 		function(sendToApp, initialModel) {
 			var divertHrefToApp = impl.E && impl.E(sendToApp)
-			var view = impl.a7;
+			var view = impl.a8;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3933,12 +3933,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.aF);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc._);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.aB) && (_VirtualDom_doc.title = title = doc.aB);
+				(title !== doc.Y) && (_VirtualDom_doc.title = title = doc.Y);
 			});
 		}
 	);
@@ -4010,9 +4010,9 @@ function _Browser_application(impl)
 					var next = elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.ar === next.ar
-							&& curr.af === next.af
-							&& curr.ao.a === next.ao.a
+							&& curr.au === next.au
+							&& curr.ai === next.ai
+							&& curr.ar.a === next.ar.a
 						)
 							? elm$browser$Browser$Internal(next)
 							: elm$browser$Browser$External(href)
@@ -4024,9 +4024,9 @@ function _Browser_application(impl)
 		{
 			return A3(impl.aR, flags, _Browser_getUrl(), key);
 		},
-		a7: impl.a7,
-		a5: impl.a5,
-		a3: impl.a3
+		a8: impl.a8,
+		a6: impl.a6,
+		a4: impl.a4
 	});
 }
 
@@ -4092,17 +4092,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { aP: 'hidden', C: 'visibilitychange' }
+		? { aO: 'hidden', C: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { aP: 'mozHidden', C: 'mozvisibilitychange' }
+		? { aO: 'mozHidden', C: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { aP: 'msHidden', C: 'msvisibilitychange' }
+		? { aO: 'msHidden', C: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { aP: 'webkitHidden', C: 'webkitvisibilitychange' }
-		: { aP: 'hidden', C: 'visibilitychange' };
+		? { aO: 'webkitHidden', C: 'webkitvisibilitychange' }
+		: { aO: 'hidden', C: 'visibilitychange' };
 }
 
 
@@ -4183,10 +4183,10 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		aw: _Browser_getScene(),
-		aC: {
-			M: _Browser_window.pageXOffset,
-			N: _Browser_window.pageYOffset,
+		az: _Browser_getScene(),
+		aD: {
+			L: _Browser_window.pageXOffset,
+			M: _Browser_window.pageYOffset,
 			A: _Browser_doc.documentElement.clientWidth,
 			u: _Browser_doc.documentElement.clientHeight
 		}
@@ -4222,13 +4222,13 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			aw: {
+			az: {
 				A: node.scrollWidth,
 				u: node.scrollHeight
 			},
-			aC: {
-				M: node.scrollLeft,
-				N: node.scrollTop,
+			aD: {
+				L: node.scrollLeft,
+				M: node.scrollTop,
 				A: node.clientWidth,
 				u: node.clientHeight
 			}
@@ -4260,16 +4260,16 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			aw: _Browser_getScene(),
-			aC: {
-				M: x,
-				N: y,
+			az: _Browser_getScene(),
+			aD: {
+				L: x,
+				M: y,
 				A: _Browser_doc.documentElement.clientWidth,
 				u: _Browser_doc.documentElement.clientHeight
 			},
-			aL: {
-				M: x + rect.left,
-				N: y + rect.top,
+			aK: {
+				L: x + rect.left,
+				M: y + rect.top,
 				A: rect.width,
 				u: rect.height
 			}
@@ -4381,9 +4381,9 @@ function _Markdown_formatOptions(options)
 {
 	function toHighlight(code, lang)
 	{
-		if (!lang && elm$core$Maybe$isJust(options.ab))
+		if (!lang && elm$core$Maybe$isJust(options.ae))
 		{
-			lang = options.ab.a;
+			lang = options.ae.a;
 		}
 
 		if (typeof hljs !== 'undefined' && lang && hljs.listLanguages().indexOf(lang) >= 0)
@@ -4394,15 +4394,15 @@ function _Markdown_formatOptions(options)
 		return code;
 	}
 
-	var gfm = options.ae.a;
+	var gfm = options.ah.a;
 
 	return {
 		highlight: toHighlight,
 		gfm: gfm,
-		tables: gfm && gfm.a4,
+		tables: gfm && gfm.a5,
 		breaks: gfm && gfm.aG,
-		sanitize: options.av,
-		smartypants: options.ay
+		sanitize: options.ay,
+		smartypants: options.aA
 	};
 }
 var author$project$Main$ChangedUrl = function (a) {
@@ -4421,14 +4421,14 @@ var author$project$Main$GotHomeMsg = function (a) {
 var author$project$Main$GotStoryMsg = function (a) {
 	return {$: 6, a: a};
 };
-var author$project$Main$Home = F2(
-	function (a, b) {
-		return {$: 1, a: a, b: b};
+var author$project$Main$Home = F3(
+	function (a, b, c) {
+		return {$: 1, a: a, b: b, c: c};
 	});
 var author$project$Main$Ignored = {$: 0};
-var author$project$Main$Story = F2(
-	function (a, b) {
-		return {$: 2, a: a, b: b};
+var author$project$Main$Story = F3(
+	function (a, b, c) {
+		return {$: 2, a: a, b: b, c: c};
 	});
 var author$project$Main$getNavKey = function (model) {
 	switch (model.$) {
@@ -4927,6 +4927,47 @@ var author$project$Main$updateWith = F4(
 			toModel(subModel),
 			A2(elm$core$Platform$Cmd$map, toMsg, subCmd));
 	});
+var author$project$Port$PreloadImages = elm$core$Basics$identity;
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(0),
+				entries));
+	});
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(0),
+			pairs));
+};
+var elm$json$Json$Encode$string = _Json_wrap;
+var author$project$Port$encode = function (msg) {
+	var images = msg;
+	return elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'command',
+				elm$json$Json$Encode$string('PRELOAD_IMAGES')),
+				_Utils_Tuple2(
+				'data',
+				A2(elm$json$Json$Encode$list, elm$json$Json$Encode$string, images))
+			]));
+};
+var elm$core$Basics$identity = function (x) {
+	return x;
+};
+var author$project$Port$toJavaScript = _Platform_outgoingPort('toJavaScript', elm$core$Basics$identity);
 var author$project$Story$Components$Image = function (a) {
 	return {$: 1, a: a};
 };
@@ -5105,7 +5146,7 @@ var author$project$Story$HowJaraldandTenzinMet$Manifest$locations = _List_fromAr
 			'The Castle',
 			author$project$Story$Components$entity('castle')))
 	]);
-var author$project$Story$HowJaraldandTenzinMet$Narrative$startingNarrative = {aS: 'opening', aT: '', L: 'Once upon a time there was a peaceful forest...'};
+var author$project$Story$HowJaraldandTenzinMet$Narrative$startingNarrative = {aS: 'opening', aT: '', Q: 'Once upon a time there was a peaceful forest...'};
 var author$project$Story$Components$Narrative = function (a) {
 	return {$: 4, a: a};
 };
@@ -5290,13 +5331,15 @@ var author$project$Story$HowJaraldandTenzinMet$Rules$startingState = _List_fromA
 		A2(jschomay$elm_narrative_engine$Engine$moveItemToLocation, 'next', 'forest')
 	]);
 var author$project$Story$HowJaraldandTenzinMet$StoryInfo$storyInfo = {
-	aK: 'https://via.placeholder.com/150x200?text=How Jarald and Tenzin Met',
-	aV: {_: author$project$Story$HowJaraldandTenzinMet$Manifest$characters, ag: author$project$Story$HowJaraldandTenzinMet$Manifest$items, ak: author$project$Story$HowJaraldandTenzinMet$Manifest$locations},
+	ac: 'https://via.placeholder.com/150x200?text=How Jarald and Tenzin Met',
+	aP: _List_fromArray(
+		['/img/giraffe.png', '/img/panda.png', '/img/forest.png', '/img/castle.png']),
+	aV: {ab: author$project$Story$HowJaraldandTenzinMet$Manifest$characters, aj: author$project$Story$HowJaraldandTenzinMet$Manifest$items, an: author$project$Story$HowJaraldandTenzinMet$Manifest$locations},
 	a0: author$project$Story$HowJaraldandTenzinMet$Rules$rules,
-	ax: 'how-jarald-and-tenzin-met',
-	a1: author$project$Story$HowJaraldandTenzinMet$Narrative$startingNarrative,
-	a2: author$project$Story$HowJaraldandTenzinMet$Rules$startingState,
-	aB: 'How Jarald and Tenzin Met'
+	a1: 'how-jarald-and-tenzin-met',
+	a2: author$project$Story$HowJaraldandTenzinMet$Narrative$startingNarrative,
+	a3: author$project$Story$HowJaraldandTenzinMet$Rules$startingState,
+	Y: 'How Jarald and Tenzin Met'
 };
 var author$project$Story$TheAdventuresOfLaz$Manifest$characters = _List_fromArray(
 	[
@@ -5322,7 +5365,7 @@ var author$project$Story$TheAdventuresOfLaz$Manifest$locations = _List_fromArray
 			'The Forest',
 			author$project$Story$Components$entity('forest')))
 	]);
-var author$project$Story$TheAdventuresOfLaz$Narrative$startingNarrative = {aS: 'opening', aT: '', L: 'There once was a cat.'};
+var author$project$Story$TheAdventuresOfLaz$Narrative$startingNarrative = {aS: 'opening', aT: '', Q: 'There once was a cat.'};
 var author$project$Story$TheAdventuresOfLaz$Rules$rules = elm$core$Dict$fromList(
 	_List_fromArray(
 		[
@@ -5365,24 +5408,111 @@ var author$project$Story$TheAdventuresOfLaz$Rules$startingState = _List_fromArra
 		A2(jschomay$elm_narrative_engine$Engine$moveItemToLocation, 'next', 'forest')
 	]);
 var author$project$Story$TheAdventuresOfLaz$StoryInfo$storyInfo = {
-	aK: 'https://via.placeholder.com/150x200?text=The Adventures of Laz The Cat',
-	aV: {_: author$project$Story$TheAdventuresOfLaz$Manifest$characters, ag: author$project$Story$TheAdventuresOfLaz$Manifest$items, ak: author$project$Story$TheAdventuresOfLaz$Manifest$locations},
+	ac: 'https://via.placeholder.com/150x200?text=The Adventures of Laz The Cat',
+	aP: _List_fromArray(
+		['/img/laz.png', '/img/forest.png']),
+	aV: {ab: author$project$Story$TheAdventuresOfLaz$Manifest$characters, aj: author$project$Story$TheAdventuresOfLaz$Manifest$items, an: author$project$Story$TheAdventuresOfLaz$Manifest$locations},
 	a0: author$project$Story$TheAdventuresOfLaz$Rules$rules,
-	ax: 'the-adventures-of-laz-the-cat',
-	a1: author$project$Story$TheAdventuresOfLaz$Narrative$startingNarrative,
-	a2: author$project$Story$TheAdventuresOfLaz$Rules$startingState,
-	aB: 'The Adventures Of Laz The Cat'
+	a1: 'the-adventures-of-laz-the-cat',
+	a2: author$project$Story$TheAdventuresOfLaz$Narrative$startingNarrative,
+	a3: author$project$Story$TheAdventuresOfLaz$Rules$startingState,
+	Y: 'The Adventures Of Laz The Cat'
 };
 var author$project$Story$AllStories$allStories = _List_fromArray(
-	[author$project$Story$HowJaraldandTenzinMet$StoryInfo$storyInfo, author$project$Story$TheAdventuresOfLaz$StoryInfo$storyInfo, author$project$Story$HowJaraldandTenzinMet$StoryInfo$storyInfo, author$project$Story$TheAdventuresOfLaz$StoryInfo$storyInfo, author$project$Story$HowJaraldandTenzinMet$StoryInfo$storyInfo, author$project$Story$TheAdventuresOfLaz$StoryInfo$storyInfo]);
+	[author$project$Story$HowJaraldandTenzinMet$StoryInfo$storyInfo, author$project$Story$TheAdventuresOfLaz$StoryInfo$storyInfo]);
+var elm$core$List$foldrHelper = F4(
+	function (fn, acc, ctr, ls) {
+		if (!ls.b) {
+			return acc;
+		} else {
+			var a = ls.a;
+			var r1 = ls.b;
+			if (!r1.b) {
+				return A2(fn, a, acc);
+			} else {
+				var b = r1.a;
+				var r2 = r1.b;
+				if (!r2.b) {
+					return A2(
+						fn,
+						a,
+						A2(fn, b, acc));
+				} else {
+					var c = r2.a;
+					var r3 = r2.b;
+					if (!r3.b) {
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(fn, c, acc)));
+					} else {
+						var d = r3.a;
+						var r4 = r3.b;
+						var res = (ctr > 500) ? A3(
+							elm$core$List$foldl,
+							fn,
+							acc,
+							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(
+									fn,
+									c,
+									A2(fn, d, res))));
+					}
+				}
+			}
+		}
+	});
+var elm$core$List$foldr = F3(
+	function (fn, acc, ls) {
+		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
+	});
+var elm$core$List$map = F2(
+	function (f, xs) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, acc) {
+					return A2(
+						elm$core$List$cons,
+						f(x),
+						acc);
+				}),
+			_List_Nil,
+			xs);
+	});
+var author$project$Page$Home$init = function () {
+	var loadImagesMsg = A2(
+		elm$core$List$cons,
+		'/img/home-background.png',
+		A2(
+			elm$core$List$map,
+			function ($) {
+				return $.ac;
+			},
+			author$project$Story$AllStories$allStories));
+	return _Utils_Tuple2(
+		{W: author$project$Story$AllStories$allStories},
+		author$project$Port$toJavaScript(
+			author$project$Port$encode(loadImagesMsg)));
+}();
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var author$project$Page$Home$init = _Utils_Tuple2(
-	{W: author$project$Story$AllStories$allStories},
-	elm$core$Platform$Cmd$none);
 var author$project$Page$NotFound$init = _Utils_Tuple2(
 	{},
 	elm$core$Platform$Cmd$none);
+var author$project$Story$getImagesToPreload = function (story) {
+	var imagesToPreLoad = story.aP;
+	return imagesToPreLoad;
+};
 var author$project$Story$getManifest = function (story) {
 	var manifest = story.aV;
 	return manifest;
@@ -5392,11 +5522,11 @@ var author$project$Story$getRules = function (story) {
 	return rules;
 };
 var author$project$Story$getStartingNarrative = function (story) {
-	var startingNarrative = story.a1;
+	var startingNarrative = story.a2;
 	return startingNarrative;
 };
 var author$project$Story$getStartingState = function (story) {
-	var startingState = story.a2;
+	var startingState = story.a3;
 	return startingState;
 };
 var elm$core$Dict$get = F2(
@@ -5473,78 +5603,6 @@ var elm$core$Dict$map = F2(
 				A2(elm$core$Dict$map, func, right));
 		}
 	});
-var elm$core$List$foldrHelper = F4(
-	function (fn, acc, ctr, ls) {
-		if (!ls.b) {
-			return acc;
-		} else {
-			var a = ls.a;
-			var r1 = ls.b;
-			if (!r1.b) {
-				return A2(fn, a, acc);
-			} else {
-				var b = r1.a;
-				var r2 = r1.b;
-				if (!r2.b) {
-					return A2(
-						fn,
-						a,
-						A2(fn, b, acc));
-				} else {
-					var c = r2.a;
-					var r3 = r2.b;
-					if (!r3.b) {
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(fn, c, acc)));
-					} else {
-						var d = r3.a;
-						var r4 = r3.b;
-						var res = (ctr > 500) ? A3(
-							elm$core$List$foldl,
-							fn,
-							acc,
-							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(
-									fn,
-									c,
-									A2(fn, d, res))));
-					}
-				}
-			}
-		}
-	});
-var elm$core$List$foldr = F3(
-	function (fn, acc, ls) {
-		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
-	});
-var elm$core$List$map = F2(
-	function (f, xs) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, acc) {
-					return A2(
-						elm$core$List$cons,
-						f(x),
-						acc);
-				}),
-			_List_Nil,
-			xs);
-	});
-var elm$core$Basics$identity = function (x) {
-	return x;
-};
 var jschomay$elm_narrative_engine$Engine$Model = elm$core$Basics$identity;
 var elm$core$Dict$getMin = function (dict) {
 	getMin:
@@ -6080,7 +6138,7 @@ var jschomay$elm_narrative_engine$Engine$changeWorld = F2(
 						var sceneName = change.a;
 						return _Utils_update(
 							story_,
-							{P: sceneName});
+							{O: sceneName});
 					case 10:
 						var ending = change.a;
 						return _Utils_update(
@@ -6102,9 +6160,9 @@ var jschomay$elm_narrative_engine$Engine$Manifest$character = jschomay$elm_narra
 var jschomay$elm_narrative_engine$Engine$Manifest$item = A2(jschomay$elm_narrative_engine$Types$Item, false, jschomay$elm_narrative_engine$Types$ItemOffScreen);
 var jschomay$elm_narrative_engine$Engine$Manifest$location = jschomay$elm_narrative_engine$Types$Location(false);
 var jschomay$elm_narrative_engine$Engine$Manifest$init = function (_n0) {
-	var items = _n0.ag;
-	var locations = _n0.ak;
-	var characters = _n0._;
+	var items = _n0.aj;
+	var locations = _n0.an;
+	var characters = _n0.ab;
 	var insertFn = F3(
 		function (interactableConstructor, id, acc) {
 			return A3(elm$core$Dict$insert, id, interactableConstructor, acc);
@@ -6131,7 +6189,7 @@ var jschomay$elm_narrative_engine$Engine$init = F2(
 	function (manifest, rules) {
 		return {
 			J: '',
-			P: '',
+			O: '',
 			e: _List_Nil,
 			aV: jschomay$elm_narrative_engine$Engine$Manifest$init(manifest),
 			a0: rules,
@@ -6141,15 +6199,16 @@ var jschomay$elm_narrative_engine$Engine$init = F2(
 var author$project$Page$Story$init = function (story) {
 	var rules = author$project$Story$getRules(story);
 	var manifest = author$project$Story$getManifest(story);
+	var loadImagesMsg = author$project$Story$getImagesToPreload(story);
 	var engineModel = A2(
 		jschomay$elm_narrative_engine$Engine$changeWorld,
 		author$project$Story$getStartingState(story),
 		A2(
 			jschomay$elm_narrative_engine$Engine$init,
 			{
-				_: A2(elm$core$List$map, elm$core$Tuple$first, manifest._),
-				ag: A2(elm$core$List$map, elm$core$Tuple$first, manifest.ag),
-				ak: A2(elm$core$List$map, elm$core$Tuple$first, manifest.ak)
+				ab: A2(elm$core$List$map, elm$core$Tuple$first, manifest.ab),
+				aj: A2(elm$core$List$map, elm$core$Tuple$first, manifest.aj),
+				an: A2(elm$core$List$map, elm$core$Tuple$first, manifest.an)
 			},
 			A2(elm$core$Dict$map, author$project$Story$Components$getRuleData, rules)));
 	return _Utils_Tuple2(
@@ -6162,7 +6221,8 @@ var author$project$Page$Story$init = function (story) {
 					author$project$Story$getStartingNarrative(story)
 				])
 		},
-		elm$core$Platform$Cmd$none);
+		author$project$Port$toJavaScript(
+			author$project$Port$encode(loadImagesMsg)));
 };
 var elm$core$Basics$always = F2(
 	function (a, _n0) {
@@ -6186,7 +6246,7 @@ var author$project$Main$changeRouteTo = F2(
 				var _n2 = maybeRoute.a;
 				return A4(
 					author$project$Main$updateWith,
-					author$project$Main$Home(navKey),
+					A2(author$project$Main$Home, navKey, false),
 					author$project$Main$GotHomeMsg,
 					model,
 					author$project$Page$Home$init);
@@ -6194,7 +6254,7 @@ var author$project$Main$changeRouteTo = F2(
 				var story = maybeRoute.a.a;
 				return A4(
 					author$project$Main$updateWith,
-					author$project$Main$Story(navKey),
+					A2(author$project$Main$Story, navKey, false),
 					author$project$Main$GotStoryMsg,
 					model,
 					author$project$Page$Story$init(story));
@@ -6299,7 +6359,7 @@ var author$project$Story$parser = function () {
 		return A2(
 			elm$url$Url$Parser$map,
 			storyInfo,
-			elm$url$Url$Parser$s(storyInfo.ax));
+			elm$url$Url$Parser$s(storyInfo.a1));
 	};
 	return elm$url$Url$Parser$oneOf(
 		A2(elm$core$List$map, toParser, author$project$Story$AllStories$allStories));
@@ -6434,8 +6494,8 @@ var elm$url$Url$Parser$parse = F2(
 					elm$url$Url$Parser$State,
 					_List_Nil,
 					elm$url$Url$Parser$preparePath(url.a_),
-					elm$url$Url$Parser$prepareQuery(url.as),
-					url.aO,
+					elm$url$Url$Parser$prepareQuery(url.av),
+					url.aN,
 					elm$core$Basics$identity)));
 	});
 var author$project$Route$fromUrl = function (url) {
@@ -6445,8 +6505,8 @@ var author$project$Route$fromUrl = function (url) {
 		_Utils_update(
 			url,
 			{
-				aO: elm$core$Maybe$Nothing,
-				a_: A2(elm$core$Maybe$withDefault, '', url.aO)
+				aN: elm$core$Maybe$Nothing,
+				a_: A2(elm$core$Maybe$withDefault, '', url.aN)
 			}));
 };
 var author$project$Main$init = F3(
@@ -6459,24 +6519,282 @@ var author$project$Main$init = F3(
 				navKey,
 				{}));
 	});
-var elm$core$Platform$Sub$batch = _Platform_batch;
-var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
-var author$project$Main$subscriptions = function (model) {
-	return elm$core$Platform$Sub$none;
+var author$project$Main$GotSubscription = function (a) {
+	return {$: 7, a: a};
+};
+var elm$json$Json$Decode$value = _Json_decodeValue;
+var author$project$Port$fromJavaScript = _Platform_incomingPort('fromJavaScript', elm$json$Json$Decode$value);
+var author$project$Main$subscriptions = function (_n0) {
+	return author$project$Port$fromJavaScript(author$project$Main$GotSubscription);
 };
 var author$project$Main$GotNotFoundMsg = function (a) {
 	return {$: 4, a: a};
 };
-var author$project$Page$Home$update = F2(
-	function (msg, model) {
-		var storyInfo = msg;
-		return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+var author$project$Main$setLoadedOnModel = F2(
+	function (loaded, model) {
+		switch (model.$) {
+			case 0:
+				return model;
+			case 1:
+				var navKey = model.a;
+				var homeModel = model.c;
+				return A3(author$project$Main$Home, navKey, loaded, homeModel);
+			default:
+				var navKey = model.a;
+				var storyModel = model.c;
+				return A3(author$project$Main$Story, navKey, loaded, storyModel);
+		}
 	});
-var author$project$Page$NotFound$update = F2(
-	function (msg, model) {
-		return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+var elm$browser$Browser$External = function (a) {
+	return {$: 1, a: a};
+};
+var elm$browser$Browser$Internal = function (a) {
+	return {$: 0, a: a};
+};
+var elm$browser$Browser$Dom$NotFound = elm$core$Basics$identity;
+var elm$core$Basics$never = function (_n0) {
+	never:
+	while (true) {
+		var nvr = _n0;
+		var $temp$_n0 = nvr;
+		_n0 = $temp$_n0;
+		continue never;
+	}
+};
+var elm$core$Task$Perform = elm$core$Basics$identity;
+var elm$core$Task$succeed = _Scheduler_succeed;
+var elm$core$Task$init = elm$core$Task$succeed(0);
+var elm$core$Task$andThen = _Scheduler_andThen;
+var elm$core$Task$map = F2(
+	function (func, taskA) {
+		return A2(
+			elm$core$Task$andThen,
+			function (a) {
+				return elm$core$Task$succeed(
+					func(a));
+			},
+			taskA);
 	});
-var author$project$Port$toJavaScript = _Platform_outgoingPort('toJavaScript', elm$core$Basics$identity);
+var elm$core$Task$map2 = F3(
+	function (func, taskA, taskB) {
+		return A2(
+			elm$core$Task$andThen,
+			function (a) {
+				return A2(
+					elm$core$Task$andThen,
+					function (b) {
+						return elm$core$Task$succeed(
+							A2(func, a, b));
+					},
+					taskB);
+			},
+			taskA);
+	});
+var elm$core$Task$sequence = function (tasks) {
+	return A3(
+		elm$core$List$foldr,
+		elm$core$Task$map2(elm$core$List$cons),
+		elm$core$Task$succeed(_List_Nil),
+		tasks);
+};
+var elm$core$Platform$sendToApp = _Platform_sendToApp;
+var elm$core$Task$spawnCmd = F2(
+	function (router, _n0) {
+		var task = _n0;
+		return _Scheduler_spawn(
+			A2(
+				elm$core$Task$andThen,
+				elm$core$Platform$sendToApp(router),
+				task));
+	});
+var elm$core$Task$onEffects = F3(
+	function (router, commands, state) {
+		return A2(
+			elm$core$Task$map,
+			function (_n0) {
+				return 0;
+			},
+			elm$core$Task$sequence(
+				A2(
+					elm$core$List$map,
+					elm$core$Task$spawnCmd(router),
+					commands)));
+	});
+var elm$core$Task$onSelfMsg = F3(
+	function (_n0, _n1, _n2) {
+		return elm$core$Task$succeed(0);
+	});
+var elm$core$Task$cmdMap = F2(
+	function (tagger, _n0) {
+		var task = _n0;
+		return A2(elm$core$Task$map, tagger, task);
+	});
+_Platform_effectManagers['Task'] = _Platform_createManager(elm$core$Task$init, elm$core$Task$onEffects, elm$core$Task$onSelfMsg, elm$core$Task$cmdMap);
+var elm$core$Task$command = _Platform_leaf('Task');
+var elm$core$Task$perform = F2(
+	function (toMessage, task) {
+		return elm$core$Task$command(
+			A2(elm$core$Task$map, toMessage, task));
+	});
+var elm$json$Json$Decode$map = _Json_map1;
+var elm$json$Json$Decode$map2 = _Json_map2;
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
+	switch (handler.$) {
+		case 0:
+			return 0;
+		case 1:
+			return 1;
+		case 2:
+			return 2;
+		default:
+			return 3;
+	}
+};
+var elm$core$String$length = _String_length;
+var elm$core$String$slice = _String_slice;
+var elm$core$String$dropLeft = F2(
+	function (n, string) {
+		return (n < 1) ? string : A3(
+			elm$core$String$slice,
+			n,
+			elm$core$String$length(string),
+			string);
+	});
+var elm$core$String$startsWith = _String_startsWith;
+var elm$url$Url$Http = 0;
+var elm$url$Url$Https = 1;
+var elm$core$String$indexes = _String_indexes;
+var elm$core$String$isEmpty = function (string) {
+	return string === '';
+};
+var elm$core$String$left = F2(
+	function (n, string) {
+		return (n < 1) ? '' : A3(elm$core$String$slice, 0, n, string);
+	});
+var elm$core$String$contains = _String_contains;
+var elm$core$String$toInt = _String_toInt;
+var elm$url$Url$Url = F6(
+	function (protocol, host, port_, path, query, fragment) {
+		return {aN: fragment, ai: host, a_: path, ar: port_, au: protocol, av: query};
+	});
+var elm$url$Url$chompBeforePath = F5(
+	function (protocol, path, params, frag, str) {
+		if (elm$core$String$isEmpty(str) || A2(elm$core$String$contains, '@', str)) {
+			return elm$core$Maybe$Nothing;
+		} else {
+			var _n0 = A2(elm$core$String$indexes, ':', str);
+			if (!_n0.b) {
+				return elm$core$Maybe$Just(
+					A6(elm$url$Url$Url, protocol, str, elm$core$Maybe$Nothing, path, params, frag));
+			} else {
+				if (!_n0.b.b) {
+					var i = _n0.a;
+					var _n1 = elm$core$String$toInt(
+						A2(elm$core$String$dropLeft, i + 1, str));
+					if (_n1.$ === 1) {
+						return elm$core$Maybe$Nothing;
+					} else {
+						var port_ = _n1;
+						return elm$core$Maybe$Just(
+							A6(
+								elm$url$Url$Url,
+								protocol,
+								A2(elm$core$String$left, i, str),
+								port_,
+								path,
+								params,
+								frag));
+					}
+				} else {
+					return elm$core$Maybe$Nothing;
+				}
+			}
+		}
+	});
+var elm$url$Url$chompBeforeQuery = F4(
+	function (protocol, params, frag, str) {
+		if (elm$core$String$isEmpty(str)) {
+			return elm$core$Maybe$Nothing;
+		} else {
+			var _n0 = A2(elm$core$String$indexes, '/', str);
+			if (!_n0.b) {
+				return A5(elm$url$Url$chompBeforePath, protocol, '/', params, frag, str);
+			} else {
+				var i = _n0.a;
+				return A5(
+					elm$url$Url$chompBeforePath,
+					protocol,
+					A2(elm$core$String$dropLeft, i, str),
+					params,
+					frag,
+					A2(elm$core$String$left, i, str));
+			}
+		}
+	});
+var elm$url$Url$chompBeforeFragment = F3(
+	function (protocol, frag, str) {
+		if (elm$core$String$isEmpty(str)) {
+			return elm$core$Maybe$Nothing;
+		} else {
+			var _n0 = A2(elm$core$String$indexes, '?', str);
+			if (!_n0.b) {
+				return A4(elm$url$Url$chompBeforeQuery, protocol, elm$core$Maybe$Nothing, frag, str);
+			} else {
+				var i = _n0.a;
+				return A4(
+					elm$url$Url$chompBeforeQuery,
+					protocol,
+					elm$core$Maybe$Just(
+						A2(elm$core$String$dropLeft, i + 1, str)),
+					frag,
+					A2(elm$core$String$left, i, str));
+			}
+		}
+	});
+var elm$url$Url$chompAfterProtocol = F2(
+	function (protocol, str) {
+		if (elm$core$String$isEmpty(str)) {
+			return elm$core$Maybe$Nothing;
+		} else {
+			var _n0 = A2(elm$core$String$indexes, '#', str);
+			if (!_n0.b) {
+				return A3(elm$url$Url$chompBeforeFragment, protocol, elm$core$Maybe$Nothing, str);
+			} else {
+				var i = _n0.a;
+				return A3(
+					elm$url$Url$chompBeforeFragment,
+					protocol,
+					elm$core$Maybe$Just(
+						A2(elm$core$String$dropLeft, i + 1, str)),
+					A2(elm$core$String$left, i, str));
+			}
+		}
+	});
+var elm$url$Url$fromString = function (str) {
+	return A2(elm$core$String$startsWith, 'http://', str) ? A2(
+		elm$url$Url$chompAfterProtocol,
+		0,
+		A2(elm$core$String$dropLeft, 7, str)) : (A2(elm$core$String$startsWith, 'https://', str) ? A2(
+		elm$url$Url$chompAfterProtocol,
+		1,
+		A2(elm$core$String$dropLeft, 8, str)) : elm$core$Maybe$Nothing);
+};
+var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var author$project$Page$Home$update = F3(
+	function (navKey, msg, model) {
+		var slug = msg;
+		var url = '#/' + slug;
+		return _Utils_Tuple2(
+			model,
+			A2(elm$browser$Browser$Navigation$pushUrl, navKey, url));
+	});
+var author$project$Page$NotFound$update = F3(
+	function (navKey, msg, model) {
+		return _Utils_Tuple2(
+			model,
+			A2(elm$browser$Browser$Navigation$pushUrl, navKey, '/'));
+	});
 var elm$core$Basics$composeR = F3(
 	function (f, g, x) {
 		return g(
@@ -6515,8 +6833,8 @@ var author$project$Story$Components$findEntity = F2(
 						elm$core$Tuple$first,
 						elm$core$Basics$eq(id)),
 					_Utils_ap(
-						manifest.ag,
-						_Utils_ap(manifest.ak, manifest._)))));
+						manifest.aj,
+						_Utils_ap(manifest.an, manifest.ab)))));
 	});
 var author$project$Story$Components$getClassName = function (_n0) {
 	var id = _n0.a;
@@ -6559,7 +6877,6 @@ var elm$core$Maybe$map = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var elm$json$Json$Encode$string = _Json_wrap;
 var jschomay$elm_narrative_engine$Types$EndStory = function (a) {
 	return {$: 10, a: a};
 };
@@ -6739,7 +7056,7 @@ var jschomay$elm_narrative_engine$Engine$Rules$matchesCondition = F2(
 	function (_n0, condition) {
 		var history = _n0.e;
 		var currentLocation = _n0.J;
-		var currentScene = _n0.P;
+		var currentScene = _n0.O;
 		var manifest = _n0.aV;
 		switch (condition.$) {
 			case 0:
@@ -6811,7 +7128,7 @@ var jschomay$elm_narrative_engine$Engine$Rules$matchesInteraction = F3(
 var jschomay$elm_narrative_engine$Engine$Rules$matchesRule = F3(
 	function (story, interaction, rule) {
 		var currentLocation = story.J;
-		var currentScene = story.P;
+		var currentScene = story.O;
 		var manifest = story.aV;
 		var history = story.e;
 		return A3(jschomay$elm_narrative_engine$Engine$Rules$matchesInteraction, manifest, rule.aU, interaction) && A2(
@@ -6912,298 +7229,96 @@ var jschomay$elm_narrative_engine$Engine$update = F2(
 				A2(jschomay$elm_narrative_engine$Engine$changeWorld, changes, model)),
 			A2(elm$core$Maybe$map, elm$core$Tuple$first, matchingRule));
 	});
-var author$project$Page$Story$update = F2(
-	function (msg, model) {
-		if (!msg.$) {
-			var interactableId = msg.a;
-			var manifest = author$project$Story$getManifest(model.y);
-			var _n1 = A2(jschomay$elm_narrative_engine$Engine$update, interactableId, model.h);
-			var newEngineModel = _n1.a;
-			var maybeMatchedRuleId = _n1.b;
-			var checkEnd = function () {
-				if ((!maybeMatchedRuleId.$) && (maybeMatchedRuleId.a === 'TheEnd')) {
-					return jschomay$elm_narrative_engine$Engine$changeWorld(
-						_List_fromArray(
-							[
-								jschomay$elm_narrative_engine$Engine$endStory('')
-							]));
-				} else {
-					return elm$core$Basics$identity;
-				}
-			}();
-			var narrativeForThisInteraction = {
-				aS: author$project$Story$Components$getClassName(
-					A2(author$project$Story$Components$findEntity, manifest, interactableId)),
-				aT: author$project$Story$Components$getName(
-					A2(author$project$Story$Components$findEntity, manifest, interactableId)),
-				L: A2(
-					elm$core$Maybe$withDefault,
-					A2(
-						elm$core$Maybe$withDefault,
-						'',
-						A2(
-							elm$core$Maybe$map,
-							function ($) {
-								return $.L;
-							},
-							elm$core$List$head(model.j))),
-					A2(
-						elm$core$Maybe$andThen,
-						function (id) {
-							return A2(elm$core$Dict$get, id, model.R);
-						},
-						maybeMatchedRuleId))
-			};
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						h: checkEnd(newEngineModel),
-						j: A2(elm$core$List$cons, narrativeForThisInteraction, model.j)
-					}),
-				author$project$Port$toJavaScript(
-					elm$json$Json$Encode$string(narrativeForThisInteraction.L)));
-		} else {
-			return author$project$Page$Story$init(model.y);
-		}
-	});
-var elm$browser$Browser$External = function (a) {
-	return {$: 1, a: a};
-};
-var elm$browser$Browser$Internal = function (a) {
-	return {$: 0, a: a};
-};
-var elm$browser$Browser$Dom$NotFound = elm$core$Basics$identity;
-var elm$core$Basics$never = function (_n0) {
-	never:
-	while (true) {
-		var nvr = _n0;
-		var $temp$_n0 = nvr;
-		_n0 = $temp$_n0;
-		continue never;
-	}
-};
-var elm$core$Task$Perform = elm$core$Basics$identity;
-var elm$core$Task$succeed = _Scheduler_succeed;
-var elm$core$Task$init = elm$core$Task$succeed(0);
-var elm$core$Task$andThen = _Scheduler_andThen;
-var elm$core$Task$map = F2(
-	function (func, taskA) {
-		return A2(
-			elm$core$Task$andThen,
-			function (a) {
-				return elm$core$Task$succeed(
-					func(a));
-			},
-			taskA);
-	});
-var elm$core$Task$map2 = F3(
-	function (func, taskA, taskB) {
-		return A2(
-			elm$core$Task$andThen,
-			function (a) {
-				return A2(
-					elm$core$Task$andThen,
-					function (b) {
-						return elm$core$Task$succeed(
-							A2(func, a, b));
-					},
-					taskB);
-			},
-			taskA);
-	});
-var elm$core$Task$sequence = function (tasks) {
-	return A3(
-		elm$core$List$foldr,
-		elm$core$Task$map2(elm$core$List$cons),
-		elm$core$Task$succeed(_List_Nil),
-		tasks);
-};
-var elm$core$Platform$sendToApp = _Platform_sendToApp;
-var elm$core$Task$spawnCmd = F2(
-	function (router, _n0) {
-		var task = _n0;
-		return _Scheduler_spawn(
-			A2(
-				elm$core$Task$andThen,
-				elm$core$Platform$sendToApp(router),
-				task));
-	});
-var elm$core$Task$onEffects = F3(
-	function (router, commands, state) {
-		return A2(
-			elm$core$Task$map,
-			function (_n0) {
-				return 0;
-			},
-			elm$core$Task$sequence(
-				A2(
-					elm$core$List$map,
-					elm$core$Task$spawnCmd(router),
-					commands)));
-	});
-var elm$core$Task$onSelfMsg = F3(
-	function (_n0, _n1, _n2) {
-		return elm$core$Task$succeed(0);
-	});
-var elm$core$Task$cmdMap = F2(
-	function (tagger, _n0) {
-		var task = _n0;
-		return A2(elm$core$Task$map, tagger, task);
-	});
-_Platform_effectManagers['Task'] = _Platform_createManager(elm$core$Task$init, elm$core$Task$onEffects, elm$core$Task$onSelfMsg, elm$core$Task$cmdMap);
-var elm$core$Task$command = _Platform_leaf('Task');
-var elm$core$Task$perform = F2(
-	function (toMessage, task) {
-		return elm$core$Task$command(
-			A2(elm$core$Task$map, toMessage, task));
-	});
-var elm$json$Json$Decode$map = _Json_map1;
-var elm$json$Json$Decode$map2 = _Json_map2;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
-	switch (handler.$) {
-		case 0:
-			return 0;
-		case 1:
-			return 1;
-		case 2:
-			return 2;
-		default:
-			return 3;
-	}
-};
-var elm$core$String$length = _String_length;
-var elm$core$String$slice = _String_slice;
-var elm$core$String$dropLeft = F2(
-	function (n, string) {
-		return (n < 1) ? string : A3(
-			elm$core$String$slice,
-			n,
-			elm$core$String$length(string),
-			string);
-	});
-var elm$core$String$startsWith = _String_startsWith;
-var elm$url$Url$Http = 0;
-var elm$url$Url$Https = 1;
-var elm$core$String$indexes = _String_indexes;
-var elm$core$String$isEmpty = function (string) {
-	return string === '';
-};
-var elm$core$String$left = F2(
-	function (n, string) {
-		return (n < 1) ? '' : A3(elm$core$String$slice, 0, n, string);
-	});
-var elm$core$String$contains = _String_contains;
-var elm$core$String$toInt = _String_toInt;
-var elm$url$Url$Url = F6(
-	function (protocol, host, port_, path, query, fragment) {
-		return {aO: fragment, af: host, a_: path, ao: port_, ar: protocol, as: query};
-	});
-var elm$url$Url$chompBeforePath = F5(
-	function (protocol, path, params, frag, str) {
-		if (elm$core$String$isEmpty(str) || A2(elm$core$String$contains, '@', str)) {
-			return elm$core$Maybe$Nothing;
-		} else {
-			var _n0 = A2(elm$core$String$indexes, ':', str);
-			if (!_n0.b) {
-				return elm$core$Maybe$Just(
-					A6(elm$url$Url$Url, protocol, str, elm$core$Maybe$Nothing, path, params, frag));
-			} else {
-				if (!_n0.b.b) {
-					var i = _n0.a;
-					var _n1 = elm$core$String$toInt(
-						A2(elm$core$String$dropLeft, i + 1, str));
-					if (_n1.$ === 1) {
-						return elm$core$Maybe$Nothing;
+var author$project$Page$Story$update = F3(
+	function (navKey, msg, model) {
+		switch (msg.$) {
+			case 0:
+				var interactableId = msg.a;
+				var manifest = author$project$Story$getManifest(model.y);
+				var _n1 = A2(jschomay$elm_narrative_engine$Engine$update, interactableId, model.h);
+				var newEngineModel = _n1.a;
+				var maybeMatchedRuleId = _n1.b;
+				var checkEnd = function () {
+					if ((!maybeMatchedRuleId.$) && (maybeMatchedRuleId.a === 'TheEnd')) {
+						return jschomay$elm_narrative_engine$Engine$changeWorld(
+							_List_fromArray(
+								[
+									jschomay$elm_narrative_engine$Engine$endStory('')
+								]));
 					} else {
-						var port_ = _n1;
-						return elm$core$Maybe$Just(
-							A6(
-								elm$url$Url$Url,
-								protocol,
-								A2(elm$core$String$left, i, str),
-								port_,
-								path,
-								params,
-								frag));
+						return elm$core$Basics$identity;
 					}
-				} else {
-					return elm$core$Maybe$Nothing;
-				}
-			}
+				}();
+				var narrativeForThisInteraction = {
+					aS: author$project$Story$Components$getClassName(
+						A2(author$project$Story$Components$findEntity, manifest, interactableId)),
+					aT: author$project$Story$Components$getName(
+						A2(author$project$Story$Components$findEntity, manifest, interactableId)),
+					Q: A2(
+						elm$core$Maybe$withDefault,
+						A2(
+							elm$core$Maybe$withDefault,
+							'',
+							A2(
+								elm$core$Maybe$map,
+								function ($) {
+									return $.Q;
+								},
+								elm$core$List$head(model.j))),
+						A2(
+							elm$core$Maybe$andThen,
+							function (id) {
+								return A2(elm$core$Dict$get, id, model.R);
+							},
+							maybeMatchedRuleId))
+				};
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							h: checkEnd(newEngineModel),
+							j: A2(elm$core$List$cons, narrativeForThisInteraction, model.j)
+						}),
+					elm$core$Platform$Cmd$none);
+			case 1:
+				return author$project$Page$Story$init(model.y);
+			default:
+				return _Utils_Tuple2(
+					model,
+					A2(elm$browser$Browser$Navigation$pushUrl, navKey, '/'));
 		}
 	});
-var elm$url$Url$chompBeforeQuery = F4(
-	function (protocol, params, frag, str) {
-		if (elm$core$String$isEmpty(str)) {
-			return elm$core$Maybe$Nothing;
+var NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = elm$json$Json$Decode$map2(elm$core$Basics$apR);
+var elm$json$Json$Decode$field = _Json_decodeField;
+var NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
+	function (key, valDecoder, decoder) {
+		return A2(
+			NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
+			A2(elm$json$Json$Decode$field, key, valDecoder),
+			decoder);
+	});
+var elm$json$Json$Decode$andThen = _Json_andThen;
+var NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$resolve = elm$json$Json$Decode$andThen(elm$core$Basics$identity);
+var author$project$Port$ImagesLoaded = 0;
+var elm$json$Json$Decode$fail = _Json_fail;
+var elm$json$Json$Decode$string = _Json_decodeString;
+var author$project$Port$decode = function () {
+	var decoder = function (command) {
+		if (command === 'IMAGES_LOADED') {
+			return elm$json$Json$Decode$succeed(0);
 		} else {
-			var _n0 = A2(elm$core$String$indexes, '/', str);
-			if (!_n0.b) {
-				return A5(elm$url$Url$chompBeforePath, protocol, '/', params, frag, str);
-			} else {
-				var i = _n0.a;
-				return A5(
-					elm$url$Url$chompBeforePath,
-					protocol,
-					A2(elm$core$String$dropLeft, i, str),
-					params,
-					frag,
-					A2(elm$core$String$left, i, str));
-			}
+			return elm$json$Json$Decode$fail('Invalid command received');
 		}
-	});
-var elm$url$Url$chompBeforeFragment = F3(
-	function (protocol, frag, str) {
-		if (elm$core$String$isEmpty(str)) {
-			return elm$core$Maybe$Nothing;
-		} else {
-			var _n0 = A2(elm$core$String$indexes, '?', str);
-			if (!_n0.b) {
-				return A4(elm$url$Url$chompBeforeQuery, protocol, elm$core$Maybe$Nothing, frag, str);
-			} else {
-				var i = _n0.a;
-				return A4(
-					elm$url$Url$chompBeforeQuery,
-					protocol,
-					elm$core$Maybe$Just(
-						A2(elm$core$String$dropLeft, i + 1, str)),
-					frag,
-					A2(elm$core$String$left, i, str));
-			}
-		}
-	});
-var elm$url$Url$chompAfterProtocol = F2(
-	function (protocol, str) {
-		if (elm$core$String$isEmpty(str)) {
-			return elm$core$Maybe$Nothing;
-		} else {
-			var _n0 = A2(elm$core$String$indexes, '#', str);
-			if (!_n0.b) {
-				return A3(elm$url$Url$chompBeforeFragment, protocol, elm$core$Maybe$Nothing, str);
-			} else {
-				var i = _n0.a;
-				return A3(
-					elm$url$Url$chompBeforeFragment,
-					protocol,
-					elm$core$Maybe$Just(
-						A2(elm$core$String$dropLeft, i + 1, str)),
-					A2(elm$core$String$left, i, str));
-			}
-		}
-	});
-var elm$url$Url$fromString = function (str) {
-	return A2(elm$core$String$startsWith, 'http://', str) ? A2(
-		elm$url$Url$chompAfterProtocol,
-		0,
-		A2(elm$core$String$dropLeft, 7, str)) : (A2(elm$core$String$startsWith, 'https://', str) ? A2(
-		elm$url$Url$chompAfterProtocol,
-		1,
-		A2(elm$core$String$dropLeft, 8, str)) : elm$core$Maybe$Nothing);
-};
+	};
+	return NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$resolve(
+		A3(
+			NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'command',
+			elm$json$Json$Decode$string,
+			elm$json$Json$Decode$succeed(decoder)));
+}();
 var elm$browser$Browser$Navigation$load = _Browser_load;
-var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var elm$json$Json$Decode$decodeValue = _Json_run;
 var elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 1) {
@@ -7226,7 +7341,7 @@ var elm$url$Url$addPrefixed = F3(
 	});
 var elm$url$Url$toString = function (url) {
 	var http = function () {
-		var _n0 = url.ar;
+		var _n0 = url.au;
 		if (!_n0) {
 			return 'http://';
 		} else {
@@ -7236,22 +7351,22 @@ var elm$url$Url$toString = function (url) {
 	return A3(
 		elm$url$Url$addPrefixed,
 		'#',
-		url.aO,
+		url.aN,
 		A3(
 			elm$url$Url$addPrefixed,
 			'?',
-			url.as,
+			url.av,
 			_Utils_ap(
 				A2(
 					elm$url$Url$addPort,
-					url.ao,
-					_Utils_ap(http, url.af)),
+					url.ar,
+					_Utils_ap(http, url.ai)),
 				url.a_)));
 };
 var author$project$Main$update = F2(
 	function (msg, model) {
 		var _n0 = _Utils_Tuple2(msg, model);
-		_n0$6:
+		_n0$7:
 		while (true) {
 			switch (_n0.a.$) {
 				case 0:
@@ -7261,7 +7376,7 @@ var author$project$Main$update = F2(
 					var urlRequest = _n0.a.a;
 					if (!urlRequest.$) {
 						var url = urlRequest.a;
-						var _n3 = url.aO;
+						var _n3 = url.aN;
 						if (_n3.$ === 1) {
 							return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 						} else {
@@ -7295,42 +7410,55 @@ var author$project$Main$update = F2(
 							author$project$Main$NotFound(navKey),
 							author$project$Main$GotNotFoundMsg,
 							model,
-							A2(author$project$Page$NotFound$update, subMsg, notFoundModel));
+							A3(author$project$Page$NotFound$update, navKey, subMsg, notFoundModel));
 					} else {
-						break _n0$6;
+						break _n0$7;
 					}
 				case 5:
 					if (_n0.b.$ === 1) {
 						var subMsg = _n0.a.a;
 						var _n5 = _n0.b;
 						var navKey = _n5.a;
-						var homeModel = _n5.b;
+						var loaded = _n5.b;
+						var homeModel = _n5.c;
 						return A4(
 							author$project$Main$updateWith,
-							author$project$Main$Home(navKey),
+							A2(author$project$Main$Home, navKey, loaded),
 							author$project$Main$GotHomeMsg,
 							model,
-							A2(author$project$Page$Home$update, subMsg, homeModel));
+							A3(author$project$Page$Home$update, navKey, subMsg, homeModel));
 					} else {
-						break _n0$6;
+						break _n0$7;
 					}
 				case 6:
 					if (_n0.b.$ === 2) {
 						var subMsg = _n0.a.a;
 						var _n6 = _n0.b;
 						var navKey = _n6.a;
-						var storyModel = _n6.b;
+						var loaded = _n6.b;
+						var storyModel = _n6.c;
 						return A4(
 							author$project$Main$updateWith,
-							author$project$Main$Story(navKey),
+							A2(author$project$Main$Story, navKey, loaded),
 							author$project$Main$GotStoryMsg,
 							model,
-							A2(author$project$Page$Story$update, subMsg, storyModel));
+							A3(author$project$Page$Story$update, navKey, subMsg, storyModel));
 					} else {
-						break _n0$6;
+						break _n0$7;
+					}
+				case 7:
+					var json = _n0.a.a;
+					var _n7 = A2(elm$json$Json$Decode$decodeValue, author$project$Port$decode, json);
+					if (!_n7.$) {
+						var portMsg = _n7.a;
+						return _Utils_Tuple2(
+							A2(author$project$Main$setLoadedOnModel, true, model),
+							elm$core$Platform$Cmd$none);
+					} else {
+						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 					}
 				default:
-					break _n0$6;
+					break _n0$7;
 			}
 		}
 		return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
@@ -7376,7 +7504,7 @@ var author$project$Page$Home$viewStory = function (storyInfo) {
 		_List_fromArray(
 			[
 				elm$html$Html$Attributes$class('story__item'),
-				elm$html$Html$Events$onClick(storyInfo)
+				elm$html$Html$Events$onClick(storyInfo.a1)
 			]),
 		_List_fromArray(
 			[
@@ -7384,8 +7512,8 @@ var author$project$Page$Home$viewStory = function (storyInfo) {
 				elm$html$Html$img,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$src(storyInfo.aK),
-						elm$html$Html$Attributes$alt(storyInfo.aB)
+						elm$html$Html$Attributes$src(storyInfo.ac),
+						elm$html$Html$Attributes$alt(storyInfo.Y)
 					]),
 				_List_Nil)
 			]));
@@ -7408,22 +7536,40 @@ var author$project$Page$Home$view = function (model) {
 						]),
 					A2(elm$core$List$map, author$project$Page$Home$viewStory, model.W))
 				])),
-		aB: 'Story Telling'
+		Y: 'Story Telling'
 	};
 };
+var author$project$Page$NotFound$GoHome = 0;
+var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var author$project$Page$NotFound$view = function (model) {
 	return {
 		aJ: A2(
-			elm$html$Html$h1,
+			elm$html$Html$div,
 			_List_Nil,
 			_List_fromArray(
 				[
-					elm$html$Html$text('not found')
+					A2(
+					elm$html$Html$button,
+					_List_fromArray(
+						[
+							elm$html$Html$Events$onClick(0)
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Go Home')
+						])),
+					A2(
+					elm$html$Html$h1,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('not found')
+						]))
 				])),
-		aB: 'Not Found'
+		Y: 'Not Found'
 	};
 };
 var jschomay$elm_narrative_engine$Engine$getCharactersInCurrentLocation = function (_n0) {
@@ -7449,7 +7595,7 @@ var jschomay$elm_narrative_engine$Engine$getItemsInInventory = function (_n0) {
 var author$project$Page$Story$getDisplayState = function (model) {
 	var manifest = author$project$Story$getManifest(model.y);
 	return {
-		O: A2(
+		N: A2(
 			elm$core$List$map,
 			author$project$Story$Components$findEntity(manifest),
 			jschomay$elm_narrative_engine$Engine$getCharactersInCurrentLocation(model.h)),
@@ -7458,17 +7604,18 @@ var author$project$Page$Story$getDisplayState = function (model) {
 			manifest,
 			jschomay$elm_narrative_engine$Engine$getCurrentLocation(model.h)),
 		K: jschomay$elm_narrative_engine$Engine$getEnding(model.h),
-		ah: A2(
+		ak: A2(
 			elm$core$List$map,
 			author$project$Story$Components$findEntity(manifest),
 			jschomay$elm_narrative_engine$Engine$getItemsInCurrentLocation(model.h)),
-		ai: A2(
+		al: A2(
 			elm$core$List$map,
 			author$project$Story$Components$findEntity(manifest),
 			jschomay$elm_narrative_engine$Engine$getItemsInInventory(model.h)),
 		j: model.j
 	};
 };
+var author$project$Page$Story$GoHome = {$: 2};
 var author$project$Page$Story$Interact = function (a) {
 	return {$: 0, a: a};
 };
@@ -7516,11 +7663,11 @@ var elm$core$Basics$neq = _Utils_notEqual;
 var elm$html$Html$h5 = _VirtualDom_node('h5');
 var elm$html$Html$section = _VirtualDom_node('section');
 var elm_explorations$markdown$Markdown$defaultOptions = {
-	ab: elm$core$Maybe$Nothing,
-	ae: elm$core$Maybe$Just(
-		{aG: false, a4: false}),
-	av: true,
-	ay: false
+	ae: elm$core$Maybe$Nothing,
+	ah: elm$core$Maybe$Just(
+		{aG: false, a5: false}),
+	ay: true,
+	aA: false
 };
 var elm$core$Maybe$isJust = function (maybe) {
 	if (!maybe.$) {
@@ -7544,7 +7691,7 @@ var author$project$Page$Story$viewStoryLine = F2(
 					function () {
 					var _n0 = elm$core$List$head(storyLine);
 					if (!_n0.$) {
-						var narrative = _n0.a.L;
+						var narrative = _n0.a.Q;
 						return A2(
 							elm$html$Html$section,
 							_List_Nil,
@@ -7595,6 +7742,16 @@ var author$project$Page$Story$viewLayout = function (displayState) {
 		_List_fromArray(
 			[
 				A2(
+				elm$html$Html$button,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(author$project$Page$Story$GoHome)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('Go Home')
+					])),
+				A2(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
@@ -7602,7 +7759,7 @@ var author$project$Page$Story$viewLayout = function (displayState) {
 					]),
 				_List_fromArray(
 					[
-						author$project$Page$Story$viewCharacters(displayState.O),
+						author$project$Page$Story$viewCharacters(displayState.N),
 						A2(
 						elm$html$Html$div,
 						_List_fromArray(
@@ -7613,7 +7770,7 @@ var author$project$Page$Story$viewLayout = function (displayState) {
 							[
 								A2(author$project$Page$Story$viewStoryLine, displayState.j, displayState.K),
 								(!_Utils_eq(displayState.K, elm$core$Maybe$Nothing)) ? A2(
-								elm$html$Html$h5,
+								elm$html$Html$button,
 								_List_fromArray(
 									[
 										elm$html$Html$Attributes$class('StoryRestart'),
@@ -7623,7 +7780,7 @@ var author$project$Page$Story$viewLayout = function (displayState) {
 									[
 										elm$html$Html$text('Restart')
 									])) : A2(
-								elm$html$Html$h5,
+								elm$html$Html$button,
 								_List_fromArray(
 									[
 										elm$html$Html$Attributes$class('StoryContinue'),
@@ -7639,14 +7796,14 @@ var author$project$Page$Story$viewLayout = function (displayState) {
 			]));
 };
 var author$project$Story$getTitle = function (story) {
-	var title = story.aB;
+	var title = story.Y;
 	return title;
 };
 var author$project$Page$Story$view = function (model) {
 	return {
 		aJ: author$project$Page$Story$viewLayout(
 			author$project$Page$Story$getDisplayState(model)),
-		aB: author$project$Story$getTitle(model.y)
+		Y: author$project$Story$getTitle(model.y)
 	};
 };
 var elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
@@ -7654,39 +7811,54 @@ var elm$html$Html$map = elm$virtual_dom$VirtualDom$map;
 var author$project$Main$view = function (model) {
 	var viewPage = F2(
 		function (_n1, toMsg) {
-			var title = _n1.aB;
+			var title = _n1.Y;
 			var content = _n1.aJ;
 			return {
-				aF: _List_fromArray(
+				_: _List_fromArray(
 					[
 						A2(elm$html$Html$map, toMsg, content)
 					]),
-				aB: title
+				Y: title
 			};
 		});
+	var viewLoading = {
+		_: _List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text('Loading')
+					]))
+			]),
+		Y: 'Stories By Iot'
+	};
 	switch (model.$) {
 		case 0:
 			var notFoundModel = model.b;
 			return A2(
 				viewPage,
 				author$project$Page$NotFound$view(notFoundModel),
-				elm$core$Basics$always(author$project$Main$Ignored));
+				author$project$Main$GotNotFoundMsg);
 		case 1:
-			var homeModel = model.b;
-			return A2(
+			var loaded = model.b;
+			var homeModel = model.c;
+			return loaded ? A2(
 				viewPage,
 				author$project$Page$Home$view(homeModel),
-				author$project$Main$GotHomeMsg);
+				author$project$Main$GotHomeMsg) : viewLoading;
 		default:
-			var storyModel = model.b;
-			return A2(
+			var loaded = model.b;
+			var storyModel = model.c;
+			return loaded ? A2(
 				viewPage,
 				author$project$Page$Story$view(storyModel),
-				author$project$Main$GotStoryMsg);
+				author$project$Main$GotStoryMsg) : viewLoading;
 	}
 };
 var elm$browser$Browser$application = _Browser_application;
 var author$project$Main$main = elm$browser$Browser$application(
-	{aR: author$project$Main$init, aX: author$project$Main$ChangedUrl, aY: author$project$Main$RequestedUrl, a3: author$project$Main$subscriptions, a5: author$project$Main$update, a7: author$project$Main$view});
+	{aR: author$project$Main$init, aX: author$project$Main$ChangedUrl, aY: author$project$Main$RequestedUrl, a4: author$project$Main$subscriptions, a6: author$project$Main$update, a8: author$project$Main$view});
 _Platform_export({'Main':{'init':author$project$Main$main(
 	elm$json$Json$Decode$succeed(0))(0)}});}(this));
