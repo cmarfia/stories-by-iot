@@ -36,7 +36,8 @@ type alias Model =
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url navKey =
     { navKey = navKey, loaded = False, voiceLoaded = False, page = NotFound {} }
-        |> changeRouteTo (Route.fromUrl url) 
+        |> changeRouteTo (Route.fromUrl url)
+
 
 
 -- VIEW
@@ -164,9 +165,11 @@ changeRouteTo maybeRoute model =
                 |> updatePageWith Story GotStoryMsg
                 |> updateModelWith model
 
-updateModelWith : Model -> ( Page, Cmd Msg) -> ( Model, Cmd Msg)
-updateModelWith model (page, cmds) =
-    ( { model | page = page }, cmds)
+
+updateModelWith : Model -> ( Page, Cmd Msg ) -> ( Model, Cmd Msg )
+updateModelWith model ( page, cmds ) =
+    ( { model | page = page }, cmds )
+
 
 updatePageWith : (subModel -> Page) -> (subMsg -> Msg) -> ( subModel, Cmd subMsg ) -> ( Page, Cmd Msg )
 updatePageWith toPage toMsg ( subModel, subCmd ) =

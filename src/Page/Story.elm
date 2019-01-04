@@ -81,7 +81,8 @@ viewLayout voiceLoaded displayState =
         [ button [ onClick GoHome ] [ text "Go Home" ]
         , if voiceLoaded then
             button [ onClick Speak ] [ text "Speak" ]
-        else 
+
+          else
             text ""
         , div
             [ class "Layout" ]
@@ -187,33 +188,37 @@ update navKey msg model =
                 | engineModel = newEngineModel |> checkEnd
                 , storyLine = narrativeForThisInteraction :: model.storyLine
               }
-            , Cmd.none
+            , Port.Speak ""
+                |> Port.encode
+                |> Port.toJavaScript
             )
 
         Restart ->
             init model.story
 
         GoHome ->
-            ( model, Nav.pushUrl navKey "/" )
+            ( model
+            , Cmd.batch
+                [ Nav.pushUrl navKey "/"
+                , Port.Speak ""
+                    |> Port.encode
+                    |> Port.toJavaScript
+                ]
+            )
 
         Speak ->
             let
-                maybeNarrative =
+                narrative =
                     model.storyLine
                         |> List.head
                         |> Maybe.map .narrative
-                
-                cmds = 
-                    case maybeNarrative of 
-                        Just narrative ->
-                            Port.Speak narrative
-                                |> Port.encode
-                                |> Port.toJavaScript
-                        
-                        Nothing ->
-                            Cmd.none
+                        |> Maybe.withDefault ""
             in
-            ( model, cmds)          
+            ( model
+            , Port.Speak narrative
+                |> Port.encode
+                |> Port.toJavaScript
+            )
 
 
 
