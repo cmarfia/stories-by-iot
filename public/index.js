@@ -1,6 +1,7 @@
 void function (Elm) {
   var imagesPreloaded = [];
   var imagesToPreload = [];
+  var synthVoice = null;
   var app = Elm.Main.init({ node: document.getElementsByTagName('main')[0] });
 
   function sendToElm(command, data = {}) {
@@ -46,6 +47,43 @@ void function (Elm) {
     }
   }
 
+  function populateVoiceList() {
+    if (synthVoice !== null) {
+      return;
+    }
+
+    synthVoice = undefined;
+    var voices = window.speechSynthesis.getVoices();
+    for(var i = 0; i < voices.length ; i++) {
+      var voice = voices[i];
+      if (voice.name === 'Google US English') {
+        synthVoice = voice;
+      }
+    }
+    
+    sendToElm('VOICE_LOADED', true);
+  }
+
+  function speak(text){
+    window.speechSynthesis.cancel();
+
+    if (text === '') {
+      return;
+    }
+
+    var utterance = new window.SpeechSynthesisUtterance(text);
+
+    if (voice) {
+      utterance.voice = voice;
+    }
+    
+    window.speechSynthesis.speak(utterance);
+  }
+
+  if (window.speechSynthesis && !window.speechSynthesis.onvoiceschanged) {
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+  }
+
   app.ports.toJavaScript.subscribe(function (msg) {
     switch (msg.command) {
       case "PRELOAD_IMAGES":
@@ -58,6 +96,9 @@ void function (Elm) {
         } else if (imagesToPreload.length === 0) {
           sendToElm('IMAGES_LOADED')
         }
+        break;
+      case "SPEAK":
+        speak(msg.data || '');
         break;
     }
   });
