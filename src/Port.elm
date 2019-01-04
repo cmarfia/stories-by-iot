@@ -1,10 +1,45 @@
-port module Port exposing (fromJavaScript, toJavaScript)
+port module Port exposing (IncomingMsg(..), OutgoingMsg(..), decode, encode, fromJavaScript, toJavaScript)
 
-import Json.Decode
-import Json.Encode
-
-
-port toJavaScript : Json.Encode.Value -> Cmd msg
+import Json.Decode as Decode exposing (Decoder)
+import Json.Decode.Pipeline exposing (required, resolve)
+import Json.Encode as Encode
 
 
-port fromJavaScript : (Json.Decode.Value -> msg) -> Sub msg
+port toJavaScript : Encode.Value -> Cmd msg
+
+
+port fromJavaScript : (Encode.Value -> msg) -> Sub msg
+
+
+type OutgoingMsg
+    = PreloadImages (List String)
+
+
+type IncomingMsg
+    = ImagesLoaded
+
+
+encode : OutgoingMsg -> Encode.Value
+encode msg =
+    case msg of
+        PreloadImages images ->
+            Encode.object
+                [ ( "command", Encode.string "PRELOAD_IMAGES" )
+                , ( "data", Encode.list Encode.string images )
+                ]
+
+
+decode : Decoder IncomingMsg
+decode =
+    let
+        decoder command =
+            case command of
+                "IMAGES_LOADED" ->
+                    Decode.succeed ImagesLoaded
+
+                _ ->
+                    Decode.fail "Invalid command received"
+    in
+    Decode.succeed decoder
+        |> required "command" Decode.string
+        |> resolve

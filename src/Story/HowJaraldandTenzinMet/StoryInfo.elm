@@ -19,4 +19,10 @@ storyInfo =
     , startingNarrative = Narrative.startingNarrative
     , startingState = Rules.startingState
     , rules = Rules.rules
+    , imagesToPreLoad =
+        [ "/img/giraffe.png"
+        , "/img/panda.png"
+        , "/img/forest.png"
+        , "/img/castle.png"
+        ]
     }

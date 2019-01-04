@@ -19,4 +19,8 @@ storyInfo =
     , startingNarrative = Narrative.startingNarrative
     , startingState = Rules.startingState
     , rules = Rules.rules
+    , imagesToPreLoad =
+        [ "/img/laz.png"
+        , "/img/forest.png"
+        ]
     }

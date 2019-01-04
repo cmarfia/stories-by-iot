@@ -43,6 +43,7 @@ type alias StoryInfo =
     , startingNarrative : Snippet
     , startingState : List Engine.ChangeWorldCommand
     , rules : Dict String Components
+    , imagesToPreLoad : List String
     }
 
 

@@ -1,5 +1,6 @@
 module Story exposing
     ( Story
+    , getImagesToPreload
     , getManifest
     , getRules
     , getStartingNarrative
@@ -76,3 +77,10 @@ getStartingNarrative story =
     case story of
         Story { startingNarrative } ->
             startingNarrative
+
+
+getImagesToPreload : Story -> List String
+getImagesToPreload story =
+    case story of
+        Story { imagesToPreLoad } ->
+            imagesToPreLoad

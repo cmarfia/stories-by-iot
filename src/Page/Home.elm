@@ -4,6 +4,7 @@ import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Port
 import Route
 import Story
 import Story.AllStories exposing (..)
@@ -22,7 +23,11 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { stories = allStories }, Cmd.none )
+    let
+        loadImagesMsg =
+            Port.PreloadImages ("/img/home-background.png" :: List.map .cover allStories)
+    in
+    ( { stories = allStories }, Port.toJavaScript (Port.encode loadImagesMsg) )
 
 
 

@@ -4,11 +4,12 @@ import Browser
 import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Json.Decode
 import Json.Encode
 import Page.Home as Home
 import Page.NotFound as NotFound
 import Page.Story as Story
-import Port exposing (..)
+import Port
 import Route exposing (Route)
 import Tuple
 import Url exposing (Url)
@@ -20,8 +21,8 @@ import Url exposing (Url)
 
 type Model
     = NotFound Nav.Key NotFound.Model
-    | Home Nav.Key Home.Model
-    | Story Nav.Key Story.Model
+    | Home Nav.Key Bool Home.Model
+    | Story Nav.Key Bool Story.Model
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -40,16 +41,31 @@ view model =
             { title = title
             , body = [ Html.map toMsg content ]
             }
+
+        viewLoading =
+            { title = "Stories By Iot"
+            , body =
+                [ div [] [ text "Loading" ]
+                ]
+            }
     in
     case model of
         NotFound _ notFoundModel ->
             viewPage (NotFound.view notFoundModel) GotNotFoundMsg
 
-        Home _ homeModel ->
-            viewPage (Home.view homeModel) GotHomeMsg
+        Home _ loaded homeModel ->
+            if loaded then
+                viewPage (Home.view homeModel) GotHomeMsg
 
-        Story _ storyModel ->
-            viewPage (Story.view storyModel) GotStoryMsg
+            else
+                viewLoading
+
+        Story _ loaded storyModel ->
+            if loaded then
+                viewPage (Story.view storyModel) GotStoryMsg
+
+            else
+                viewLoading
 
 
 
@@ -64,6 +80,7 @@ type Msg
     | GotNotFoundMsg NotFound.Msg
     | GotHomeMsg Home.Msg
     | GotStoryMsg Story.Msg
+    | GotSubscription Json.Encode.Value
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -92,17 +109,40 @@ update msg model =
             NotFound.update navKey subMsg notFoundModel
                 |> updateWith (NotFound navKey) GotNotFoundMsg model
 
-        ( GotHomeMsg subMsg, Home navKey homeModel ) ->
+        ( GotHomeMsg subMsg, Home navKey loaded homeModel ) ->
             Home.update navKey subMsg homeModel
-                |> updateWith (Home navKey) GotHomeMsg model
+                |> updateWith (Home navKey loaded) GotHomeMsg model
 
-        ( GotStoryMsg subMsg, Story navKey storyModel ) ->
+        ( GotStoryMsg subMsg, Story navKey loaded storyModel ) ->
             Story.update navKey subMsg storyModel
-                |> updateWith (Story navKey) GotStoryMsg model
+                |> updateWith (Story navKey loaded) GotStoryMsg model
+
+        ( GotSubscription json, _ ) ->
+            case Json.Decode.decodeValue Port.decode json of
+                Ok portMsg ->
+                    case portMsg of
+                        Port.ImagesLoaded ->
+                            ( setLoadedOnModel True model, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
 
         ( _, _ ) ->
             -- Disregard messages that arrived for the wrong page.
             ( model, Cmd.none )
+
+
+setLoadedOnModel : Bool -> Model -> Model
+setLoadedOnModel loaded model =
+    case model of
+        NotFound _ _ ->
+            model
+
+        Home navKey _ homeModel ->
+            Home navKey loaded homeModel
+
+        Story navKey _ storyModel ->
+            Story navKey loaded storyModel
 
 
 getNavKey : Model -> Nav.Key
@@ -111,10 +151,10 @@ getNavKey model =
         NotFound navKey _ ->
             navKey
 
-        Home navKey _ ->
+        Home navKey _ _ ->
             navKey
 
-        Story navKey _ ->
+        Story navKey _ _ ->
             navKey
 
 
@@ -134,11 +174,11 @@ changeRouteTo maybeRoute model =
 
         Just Route.Home ->
             Home.init
-                |> updateWith (Home navKey) GotHomeMsg model
+                |> updateWith (Home navKey False) GotHomeMsg model
 
         Just (Route.Story story) ->
             Story.init story
-                |> updateWith (Story navKey) GotStoryMsg model
+                |> updateWith (Story navKey False) GotStoryMsg model
 
 
 updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
@@ -149,8 +189,8 @@ updateWith toModel toMsg model ( subModel, subCmd ) =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
+subscriptions _ =
+    Port.fromJavaScript GotSubscription
 
 
 main : Program () Model Msg

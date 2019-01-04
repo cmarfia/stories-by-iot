@@ -10,7 +10,7 @@ import Html.Events exposing (..)
 import Html.Keyed
 import Json.Encode
 import Markdown
-import Port exposing (..)
+import Port
 import Story exposing (Story)
 import Story.Components exposing (..)
 import Url
@@ -41,13 +41,16 @@ init story =
                 }
                 (Dict.map getRuleData rules)
                 |> Engine.changeWorld (Story.getStartingState story)
+
+        loadImagesMsg =
+            Port.PreloadImages (Story.getImagesToPreload story)
     in
     ( { engineModel = engineModel
       , story = story
       , storyLine = [ Story.getStartingNarrative story ]
       , narrativeContent = Dict.map getNarrative rules
       }
-    , Cmd.none
+    , Port.toJavaScript (Port.encode loadImagesMsg)
     )
 
 
@@ -179,7 +182,7 @@ update navKey msg model =
                 | engineModel = newEngineModel |> checkEnd
                 , storyLine = narrativeForThisInteraction :: model.storyLine
               }
-            , toJavaScript (Json.Encode.string narrativeForThisInteraction.narrative)
+            , Cmd.none
             )
 
         Restart ->
