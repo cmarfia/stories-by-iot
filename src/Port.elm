@@ -29,7 +29,7 @@ encode msg =
                 [ ( "command", Encode.string "PRELOAD_IMAGES" )
                 , ( "data", Encode.list Encode.string images )
                 ]
-        
+
         Speak text ->
             Encode.object
                 [ ( "command", Encode.string "SPEAK" )
@@ -44,7 +44,7 @@ decode =
             case command of
                 "IMAGES_LOADED" ->
                     Decode.succeed ImagesLoaded
-                
+
                 "VOICE_LOADED" ->
                     Decode.succeed VoiceLoaded
 

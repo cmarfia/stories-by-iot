@@ -19,16 +19,24 @@ import Url exposing (Url)
 -- MODEL
 
 
-type Model
-    = NotFound Nav.Key NotFound.Model
-    | Home Nav.Key Bool Home.Model
-    | Story Nav.Key Bool Story.Model
+type Page
+    = NotFound NotFound.Model
+    | Home Home.Model
+    | Story Story.Model
+
+
+type alias Model =
+    { navKey : Nav.Key
+    , loaded : Bool
+    , voiceLoaded : Bool
+    , page : Page
+    }
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url navKey =
-    changeRouteTo (Route.fromUrl url) (NotFound navKey {})
-
+    { navKey = navKey, loaded = False, voiceLoaded = False, page = NotFound {} }
+        |> changeRouteTo (Route.fromUrl url) 
 
 
 -- VIEW
@@ -49,19 +57,19 @@ view model =
                 ]
             }
     in
-    case model of
-        NotFound _ notFoundModel ->
+    case model.page of
+        NotFound notFoundModel ->
             viewPage (NotFound.view notFoundModel) GotNotFoundMsg
 
-        Home _ loaded homeModel ->
-            if loaded then
+        Home homeModel ->
+            if model.loaded then
                 viewPage (Home.view homeModel) GotHomeMsg
 
             else
                 viewLoading
 
-        Story _ loaded storyModel ->
-            if loaded then
+        Story storyModel ->
+            if model.loaded then
                 viewPage (Story.view storyModel) GotStoryMsg
 
             else
@@ -85,7 +93,7 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case ( msg, model ) of
+    case ( msg, model.page ) of
         ( Ignored, _ ) ->
             ( model, Cmd.none )
 
@@ -97,7 +105,7 @@ update msg model =
                             ( model, Cmd.none )
 
                         Just _ ->
-                            ( model, Nav.pushUrl (getNavKey model) (Url.toString url) )
+                            ( model, Nav.pushUrl model.navKey (Url.toString url) )
 
                 Browser.External href ->
                     ( model, Nav.load href )
@@ -105,30 +113,30 @@ update msg model =
         ( ChangedUrl url, _ ) ->
             changeRouteTo (Route.fromUrl url) model
 
-        ( GotNotFoundMsg subMsg, NotFound navKey notFoundModel ) ->
-            NotFound.update navKey subMsg notFoundModel
-                |> updateWith (NotFound navKey) GotNotFoundMsg model
+        ( GotNotFoundMsg subMsg, NotFound notFoundModel ) ->
+            NotFound.update model.navKey subMsg notFoundModel
+                |> updatePageWith NotFound GotNotFoundMsg
+                |> updateModelWith model
 
-        ( GotHomeMsg subMsg, Home navKey loaded homeModel ) ->
-            Home.update navKey subMsg homeModel
-                |> updateWith (Home navKey loaded) GotHomeMsg model
+        ( GotHomeMsg subMsg, Home homeModel ) ->
+            Home.update model.navKey subMsg homeModel
+                |> updatePageWith Home GotHomeMsg
+                |> updateModelWith model
 
-        ( GotStoryMsg subMsg, Story navKey loaded storyModel ) ->
-            Story.update navKey subMsg storyModel
-                |> updateWith (Story navKey loaded) GotStoryMsg model
+        ( GotStoryMsg subMsg, Story storyModel ) ->
+            Story.update model.navKey subMsg storyModel
+                |> updatePageWith Story GotStoryMsg
+                |> updateModelWith model
 
         ( GotSubscription json, _ ) ->
             case Json.Decode.decodeValue Port.decode json of
                 Ok portMsg ->
                     case portMsg of
                         Port.ImagesLoaded ->
-                            ( setLoadedOnModel True model, Cmd.none )
-                        
+                            ( { model | loaded = True }, Cmd.none )
+
                         Port.VoiceLoaded ->
-                            let
-                                _ = Debug.log "voice loaded" 0
-                            in
-                            ( model, Cmd.none )
+                            ( { model | voiceLoaded = True }, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -138,58 +146,31 @@ update msg model =
             ( model, Cmd.none )
 
 
-setLoadedOnModel : Bool -> Model -> Model
-setLoadedOnModel loaded model =
-    case model of
-        NotFound _ _ ->
-            model
-
-        Home navKey _ homeModel ->
-            Home navKey loaded homeModel
-
-        Story navKey _ storyModel ->
-            Story navKey loaded storyModel
-
-
-getNavKey : Model -> Nav.Key
-getNavKey model =
-    case model of
-        NotFound navKey _ ->
-            navKey
-
-        Home navKey _ _ ->
-            navKey
-
-        Story navKey _ _ ->
-            navKey
-
-
 changeRouteTo : Maybe Route -> Model -> ( Model, Cmd Msg )
 changeRouteTo maybeRoute model =
-    let
-        navKey =
-            getNavKey model
-    in
     case maybeRoute of
         Nothing ->
-            let
-                ( notFoundModel, cmds ) =
-                    NotFound.init
-            in
-            ( NotFound navKey notFoundModel, Cmd.map (always Ignored) cmds )
+            NotFound.init
+                |> updatePageWith NotFound GotNotFoundMsg
+                |> updateModelWith { model | loaded = True }
 
         Just Route.Home ->
             Home.init
-                |> updateWith (Home navKey False) GotHomeMsg model
+                |> updatePageWith Home GotHomeMsg
+                |> updateModelWith model
 
         Just (Route.Story story) ->
             Story.init story
-                |> updateWith (Story navKey False) GotStoryMsg model
+                |> updatePageWith Story GotStoryMsg
+                |> updateModelWith model
 
+updateModelWith : Model -> ( Page, Cmd Msg) -> ( Model, Cmd Msg)
+updateModelWith model (page, cmds) =
+    ( { model | page = page }, cmds)
 
-updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
-updateWith toModel toMsg model ( subModel, subCmd ) =
-    ( toModel subModel
+updatePageWith : (subModel -> Page) -> (subMsg -> Msg) -> ( subModel, Cmd subMsg ) -> ( Page, Cmd Msg )
+updatePageWith toPage toMsg ( subModel, subCmd ) =
+    ( toPage subModel
     , Cmd.map toMsg subCmd
     )
 
