@@ -123,6 +123,12 @@ update msg model =
                     case portMsg of
                         Port.ImagesLoaded ->
                             ( setLoadedOnModel True model, Cmd.none )
+                        
+                        Port.VoiceLoaded ->
+                            let
+                                _ = Debug.log "voice loaded" 0
+                            in
+                            ( model, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )

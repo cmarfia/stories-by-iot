@@ -61,7 +61,7 @@ void function (Elm) {
       }
     }
     
-    sendToElm('VOICE_LOADED', true);
+    sendToElm('VOICE_LOADED');
   }
 
   function speak(text){
