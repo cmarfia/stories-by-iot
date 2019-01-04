@@ -75,7 +75,9 @@ view model =
 viewLayout : DisplayState -> Html Msg
 viewLayout displayState =
     div [ class <| "Location Location--" ++ getClassName displayState.currentLocation, style "background-image" ("url(" ++ (Maybe.withDefault "" <| getImage displayState.currentLocation) ++ ")") ]
-        [ div [ class "Layout" ]
+        [ button [ onClick GoHome ] [ text "Go Home" ]
+        , div
+            [ class "Layout" ]
             [ viewCharacters displayState.charactersInCurrentLocation
             , div [ class "Layout__Main" ] <|
                 [ viewStoryLine displayState.storyLine displayState.ending
@@ -142,6 +144,7 @@ getDisplayState model =
 type Msg
     = Interact String
     | Restart
+    | GoHome
 
 
 update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
@@ -181,6 +184,9 @@ update navKey msg model =
 
         Restart ->
             init model.story
+
+        GoHome ->
+            ( model, Nav.pushUrl navKey "/" )
 
 
 

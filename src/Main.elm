@@ -43,7 +43,7 @@ view model =
     in
     case model of
         NotFound _ notFoundModel ->
-            viewPage (NotFound.view notFoundModel) (always Ignored)
+            viewPage (NotFound.view notFoundModel) GotNotFoundMsg
 
         Home _ homeModel ->
             viewPage (Home.view homeModel) GotHomeMsg

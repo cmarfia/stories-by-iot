@@ -3,6 +3,7 @@ module Page.NotFound exposing (Model, Msg(..), init, update, view)
 import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 
 
 
@@ -25,7 +26,11 @@ init =
 view : Model -> { title : String, content : Html Msg }
 view model =
     { title = "Not Found"
-    , content = h1 [] [ text "not found" ]
+    , content =
+        div []
+            [ button [ onClick GoHome ] [ text "Go Home" ]
+            , h1 [] [ text "not found" ]
+            ]
     }
 
 
@@ -34,11 +39,11 @@ view model =
 
 
 type Msg
-    = NoOp
+    = GoHome
 
 
 update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
 update navKey msg model =
     case msg of
-        _ ->
-            ( model, Cmd.none )
+        GoHome ->
+            ( model, Nav.pushUrl navKey "/" )
