@@ -25,7 +25,7 @@ init : ( Model, Cmd Msg )
 init =
     let
         loadImagesMsg =
-            Port.PreloadImages ("/img/home-background.png" :: List.map .cover allStories)
+            Port.PreloadImages ("img/home-background.png" :: List.map .cover allStories)
     in
     ( { stories = allStories }, Port.toJavaScript (Port.encode loadImagesMsg) )
 

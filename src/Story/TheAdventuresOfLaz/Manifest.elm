@@ -19,7 +19,7 @@ characters : List Entity
 characters =
     [ entity "laz"
         |> addName "Lax the Cat"
-        |> addImage "/img/laz.png"
+        |> addImage "img/laz.png"
         |> addNarrative "Default Laz Interaction"
     ]
 
@@ -28,5 +28,5 @@ locations : List Entity
 locations =
     [ entity "forest"
         |> addName "The Forest"
-        |> addImage "/img/forest.png"
+        |> addImage "img/forest.png"
     ]

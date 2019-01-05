@@ -63,7 +63,7 @@ img {
 }
 
 .page__home {
-  background-image: url(/img/home-background.png);
+  background-image: url(../img/home-background.png);
   padding: 2em;
 	background-attachment: fixed;
 }

@@ -22,11 +22,11 @@ characters : List Entity
 characters =
     [ entity "jarald"
         |> addName "Jarald the Giraffe"
-        |> addImage "/img/giraffe.png"
+        |> addImage "img/giraffe.png"
         |> addInteractable
     , entity "tenzin"
         |> addName "Tenzin the Panda"
-        |> addImage "/img/panda.png"
+        |> addImage "img/panda.png"
     ]
 
 
@@ -35,8 +35,8 @@ locations =
     [ entity "forest"
         |> addName "The Forest"
         |> addConnectingLocations [ "castle" ]
-        |> addImage "/img/forest.png"
+        |> addImage "img/forest.png"
     , entity "castle"
         |> addName "The Castle"
-        |> addImage "/img/castle.png"
+        |> addImage "img/castle.png"
     ]
