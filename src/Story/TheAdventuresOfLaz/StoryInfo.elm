@@ -20,7 +20,7 @@ storyInfo =
     , startingState = Rules.startingState
     , rules = Rules.rules
     , imagesToPreLoad =
-        [ "img/laz.png"
-        , "img/forest.png"
+        [ "img/laz.png?v=1"
+        , "img/forest.png?v=1"
         ]
     }
