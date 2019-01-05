@@ -34,7 +34,7 @@ locations : List Entity
 locations =
     [ entity "forest"
         |> addName "The Forest"
-        |> addConnectingLocations ["castle" ]
+        |> addConnectingLocations [ "castle" ]
         |> addImage "/img/forest.png"
     , entity "castle"
         |> addName "The Castle"

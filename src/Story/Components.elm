@@ -6,9 +6,12 @@ module Story.Components exposing
     , Snippet
     , SpeakingPosition(..)
     , StoryInfo
+    , addActionText
     , addClassName
     , addComponent
+    , addConnectingLocations
     , addImage
+    , addInteractable
     , addName
     , addNarrative
     , addRuleData
@@ -16,19 +19,16 @@ module Story.Components exposing
     , createRule
     , entity
     , findEntity
+    , getActionText
+    , getActionTextOrName
     , getClassName
+    , getConnectingLocations
     , getImage
+    , getInteractable
     , getName
     , getNarrative
     , getRuleData
     , getSpeakingPosition
-    , addInteractable
-    , getInteractable
-    , addConnectingLocations
-    , getConnectingLocations
-    , getActionTextOrName
-    , addActionText
-    , getActionText
     )
 
 import Dict exposing (..)
@@ -60,6 +60,7 @@ type alias Snippet =
     , narrative : String
     }
 
+
 {-| An entity is simply an id associated with some potential components and their data.
 Each object in your story is an entity - this includes items, locations, and characters, but also rules too.
 -}
@@ -86,6 +87,7 @@ type Component
 type SpeakingPosition
     = Left
     | Right
+
 
 entity : String -> Entity
 entity id =
@@ -209,36 +211,41 @@ addInteractable : Entity -> Entity
 addInteractable =
     addComponent "interactable" <| Interactable
 
+
 getInteractable : Entity -> Bool
-getInteractable ( id, components ) = 
+getInteractable ( id, components ) =
     case Dict.get "interactable" components of
-        Just (Interactable) ->
+        Just Interactable ->
             True
-        
+
         _ ->
             False
+
 
 addActionText : String -> Entity -> Entity
 addActionText text =
     addComponent "actionText" <| ActionText text
 
+
 getActionText : Entity -> String
-getActionText ( id, components ) = 
-    case Dict.get "actionText" components of 
+getActionText ( id, components ) =
+    case Dict.get "actionText" components of
         Just (ActionText text) ->
             text
-        
+
         _ ->
             id
 
+
 getActionTextOrName : Entity -> String
-getActionTextOrName ( id, components ) = 
-    case Dict.get "actionText" components of 
+getActionTextOrName ( id, components ) =
+    case Dict.get "actionText" components of
         Just (ActionText text) ->
             text
-        
+
         _ ->
             getName ( id, components )
+
 
 createRule : String -> Engine.Rule -> String -> Entity
 createRule id ruleData narrative =
