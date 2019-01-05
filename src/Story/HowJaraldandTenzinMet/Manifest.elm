@@ -12,6 +12,9 @@ import Story.Components exposing (..)
 items : List Entity
 items =
     [ entity "next"
+        |> addActionText "Continue"
+    , entity "rock"
+        |> addActionText "Grab The Rock"
     ]
 
 
@@ -20,6 +23,7 @@ characters =
     [ entity "jarald"
         |> addName "Jarald the Giraffe"
         |> addImage "/img/giraffe.png"
+        |> addInteractable
     , entity "tenzin"
         |> addName "Tenzin the Panda"
         |> addImage "/img/panda.png"
@@ -30,6 +34,7 @@ locations : List Entity
 locations =
     [ entity "forest"
         |> addName "The Forest"
+        |> addConnectingLocations ["castle" ]
         |> addImage "/img/forest.png"
     , entity "castle"
         |> addName "The Castle"

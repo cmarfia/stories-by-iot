@@ -62,7 +62,7 @@ type alias DisplayState =
     { currentLocation : Entity
     , itemsInCurrentLocation : List Entity
     , charactersInCurrentLocation : List Entity
-    , itemsInInventory : List Entity
+    , connectingLocations : List Entity
     , ending : Maybe String
     , storyLine : List { interactableName : String, interactableCssSelector : String, narrative : String }
     }
@@ -89,15 +89,19 @@ viewLayout voiceLoaded displayState =
             [ viewCharacters displayState.charactersInCurrentLocation
             , div [ class "Layout__Main" ] <|
                 [ viewStoryLine displayState.storyLine displayState.ending
-                , if displayState.ending /= Nothing then
-                    button [ class "StoryRestart", onClick Restart ] [ text "Restart" ]
+                , div [] (if displayState.ending /= Nothing then
+                    [button [ class "StoryRestart", onClick Restart ] [ text "Restart" ]]
 
                   else
-                    button [ class "StoryContinue", onClick (Interact "next") ] [ text "Continue" ]
+                    List.map viewItem displayState.itemsInCurrentLocation)
                 ]
+            , viewConnectingLocations displayState.connectingLocations
             ]
         ]
 
+viewItem : Entity -> Html Msg
+viewItem item = 
+    button [ class "story__action", onClick <| Interact <| Tuple.first item ] [ text <| getActionTextOrName item ]
 
 viewCharacters : List Entity -> Html Msg
 viewCharacters characters =
@@ -105,11 +109,23 @@ viewCharacters characters =
         toImage character =
             div []
                 [ img [ src <| Maybe.withDefault "" <| getImage character ] []
+                , if getInteractable character then
+                    button [onClick <| Interact <| Tuple.first character ] [ text <| (++) "Speak with " <| getName character]
+                else 
+                    text ""
                 ]
     in
     div [ class "Characters" ] <|
         List.map toImage characters
 
+viewConnectingLocations : List Entity -> Html Msg
+viewConnectingLocations locations = 
+    let
+        viewLocation location = 
+            button [ onClick <| Interact <| Tuple.first location ] [ text <| (++) "Go To " <| getName location ]
+    in
+    div [ class "story__locations" ] <|
+        List.map viewLocation locations
 
 viewStoryLine : List Snippet -> Maybe String -> Html Msg
 viewStoryLine storyLine ending =
@@ -135,11 +151,14 @@ getDisplayState model =
     let
         manifest =
             Story.getManifest model.story
+        
+        currentLocation = 
+            Engine.getCurrentLocation model.engineModel |> findEntity manifest
     in
-    { currentLocation = Engine.getCurrentLocation model.engineModel |> findEntity manifest
+    { currentLocation = currentLocation
     , itemsInCurrentLocation = Engine.getItemsInCurrentLocation model.engineModel |> List.map (findEntity manifest)
     , charactersInCurrentLocation = Engine.getCharactersInCurrentLocation model.engineModel |> List.map (findEntity manifest)
-    , itemsInInventory = Engine.getItemsInInventory model.engineModel |> List.map (findEntity manifest)
+    , connectingLocations = getConnectingLocations currentLocation |> List.map (findEntity manifest)
     , ending = Engine.getEnding model.engineModel
     , storyLine = model.storyLine
     }
@@ -199,8 +218,9 @@ update navKey msg model =
         GoHome ->
             ( model
             , Cmd.batch
-                [ Nav.pushUrl navKey "/"
-                , Port.Speak ""
+                [ Nav.pushUrl navKey "/"  
+                
+                , Port.Speak "" 
                     |> Port.encode
                     |> Port.toJavaScript
                 ]
@@ -219,9 +239,3 @@ update navKey msg model =
                 |> Port.encode
                 |> Port.toJavaScript
             )
-
-
-
-{-
-
--}

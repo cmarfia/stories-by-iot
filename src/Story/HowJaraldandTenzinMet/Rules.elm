@@ -10,6 +10,7 @@ startingState : List Engine.ChangeWorldCommand
 startingState =
     [ moveTo "forest"
     , moveItemToLocation "next" "forest"
+    , moveItemToLocation "rock" "forest"
     ]
 
 

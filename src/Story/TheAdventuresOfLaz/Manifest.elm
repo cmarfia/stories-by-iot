@@ -20,6 +20,7 @@ characters =
     [ entity "laz"
         |> addName "Lax the Cat"
         |> addImage "/img/laz.png"
+        |> addNarrative "Default Laz Interaction"
     ]
 
 
