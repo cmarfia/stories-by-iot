@@ -31,6 +31,24 @@ rules =
             ]
         }
         Narrative.jaraldHearsASounds
+    , createRule "interact with rock"
+        { interaction = with "rock"
+        , conditions = []
+        , changes = []
+        }
+        "You touched the rock"
+    , createRule "interact with castle"
+        { interaction = with "castle"
+        , conditions = []
+        , changes = []
+        }
+        "lets go to the castle"
+    , createRule "interact with jarald"
+        { interaction = with "jarald"
+        , conditions = []
+        , changes = []
+        }
+        "You talked with jarald"
     , createRule
         "Introduction to tenzin"
         { interaction = with "next"
