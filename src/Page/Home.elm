@@ -38,7 +38,7 @@ view : Model -> { title : String, content : Html Msg }
 view model =
     { title = "Stories By Iot"
     , content =
-        div [ class "page page__home" ]
+        div [ class "page page__home clearfix" ]
             [ div [ class "container" ]
                 [ viewHeader
                 , div [ class "row" ] (List.map viewStory model.stories)

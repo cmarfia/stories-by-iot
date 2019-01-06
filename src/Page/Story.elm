@@ -79,7 +79,7 @@ view voiceLoaded model =
 
 viewLayout : Bool -> DisplayState -> Html Msg
 viewLayout voiceLoaded displayState =
-    div [ class "page page__story" ]
+    div [ class "page page__story clearfix" ]
         [ div [ class "container" ]
             [ viewTitle displayState.title
             , viewIcons voiceLoaded

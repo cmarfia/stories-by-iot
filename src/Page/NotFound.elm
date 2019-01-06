@@ -27,7 +27,7 @@ view : Model -> { title : String, content : Html Msg }
 view model =
     { title = "Stories By Iot > Not Found"
     , content =
-        div [ class "page page_notFound" ]
+        div [ class "page page_notFound clearfix" ]
             [ div [ class "Container" ]
                 [ div [ class "row" ]
                     [ div [ class "one column" ] []
