@@ -25,7 +25,7 @@ init =
 
 view : Model -> { title : String, content : Html Msg }
 view model =
-    { title = "Not Found"
+    { title = "Stories By Iot > Not Found"
     , content =
         div []
             [ button [ onClick GoHome ] [ text "Go Home" ]
