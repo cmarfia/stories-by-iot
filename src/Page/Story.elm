@@ -82,20 +82,15 @@ viewLayout voiceLoaded displayState =
         [ div [ class "container" ]
             [ viewTitle displayState.title
             , viewIcons voiceLoaded
-            , div
-                [ class "row" ]
-                [ viewCharacters displayState.charactersInCurrentLocation
-                , div [ class "Layout__Main" ] <|
-                    [ viewStoryLine displayState.storyLine displayState.ending
-                    , div []
-                        (if displayState.ending /= Nothing then
-                            [ button [ class "StoryRestart", onClick Restart ] [ text "Restart" ] ]
-
-                         else
-                            List.map viewItem displayState.itemsInCurrentLocation
-                        )
+            , div [ class "row story__wrapper" ]
+                [ div [ class "story__header" ]
+                    [ viewLocation displayState.currentLocation
+                    , viewCharacters displayState.charactersInCurrentLocation
                     ]
-                , viewConnectingLocations displayState.connectingLocations
+                , viewStoryLine displayState.storyLine
+                ] 
+            , div [ class "story__actions" ]
+                    [ viewActions displayState.ending <| displayState.charactersInCurrentLocation ++ displayState.itemsInCurrentLocation ++ displayState.connectingLocations
                 ]
             ]
         ]
@@ -128,53 +123,88 @@ viewItem : Entity -> Html Msg
 viewItem item =
     button [ class "story__action", onClick <| Interact <| Tuple.first item ] [ text <| getActionTextOrName item ]
 
+viewLocation : Entity -> Html Msg
+viewLocation location = 
+    let
+        locationName =
+            getName location
+    in
+    div [ class "story__location" ]
+        [ h3 [] [ text locationName ]
+        , img [ src <| Maybe.withDefault "" <| getImage location, alt locationName ] []
+        ] 
 
 viewCharacters : List Entity -> Html Msg
 viewCharacters characters =
     let
-        toImage character =
-            div []
-                [ img [ src <| Maybe.withDefault "" <| getImage character ] []
-                , if getInteractable character then
-                    button [ onClick <| Interact <| Tuple.first character ] [ text <| (++) "Speak with " <| getName character ]
+        classByIndex : Int -> String
+        classByIndex index = 
+            if modBy 2 index == 0 then
+                "story__character--primary"
+            else
+                "story__character--secondary"
 
-                  else
-                    text ""
+        toImage : Int -> Entity -> Html Msg
+        toImage index character =
+            div []
+                [ img [ class <| classByIndex index, src <| Maybe.withDefault "" <| getImage character ] []
                 ]
     in
-    div [ class "Characters" ] <|
-        List.map toImage characters
+    div [ class "story__characters clearfix" ] <|
+        List.indexedMap toImage characters
 
-
-viewConnectingLocations : List Entity -> Html Msg
-viewConnectingLocations locations =
+viewActions : Maybe String -> List Entity -> Html Msg
+viewActions endStory actions =
     let
-        viewLocation location =
-            button [ onClick <| Interact <| Tuple.first location ] [ text <| (++) "Go To " <| getName location ]
+        viewAction index action =
+            ( index
+            , div [ class "one-half column story__action"]  
+                [ button [ onClick <| Interact <| Tuple.first action ] [ text <| (++) "Go To " <| getName action ] 
+                ]
+            )
+        
+        group groups (index, html ) =
+            if modby 2 index == 0 then
+                [ html ] :: groups
+            else 
+                case groups of 
+                    [] ->
+                        []
+                    
+                    head :: tail ->
+                       (html ++ head) :: tail
+        
+        wrapRows list =
+            div [ class "row" ] list
+
     in
-    div [ class "story__locations" ] <|
-        List.map viewLocation locations
+    div [ ] <|
+        if endStory /= Nothing then
+            [ div [ class "row" ] 
+                [ div [ class "one-half column story__action"]  
+                    [ button [ onClick Restart ] [ text "Read Again" ] 
+                    ]
+                ]
+            ]
+        else 
+            List.indexedMap viewAction actions
+                |> List.foldl group
+                |> List.map wrapRows
+                |> div [ ]
 
 
-viewStoryLine : List Snippet -> Maybe String -> Html Msg
-viewStoryLine storyLine ending =
-    div [ class "StoryLine" ]
+viewStoryLine : List Snippet -> Html Msg
+viewStoryLine storyLine =
+    div [ class "story__narrative" ]
         [ case List.head storyLine of
             Just { narrative } ->
-                section [] [ Markdown.toHtml [ class "Storyline__Item__Narrative markdown-body" ] narrative ]
+                section [] [ Markdown.toHtml [ class "markdown-body" ] narrative ]
 
             Nothing ->
                 text ""
-        , if ending /= Nothing then
-            h5
-                [ class "Storyline__Item__Ending" ]
-                [ text <| Maybe.withDefault "The End" ending ]
-
-          else
-            text ""
         ]
 
-
+ 
 getDisplayState : Model -> DisplayState
 getDisplayState model =
     let

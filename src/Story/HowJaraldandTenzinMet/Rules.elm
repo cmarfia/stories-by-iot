@@ -88,6 +88,7 @@ rules =
             [ moveCharacterToLocation "jarald" "castle"
             , moveCharacterToLocation "tenzin" "castle"
             , moveTo "castle"
+            , moveItemToLocation "next" "castle"
             ]
         }
         Narrative.entersClearing

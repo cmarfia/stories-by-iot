@@ -7,7 +7,8 @@
   cursor: default;
 }
 
-ul, li {
+ul,
+li {
   list-style: none;
 }
 
@@ -36,7 +37,10 @@ h3 {
   padding: 3px;
 }
 
-html, body { height: 100%; }
+html,
+body {
+  height: 100%;
+}
 
 body {
   background-color: #fbfbf8;
@@ -57,52 +61,157 @@ img {
   height: 100%;
 }
 
-.clearfix:after { 
-   content: "."; 
-   visibility: hidden; 
-   display: block; 
-   height: 0; 
-   clear: both;
+.clearfix:after {
+  content: '.';
+  visibility: hidden;
+  display: block;
+  height: 0;
+  clear: both;
 }
 
 /** LOADING **/
 
-.page__loading { text-align: center; }
-.page__loading .loading__icon { margin-top: 65%; }
-.page__loading .attribution { position: absolute; bottom: 20px; width: 100%;}
+.page__loading {
+  text-align: center;
+}
+.page__loading .loading__icon {
+  margin-top: 65%;
+}
+.page__loading .attribution {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+}
 
 /** HOME **/
 .page__home .header {
   border-radius: 10%;
   background: white;
   margin-top: 1.25em;
-  padding: .2em;
+  padding: 0.2em;
   text-align: right;
 }
 
-.page__home .header img {float: left;width: 25%;}
-.page__home .header p {padding-top: 1.5em;margin: 0;padding-right: 1.5em;font-size: 1.5em;}
-.page__home .header h1 { display: inline;}
-.page__home .stories { padding-top: 1.5em;}
-.page__home .story img {border: 4px solid white;border-radius: 5%;cursor: pointer;}
+.page__home .header img {
+  float: left;
+  width: 25%;
+}
+.page__home .header p {
+  padding-top: 1.5em;
+  margin: 0;
+  padding-right: 1em;
+  font-size: 1.5em;
+}
+.page__home .header h1 {
+  display: inline;
+}
+.page__home .stories {
+  padding-top: 1em;
+}
+.page__home .story img {
+  border: 4px solid #5aa6e9;
+  border-radius: 5%;
+  cursor: pointer;
+}
 
 /** STORY **/
 
-.page__story .story__title { 
+.page__story .story__title {
   background: white;
   border-radius: 10%;
-  padding: .5em;
-  margin-top: 1em;
+  padding: 0.5em;
+  margin-top: 0.5em;
 }
 
 .page__story .story__title h2 {
   margin: 0;
   padding: 0;
 }
-.page__story .story__icon { }
+
 .page__story .story__icon button {
- border: none; background: white;width: 50px !important; height: 50px;border-radius:50%;
- width: 100%; margin: 1em;}
-.page__story .story__icon i { font-size: 3em;color: #5aa6e9;margin-top:-5px !important; display:block}
-.page__story .story__icon--home { float: left; }
-.page__story .story__icon--speak { float: right; }
+  background: transparent;
+  width: 50px !important;
+  height: 50px;
+  width: 100%;
+  margin: 1em;
+  border: 2px solid #5aa6e9;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+}
+.page__story .story__icon i {
+  font-size: 3em;
+  color: #5aa6e9;
+  margin-top: -4px !important;
+  display: block;
+  cursor: pointer;
+}
+.page__story .story__icon--home {
+  float: left;
+}
+.page__story .story__icon--speak {
+  float: right;
+}
+
+.page__story .story__wrapper {
+  border: none;
+  border-radius: 10%;
+  background: white;
+  margin-top: 0.5em;
+  padding: 1em;
+}
+
+.page__story .story__header {
+  text-align: center;
+  position: relative;
+}
+
+.page__story .story__header h3 {
+  margin: 0;
+}
+
+.page__story .story__header img {
+  width: 50%;
+}
+
+.page__story .story__characters {
+  position: absolute;
+  bottom: 0;
+}
+
+.page__story .story__characters img {
+  width: 25%;
+}
+
+.page__story .story__characters .story__character--primary {
+  float: left;
+}
+
+.page__story .story__characters .story__character--secondary {
+  float: right;
+}
+
+.page__story .story__narrative {
+  font-size: 1.5em;
+  padding: 0.5em;
+  border: 2px solid #919090;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  margin-top: 1em;
+}
+
+.page__story .story__actions {
+}
+
+.page__story .story__action button {
+  background: transparent;
+  border: 2px solid #5aa6e9;
+  color: #5aa6e9;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  font-weight: bold;
+  font-size: 1.5em;
+  margin: 0.5em auto;
+  padding-top: 0.5em;
+  width: 100%;
+  box-sizing: border-box;
+  height: auto;
+  padding-bottom: 0.5em;
+  white-space: normal;
+}
