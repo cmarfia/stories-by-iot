@@ -195,11 +195,20 @@ viewStoryLine storyLine =
     div [ class "story__narrative" ]
         [ case List.head storyLine of
             Just { narrative } ->
-                section [] [ Markdown.toHtml [ class "markdown-body" ] narrative ]
+                section [] [ Markdown.toHtmlWith markdownOptions [ class "markdown-body" ] narrative ]
 
             Nothing ->
                 text ""
         ]
+
+
+markdownOptions : Markdown.Options
+markdownOptions =
+    { githubFlavored = Just { tables = False, breaks = False }
+    , defaultHighlighting = Nothing
+    , sanitize = False
+    , smartypants = True
+    }
 
 
 getDisplayState : Model -> DisplayState

@@ -196,9 +196,6 @@ img {
   margin-top: 1em;
 }
 
-.page__story .story__actions {
-}
-
 .page__story .story__action button {
   background: transparent;
   border: 2px solid #5aa6e9;
@@ -213,4 +210,17 @@ img {
   height: auto;
   padding-bottom: 0.5em;
   white-space: normal;
+}
+
+
+.page .highlight__primary {
+  color: #075725;
+}
+
+.page .highlight__secondary {
+  color: #5aa6e9;
+}
+
+.page .highlight__tertiary {
+  color: #d90808;
 }

@@ -20,9 +20,9 @@ startingNarrative =
 
 jaraldHearsASounds : String
 jaraldHearsASounds =
-    """A giraffe named Jarald was walking through that forest on his way to a mightly castle.
+    """A giraffe named <span class="highlight__primary">Jarald</span> was walking through that forest on his way to a mightly castle.
 
-Just when everything seems calm Jarald heard a noise. "What was that" cried Jarald."""
+Just when everything seems calm Jarald heard a noise. <span class="highlight__primary">"What was that"</span> cried <span class="highlight__primary">Jarald</span>."""
 
 
 tenzinIntro : String
@@ -45,9 +45,9 @@ entersClearing : String
 entersClearing =
     """ "Wow" they both said.
 
-"Should we go inside?" ask Tenzin with much excitement.
+<span class="highlight__primary">"Should we go inside?"</span> ask Tenzin with much excitement.
 
-"Last one there cooks dinner" Jarald yelled as he took a head start.
+<span class="highlight__secondary">"Last one there cooks dinner"</span> Jarald yelled as he took a head start.
 """
 
 

@@ -20,9 +20,5 @@ storyInfo =
     , startingState = Rules.startingState
     , rules = Rules.rules
     , imagesToPreLoad =
-        [ "img/giraffe.png?v=1"
-        , "img/panda.png?v=1"
-        , "img/forest.png?v=1"
-        , "img/castle.png?v=1"
-        ]
+        []
     }
