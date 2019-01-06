@@ -91,7 +91,7 @@ viewLayout voiceLoaded displayState =
                 , viewStoryLine displayState.storyLine
                 ]
             , div [ class "story__actions" ]
-                [ viewActions displayState.ending <| displayState.charactersInCurrentLocation ++ displayState.itemsInCurrentLocation ++ displayState.connectingLocations
+                [ viewActions displayState.ending displayState.charactersInCurrentLocation displayState.itemsInCurrentLocation displayState.connectingLocations
                 ]
             ]
         ]
@@ -158,23 +158,8 @@ viewCharacters characters =
         List.indexedMap toImage characters
 
 
-viewActions : Maybe String -> List Entity -> Html Msg
-viewActions endStory actions =
-    let
-        viewAction : Int -> Entity -> ( Int, Html Msg )
-        viewAction index action =
-            ( index
-            , div [ class "one-half column story__action" ]
-                [ button [ onClick <| Interact <| Tuple.first action ] [ text <| (++) "Go To " <| getName action ]
-                ]
-            )
-
-        wrapRows : List ( Int, Html Msg ) -> Html Msg
-        wrapRows list =
-            list
-                |> List.map Tuple.second
-                |> div [ class "row" ]
-    in
+viewActions : Maybe String -> List Entity -> List Entity -> List Entity -> Html Msg
+viewActions endStory characters items locations =
     div [] <|
         if endStory /= Nothing then
             [ div [ class "row" ]
@@ -185,7 +170,31 @@ viewActions endStory actions =
             ]
 
         else
-            List.indexedMap viewAction actions
+            let
+                viewAction : Entity -> Html Msg
+                viewAction action =
+                    div [ class "one-half column story__action" ]
+                        [ button [ onClick <| Interact <| Tuple.first action ] [ text <| getActionTextOrName action ]
+                        ]
+
+                wrapRows : List (Html Msg) -> Html Msg
+                wrapRows =
+                    div [ class "row" ]
+
+                characterActions =
+                    characters
+                        |> List.filter getInteractable
+                        |> List.map viewAction
+
+                itemActions =
+                    List.map viewAction items
+
+                locationActions =
+                    List.map viewAction locations
+            in
+            locationActions
+                |> List.append itemActions
+                |> List.append characterActions
                 |> List.Extra.greedyGroupsOf 2
                 |> List.map wrapRows
 

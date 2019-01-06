@@ -24,6 +24,7 @@ characters =
         |> addName "Jarald the Giraffe"
         |> addImage "img/laz.png?v=1"
         |> addInteractable
+        |> addActionText "Speak with Jarald"
     , entity "tenzin"
         |> addName "Tenzin the Panda"
         |> addImage "img/sparky.png?v=1"
@@ -39,4 +40,5 @@ locations =
     , entity "castle"
         |> addName "The Castle"
         |> addImage "img/castle.png?v=1"
+        |> addActionText "Enter the Castle"
     ]
