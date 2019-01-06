@@ -4980,8 +4980,8 @@ var elm$core$Basics$identity = function (x) {
 	return x;
 };
 var author$project$Port$toJavaScript = _Platform_outgoingPort('toJavaScript', elm$core$Basics$identity);
-var author$project$Story$Components$Image = function (a) {
-	return {$: 1, a: a};
+var author$project$Story$Components$ActionText = function (a) {
+	return {$: 8, a: a};
 };
 var elm$core$Dict$Black = 1;
 var elm$core$Dict$RBNode_elm_builtin = F5(
@@ -5101,6 +5101,15 @@ var author$project$Story$Components$addComponent = F3(
 			id,
 			A3(elm$core$Dict$insert, componentId, component, components));
 	});
+var author$project$Story$Components$addActionText = function (text) {
+	return A2(
+		author$project$Story$Components$addComponent,
+		'actionText',
+		author$project$Story$Components$ActionText(text));
+};
+var author$project$Story$Components$Image = function (a) {
+	return {$: 1, a: a};
+};
 var author$project$Story$Components$addImage = function (url) {
 	return A2(
 		author$project$Story$Components$addComponent,
@@ -5122,16 +5131,19 @@ var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
 var author$project$Story$Components$entity = function (id) {
 	return _Utils_Tuple2(id, elm$core$Dict$empty);
 };
-var author$project$Story$HowJaraldandTenzinMet$Manifest$characters = _List_fromArray(
+var author$project$Story$TheAdventuresOfLaz01$Manifest$characters = _List_fromArray(
 	[
-		author$project$Story$Components$addInteractable(
 		A2(
-			author$project$Story$Components$addImage,
-			'img/laz.png?v=1',
+		author$project$Story$Components$addActionText,
+		'Speak with Jarald',
+		author$project$Story$Components$addInteractable(
 			A2(
-				author$project$Story$Components$addName,
-				'Jarald the Giraffe',
-				author$project$Story$Components$entity('jarald')))),
+				author$project$Story$Components$addImage,
+				'img/laz.png?v=1',
+				A2(
+					author$project$Story$Components$addName,
+					'Jarald the Giraffe',
+					author$project$Story$Components$entity('jarald'))))),
 		A2(
 		author$project$Story$Components$addImage,
 		'img/sparky.png?v=1',
@@ -5140,16 +5152,7 @@ var author$project$Story$HowJaraldandTenzinMet$Manifest$characters = _List_fromA
 			'Tenzin the Panda',
 			author$project$Story$Components$entity('tenzin')))
 	]);
-var author$project$Story$Components$ActionText = function (a) {
-	return {$: 8, a: a};
-};
-var author$project$Story$Components$addActionText = function (text) {
-	return A2(
-		author$project$Story$Components$addComponent,
-		'actionText',
-		author$project$Story$Components$ActionText(text));
-};
-var author$project$Story$HowJaraldandTenzinMet$Manifest$items = _List_fromArray(
+var author$project$Story$TheAdventuresOfLaz01$Manifest$items = _List_fromArray(
 	[
 		A2(
 		author$project$Story$Components$addActionText,
@@ -5169,7 +5172,7 @@ var author$project$Story$Components$addConnectingLocations = function (exits) {
 		'connectedLocations',
 		author$project$Story$Components$ConnectingLocations(exits));
 };
-var author$project$Story$HowJaraldandTenzinMet$Manifest$locations = _List_fromArray(
+var author$project$Story$TheAdventuresOfLaz01$Manifest$locations = _List_fromArray(
 	[
 		A2(
 		author$project$Story$Components$addImage,
@@ -5183,14 +5186,17 @@ var author$project$Story$HowJaraldandTenzinMet$Manifest$locations = _List_fromAr
 				'The Forest',
 				author$project$Story$Components$entity('forest')))),
 		A2(
-		author$project$Story$Components$addImage,
-		'img/castle.png?v=1',
+		author$project$Story$Components$addActionText,
+		'Enter the Castle',
 		A2(
-			author$project$Story$Components$addName,
-			'The Castle',
-			author$project$Story$Components$entity('castle')))
+			author$project$Story$Components$addImage,
+			'img/castle.png?v=1',
+			A2(
+				author$project$Story$Components$addName,
+				'The Castle',
+				author$project$Story$Components$entity('castle'))))
 	]);
-var author$project$Story$HowJaraldandTenzinMet$Narrative$startingNarrative = {aU: 'opening', aV: '', N: 'Once upon a time there was a peaceful forest...'};
+var author$project$Story$TheAdventuresOfLaz01$Narrative$startingNarrative = {aU: 'opening', aV: '', N: 'Once upon a time there was a peaceful forest...'};
 var author$project$Story$Components$Narrative = function (a) {
 	return {$: 4, a: a};
 };
@@ -5219,11 +5225,11 @@ var author$project$Story$Components$createRule = F3(
 				ruleData,
 				author$project$Story$Components$entity(id)));
 	});
-var author$project$Story$HowJaraldandTenzinMet$Narrative$entersClearing = ' "Wow" they both said.\n\n<span class="highlight__primary">"Should we go inside?"</span> ask Tenzin with much excitement.\n\n<span class="highlight__secondary">"Last one there cooks dinner"</span> Jarald yelled as he took a head start.\n';
-var author$project$Story$HowJaraldandTenzinMet$Narrative$jaraldHearsASounds = 'A giraffe named <span class="highlight__primary">Jarald</span> was walking through that forest on his way to a mightly castle.\n\nJust when everything seems calm Jarald heard a noise. <span class="highlight__primary">"What was that"</span> cried <span class="highlight__primary">Jarald</span>.';
-var author$project$Story$HowJaraldandTenzinMet$Narrative$tenzinIntro = ' "It\'s only me!" said tenzin. \n\n"Why are you always so scared?"\n';
-var author$project$Story$HowJaraldandTenzinMet$Narrative$theEnd = 'To Be Continued...';
-var author$project$Story$HowJaraldandTenzinMet$Narrative$throughTheClearing = ' "Don\'t scare me like that Tenzin" said jarald. \n\nHe look we are almost there.\n';
+var author$project$Story$TheAdventuresOfLaz01$Narrative$entersClearing = ' "Wow" they both said.\n\n<span class="highlight__primary">"Should we go inside?"</span> ask Tenzin with much excitement.\n\n<span class="highlight__secondary">"Last one there cooks dinner"</span> Jarald yelled as he took a head start.\n';
+var author$project$Story$TheAdventuresOfLaz01$Narrative$jaraldHearsASounds = 'A giraffe named <span class="highlight__primary">Jarald</span> was walking through that forest on his way to a mightly castle.\n\n# THis is a heading\n\n## Sub heading\n\n- A\n- B \n- C\n\nJust when everything seems calm Jarald heard a noise. <span class="highlight__primary">"What was that"</span> cried <span class="highlight__primary">Jarald</span>.';
+var author$project$Story$TheAdventuresOfLaz01$Narrative$tenzinIntro = ' "It\'s only me!" said tenzin. \n\n"Why are you always so scared?"\n';
+var author$project$Story$TheAdventuresOfLaz01$Narrative$theEnd = 'To Be Continued...';
+var author$project$Story$TheAdventuresOfLaz01$Narrative$throughTheClearing = ' "Don\'t scare me like that Tenzin" said jarald. \n\nHe look we are almost there.\n';
 var elm$core$Dict$fromList = function (assocs) {
 	return A3(
 		elm$core$List$foldl,
@@ -5278,7 +5284,7 @@ var jschomay$elm_narrative_engine$Types$With = function (a) {
 var jschomay$elm_narrative_engine$Engine$with = function (id) {
 	return jschomay$elm_narrative_engine$Types$With(id);
 };
-var author$project$Story$HowJaraldandTenzinMet$Rules$rules = elm$core$Dict$fromList(
+var author$project$Story$TheAdventuresOfLaz01$Rules$rules = elm$core$Dict$fromList(
 	_List_fromArray(
 		[
 			A3(
@@ -5296,7 +5302,7 @@ var author$project$Story$HowJaraldandTenzinMet$Rules$rules = elm$core$Dict$fromL
 					]),
 				aW: jschomay$elm_narrative_engine$Engine$with('next')
 			},
-			author$project$Story$HowJaraldandTenzinMet$Narrative$jaraldHearsASounds),
+			author$project$Story$TheAdventuresOfLaz01$Narrative$jaraldHearsASounds),
 			A3(
 			author$project$Story$Components$createRule,
 			'interact with rock',
@@ -5341,7 +5347,7 @@ var author$project$Story$HowJaraldandTenzinMet$Rules$rules = elm$core$Dict$fromL
 					]),
 				aW: jschomay$elm_narrative_engine$Engine$with('next')
 			},
-			author$project$Story$HowJaraldandTenzinMet$Narrative$tenzinIntro),
+			author$project$Story$TheAdventuresOfLaz01$Narrative$tenzinIntro),
 			A3(
 			author$project$Story$Components$createRule,
 			'through the clearing',
@@ -5358,7 +5364,7 @@ var author$project$Story$HowJaraldandTenzinMet$Rules$rules = elm$core$Dict$fromL
 					]),
 				aW: jschomay$elm_narrative_engine$Engine$with('next')
 			},
-			author$project$Story$HowJaraldandTenzinMet$Narrative$throughTheClearing),
+			author$project$Story$TheAdventuresOfLaz01$Narrative$throughTheClearing),
 			A3(
 			author$project$Story$Components$createRule,
 			'enters clearing',
@@ -5378,7 +5384,7 @@ var author$project$Story$HowJaraldandTenzinMet$Rules$rules = elm$core$Dict$fromL
 					]),
 				aW: jschomay$elm_narrative_engine$Engine$with('next')
 			},
-			author$project$Story$HowJaraldandTenzinMet$Narrative$entersClearing),
+			author$project$Story$TheAdventuresOfLaz01$Narrative$entersClearing),
 			A3(
 			author$project$Story$Components$createRule,
 			'TheEnd',
@@ -5395,26 +5401,27 @@ var author$project$Story$HowJaraldandTenzinMet$Rules$rules = elm$core$Dict$fromL
 					]),
 				aW: jschomay$elm_narrative_engine$Engine$with('next')
 			},
-			author$project$Story$HowJaraldandTenzinMet$Narrative$theEnd)
+			author$project$Story$TheAdventuresOfLaz01$Narrative$theEnd)
 		]));
-var author$project$Story$HowJaraldandTenzinMet$Rules$startingState = _List_fromArray(
+var author$project$Story$TheAdventuresOfLaz01$Rules$startingState = _List_fromArray(
 	[
 		jschomay$elm_narrative_engine$Engine$moveTo('forest'),
 		A2(jschomay$elm_narrative_engine$Engine$moveItemToLocation, 'next', 'forest'),
 		A2(jschomay$elm_narrative_engine$Engine$moveItemToLocation, 'rock', 'forest')
 	]);
-var author$project$Story$HowJaraldandTenzinMet$StoryInfo$storyInfo = {
+var author$project$Story$TheAdventuresOfLaz01$StoryInfo$storyInfo = {
 	ai: 'img/laz_01_cover.png',
-	aR: _List_Nil,
-	aX: {ah: author$project$Story$HowJaraldandTenzinMet$Manifest$characters, an: author$project$Story$HowJaraldandTenzinMet$Manifest$items, ap: author$project$Story$HowJaraldandTenzinMet$Manifest$locations},
-	a2: author$project$Story$HowJaraldandTenzinMet$Rules$rules,
-	a4: 'how-jarald-and-tenzin-met',
-	a6: author$project$Story$HowJaraldandTenzinMet$Narrative$startingNarrative,
-	a7: author$project$Story$HowJaraldandTenzinMet$Rules$startingState,
-	ad: 'How Jarald and Tenzin Met'
+	aR: _List_fromArray(
+		['img/bridge.png', 'img/forest.png', 'img/laz_01_cover.png', 'img/laz.png', 'img/lighthouse.png', 'img/plains.png', 'img/sparky.png', 'img/village.png']),
+	aX: {ah: author$project$Story$TheAdventuresOfLaz01$Manifest$characters, an: author$project$Story$TheAdventuresOfLaz01$Manifest$items, ap: author$project$Story$TheAdventuresOfLaz01$Manifest$locations},
+	a2: author$project$Story$TheAdventuresOfLaz01$Rules$rules,
+	a4: 'the-adventrues-of-laz-the-cat-01',
+	a6: author$project$Story$TheAdventuresOfLaz01$Narrative$startingNarrative,
+	a7: author$project$Story$TheAdventuresOfLaz01$Rules$startingState,
+	ad: 'The Adventures of Laz the Cat 01'
 };
 var author$project$Story$AllStories$allStories = _List_fromArray(
-	[author$project$Story$HowJaraldandTenzinMet$StoryInfo$storyInfo]);
+	[author$project$Story$TheAdventuresOfLaz01$StoryInfo$storyInfo]);
 var elm$core$List$foldrHelper = F4(
 	function (fn, acc, ctr, ls) {
 		if (!ls.b) {
@@ -5500,11 +5507,15 @@ var author$project$Page$Home$init = function () {
 		author$project$Port$toJavaScript(
 			author$project$Port$encode(loadImagesMsg)));
 }();
-var elm$core$Platform$Cmd$batch = _Platform_batch;
-var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var author$project$Page$NotFound$init = _Utils_Tuple2(
-	{},
-	elm$core$Platform$Cmd$none);
+var author$project$Page$NotFound$init = function () {
+	var loadImagesMsg = author$project$Port$PreloadImages(
+		_List_fromArray(
+			['img/logo.png']));
+	return _Utils_Tuple2(
+		{},
+		author$project$Port$toJavaScript(
+			author$project$Port$encode(loadImagesMsg)));
+}();
 var author$project$Story$getImagesToPreload = function (story) {
 	var imagesToPreLoad = story.aR;
 	return imagesToPreLoad;
@@ -6854,6 +6865,7 @@ var elm$core$Maybe$map = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
+var elm$core$Platform$Cmd$batch = _Platform_batch;
 var jschomay$elm_narrative_engine$Types$EndStory = function (a) {
 	return {$: 10, a: a};
 };
@@ -7323,6 +7335,7 @@ var author$project$Port$decode = function () {
 			elm$json$Json$Decode$succeed(decoder)));
 }();
 var elm$browser$Browser$Navigation$load = _Browser_load;
+var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$json$Json$Decode$decodeValue = _Json_run;
 var elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
@@ -7587,7 +7600,7 @@ var author$project$Page$Home$view = function (model) {
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('page page__home')
+					elm$html$Html$Attributes$class('page page__home clearfix')
 				]),
 			_List_fromArray(
 				[
@@ -7621,7 +7634,7 @@ var author$project$Page$NotFound$view = function (model) {
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('page page_notFound')
+					elm$html$Html$Attributes$class('page page_notFound clearfix')
 				]),
 			_List_fromArray(
 				[
@@ -7629,7 +7642,7 @@ var author$project$Page$NotFound$view = function (model) {
 					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$class('Container')
+							elm$html$Html$Attributes$class('container')
 						]),
 					_List_fromArray(
 						[
@@ -7809,6 +7822,29 @@ var author$project$Page$Story$Interact = function (a) {
 	return {$: 0, a: a};
 };
 var author$project$Page$Story$Restart = {$: 1};
+var author$project$Story$Components$getActionTextOrName = function (_n0) {
+	var id = _n0.a;
+	var components = _n0.b;
+	var _n1 = A2(elm$core$Dict$get, 'actionText', components);
+	if ((!_n1.$) && (_n1.a.$ === 8)) {
+		var text = _n1.a.a;
+		return text;
+	} else {
+		return author$project$Story$Components$getName(
+			_Utils_Tuple2(id, components));
+	}
+};
+var author$project$Story$Components$getInteractable = function (_n0) {
+	var id = _n0.a;
+	var components = _n0.b;
+	var _n1 = A2(elm$core$Dict$get, 'interactable', components);
+	if ((!_n1.$) && (_n1.a.$ === 7)) {
+		var _n2 = _n1.a;
+		return true;
+	} else {
+		return false;
+	}
+};
 var elm$core$Basics$neq = _Utils_notEqual;
 var elm$core$List$drop = F2(
 	function (n, list) {
@@ -7971,57 +8007,52 @@ var elm_community$list_extra$List$Extra$greedyGroupsOf = F2(
 	function (size, xs) {
 		return A3(elm_community$list_extra$List$Extra$greedyGroupsOfWithStep, size, size, xs);
 	});
-var author$project$Page$Story$viewActions = F2(
-	function (endStory, actions) {
-		var wrapRows = function (list) {
-			return A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('row')
-					]),
-				A2(elm$core$List$map, elm$core$Tuple$second, list));
-		};
-		var viewAction = F2(
-			function (index, action) {
-				return _Utils_Tuple2(
-					index,
-					A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('one-half column story__action')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$button,
-								_List_fromArray(
-									[
-										elm$html$Html$Events$onClick(
-										author$project$Page$Story$Interact(action.a))
-									]),
-								_List_fromArray(
-									[
-										elm$html$Html$text(
-										'Go To ' + author$project$Story$Components$getName(action))
-									]))
-							])));
-			});
+var author$project$Page$Story$viewActions = F4(
+	function (endStory, characters, items, locations) {
 		return A2(
 			elm$html$Html$div,
 			_List_Nil,
-			(!_Utils_eq(endStory, elm$core$Maybe$Nothing)) ? _List_fromArray(
-				[
-					A2(
-					elm$html$Html$div,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('row')
-						]),
-					_List_fromArray(
+			function () {
+				if (!_Utils_eq(endStory, elm$core$Maybe$Nothing)) {
+					return _List_fromArray(
 						[
 							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('row')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$div,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$class('one-half column story__action')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$button,
+											_List_fromArray(
+												[
+													elm$html$Html$Events$onClick(author$project$Page$Story$Restart)
+												]),
+											_List_fromArray(
+												[
+													elm$html$Html$text('Read Again')
+												]))
+										]))
+								]))
+						]);
+				} else {
+					var wrapRows = elm$html$Html$div(
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('row')
+							]));
+					var viewAction = function (action) {
+						return A2(
 							elm$html$Html$div,
 							_List_fromArray(
 								[
@@ -8033,21 +8064,34 @@ var author$project$Page$Story$viewActions = F2(
 									elm$html$Html$button,
 									_List_fromArray(
 										[
-											elm$html$Html$Events$onClick(author$project$Page$Story$Restart)
+											elm$html$Html$Events$onClick(
+											author$project$Page$Story$Interact(action.a))
 										]),
 									_List_fromArray(
 										[
-											elm$html$Html$text('Read Again')
+											elm$html$Html$text(
+											author$project$Story$Components$getActionTextOrName(action))
 										]))
-								]))
-						]))
-				]) : A2(
-				elm$core$List$map,
-				wrapRows,
-				A2(
-					elm_community$list_extra$List$Extra$greedyGroupsOf,
-					2,
-					A2(elm$core$List$indexedMap, viewAction, actions))));
+								]));
+					};
+					var locationActions = A2(elm$core$List$map, viewAction, locations);
+					var itemActions = A2(elm$core$List$map, viewAction, items);
+					var characterActions = A2(
+						elm$core$List$map,
+						viewAction,
+						A2(elm$core$List$filter, author$project$Story$Components$getInteractable, characters));
+					return A2(
+						elm$core$List$map,
+						wrapRows,
+						A2(
+							elm_community$list_extra$List$Extra$greedyGroupsOf,
+							2,
+							A2(
+								elm$core$List$append,
+								characterActions,
+								A2(elm$core$List$append, itemActions, locationActions))));
+				}
+			}());
 	});
 var author$project$Story$Components$getImage = function (_n0) {
 	var id = _n0.a;
@@ -8264,7 +8308,7 @@ var author$project$Page$Story$viewLayout = F2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('page page__story')
+					elm$html$Html$Attributes$class('page page__story clearfix')
 				]),
 			_List_fromArray(
 				[
@@ -8307,12 +8351,7 @@ var author$project$Page$Story$viewLayout = F2(
 								]),
 							_List_fromArray(
 								[
-									A2(
-									author$project$Page$Story$viewActions,
-									displayState.U,
-									_Utils_ap(
-										displayState.M,
-										_Utils_ap(displayState.V, displayState.R)))
+									A4(author$project$Page$Story$viewActions, displayState.U, displayState.M, displayState.V, displayState.R)
 								]))
 						]))
 				]));
