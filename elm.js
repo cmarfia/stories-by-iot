@@ -586,11 +586,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region._.F === region.al.F)
+	if (region.Z.F === region.al.F)
 	{
-		return 'on line ' + region._.F;
+		return 'on line ' + region.Z.F;
 	}
-	return 'on lines ' + region._.F + ' through ' + region.al.F;
+	return 'on lines ' + region.Z.F + ' through ' + region.al.F;
 }
 
 
@@ -2661,8 +2661,8 @@ var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
 		m: func(record.m),
-		aa: record.aa,
-		Z: record.Z
+		_: record._,
+		Y: record.Y
 	}
 });
 
@@ -2931,10 +2931,10 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 
 		var value = result.a;
 		var message = !tag ? value : tag < 3 ? value.a : value.m;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.aa;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value._;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.Z) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.Y) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3933,12 +3933,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.af);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.ae);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.ad) && (_VirtualDom_doc.title = title = doc.ad);
+				(title !== doc.ac) && (_VirtualDom_doc.title = title = doc.ac);
 			});
 		}
 	);
@@ -4185,10 +4185,10 @@ function _Browser_getViewport()
 	return {
 		aD: _Browser_getScene(),
 		aH: {
-			Q: _Browser_window.pageXOffset,
-			R: _Browser_window.pageYOffset,
+			P: _Browser_window.pageXOffset,
+			Q: _Browser_window.pageYOffset,
 			C: _Browser_doc.documentElement.clientWidth,
-			u: _Browser_doc.documentElement.clientHeight
+			v: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4199,7 +4199,7 @@ function _Browser_getScene()
 	var elem = _Browser_doc.documentElement;
 	return {
 		C: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		u: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		v: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4224,13 +4224,13 @@ function _Browser_getViewportOf(id)
 		return {
 			aD: {
 				C: node.scrollWidth,
-				u: node.scrollHeight
+				v: node.scrollHeight
 			},
 			aH: {
-				Q: node.scrollLeft,
-				R: node.scrollTop,
+				P: node.scrollLeft,
+				Q: node.scrollTop,
 				C: node.clientWidth,
-				u: node.clientHeight
+				v: node.clientHeight
 			}
 		};
 	});
@@ -4262,16 +4262,16 @@ function _Browser_getElement(id)
 		return {
 			aD: _Browser_getScene(),
 			aH: {
-				Q: x,
-				R: y,
+				P: x,
+				Q: y,
 				C: _Browser_doc.documentElement.clientWidth,
-				u: _Browser_doc.documentElement.clientHeight
+				v: _Browser_doc.documentElement.clientHeight
 			},
 			aO: {
-				Q: x + rect.left,
-				R: y + rect.top,
+				P: x + rect.left,
+				Q: y + rect.top,
 				C: rect.width,
-				u: rect.height
+				v: rect.height
 			}
 		};
 	});
@@ -5127,14 +5127,14 @@ var author$project$Story$HowJaraldandTenzinMet$Manifest$characters = _List_fromA
 		author$project$Story$Components$addInteractable(
 		A2(
 			author$project$Story$Components$addImage,
-			'img/giraffe.png?v=1',
+			'img/laz.png?v=1',
 			A2(
 				author$project$Story$Components$addName,
 				'Jarald the Giraffe',
 				author$project$Story$Components$entity('jarald')))),
 		A2(
 		author$project$Story$Components$addImage,
-		'img/panda.png?v=1',
+		'img/sparky.png?v=1',
 		A2(
 			author$project$Story$Components$addName,
 			'Tenzin the Panda',
@@ -5190,7 +5190,7 @@ var author$project$Story$HowJaraldandTenzinMet$Manifest$locations = _List_fromAr
 			'The Castle',
 			author$project$Story$Components$entity('castle')))
 	]);
-var author$project$Story$HowJaraldandTenzinMet$Narrative$startingNarrative = {aW: 'opening', aX: '', O: 'Once upon a time there was a peaceful forest...'};
+var author$project$Story$HowJaraldandTenzinMet$Narrative$startingNarrative = {aW: 'opening', aX: '', N: 'Once upon a time there was a peaceful forest...'};
 var author$project$Story$Components$Narrative = function (a) {
 	return {$: 4, a: a};
 };
@@ -5403,98 +5403,18 @@ var author$project$Story$HowJaraldandTenzinMet$Rules$startingState = _List_fromA
 		A2(jschomay$elm_narrative_engine$Engine$moveItemToLocation, 'rock', 'forest')
 	]);
 var author$project$Story$HowJaraldandTenzinMet$StoryInfo$storyInfo = {
-	ai: 'https://via.placeholder.com/150x200?text=How Jarald and Tenzin Met',
+	ah: 'img/laz_01_cover.png',
 	aT: _List_fromArray(
 		['img/giraffe.png?v=1', 'img/panda.png?v=1', 'img/forest.png?v=1', 'img/castle.png?v=1']),
-	aZ: {ah: author$project$Story$HowJaraldandTenzinMet$Manifest$characters, ap: author$project$Story$HowJaraldandTenzinMet$Manifest$items, ar: author$project$Story$HowJaraldandTenzinMet$Manifest$locations},
+	aZ: {ag: author$project$Story$HowJaraldandTenzinMet$Manifest$characters, ap: author$project$Story$HowJaraldandTenzinMet$Manifest$items, ar: author$project$Story$HowJaraldandTenzinMet$Manifest$locations},
 	a4: author$project$Story$HowJaraldandTenzinMet$Rules$rules,
 	a5: 'how-jarald-and-tenzin-met',
 	a6: author$project$Story$HowJaraldandTenzinMet$Narrative$startingNarrative,
 	a7: author$project$Story$HowJaraldandTenzinMet$Rules$startingState,
-	ad: 'How Jarald and Tenzin Met'
-};
-var author$project$Story$TheAdventuresOfLaz$Manifest$characters = _List_fromArray(
-	[
-		A2(
-		author$project$Story$Components$addNarrative,
-		'Default Laz Interaction',
-		A2(
-			author$project$Story$Components$addImage,
-			'img/laz.png?v=1',
-			A2(
-				author$project$Story$Components$addName,
-				'Lax the Cat',
-				author$project$Story$Components$entity('laz'))))
-	]);
-var author$project$Story$TheAdventuresOfLaz$Manifest$items = _List_fromArray(
-	[
-		author$project$Story$Components$entity('next')
-	]);
-var author$project$Story$TheAdventuresOfLaz$Manifest$locations = _List_fromArray(
-	[
-		A2(
-		author$project$Story$Components$addImage,
-		'img/forest.png?v=1',
-		A2(
-			author$project$Story$Components$addName,
-			'The Forest',
-			author$project$Story$Components$entity('forest')))
-	]);
-var author$project$Story$TheAdventuresOfLaz$Narrative$startingNarrative = {aW: 'opening', aX: '', O: 'There once was a cat.'};
-var author$project$Story$TheAdventuresOfLaz$Rules$rules = elm$core$Dict$fromList(
-	_List_fromArray(
-		[
-			A3(
-			author$project$Story$Components$createRule,
-			'entering the forest',
-			{
-				aL: _List_fromArray(
-					[
-						A2(jschomay$elm_narrative_engine$Engine$moveCharacterToLocation, 'laz', 'forest')
-					]),
-				aM: _List_fromArray(
-					[
-						jschomay$elm_narrative_engine$Engine$currentLocationIs('forest'),
-						A2(jschomay$elm_narrative_engine$Engine$characterIsNotInLocation, 'laz', 'forest')
-					]),
-				aY: jschomay$elm_narrative_engine$Engine$with('next')
-			},
-			author$project$Story$HowJaraldandTenzinMet$Narrative$jaraldHearsASounds),
-			A3(
-			author$project$Story$Components$createRule,
-			'TheEnd',
-			{
-				aL: _List_fromArray(
-					[
-						jschomay$elm_narrative_engine$Engine$moveItemOffScreen('next')
-					]),
-				aM: _List_fromArray(
-					[
-						jschomay$elm_narrative_engine$Engine$currentLocationIs('forest'),
-						A2(jschomay$elm_narrative_engine$Engine$characterIsInLocation, 'laz', 'forest')
-					]),
-				aY: jschomay$elm_narrative_engine$Engine$with('next')
-			},
-			author$project$Story$HowJaraldandTenzinMet$Narrative$theEnd)
-		]));
-var author$project$Story$TheAdventuresOfLaz$Rules$startingState = _List_fromArray(
-	[
-		jschomay$elm_narrative_engine$Engine$moveTo('forest'),
-		A2(jschomay$elm_narrative_engine$Engine$moveItemToLocation, 'next', 'forest')
-	]);
-var author$project$Story$TheAdventuresOfLaz$StoryInfo$storyInfo = {
-	ai: 'https://via.placeholder.com/150x200?text=The Adventures of Laz The Cat',
-	aT: _List_fromArray(
-		['img/laz.png?v=1', 'img/forest.png?v=1']),
-	aZ: {ah: author$project$Story$TheAdventuresOfLaz$Manifest$characters, ap: author$project$Story$TheAdventuresOfLaz$Manifest$items, ar: author$project$Story$TheAdventuresOfLaz$Manifest$locations},
-	a4: author$project$Story$TheAdventuresOfLaz$Rules$rules,
-	a5: 'the-adventures-of-laz-the-cat',
-	a6: author$project$Story$TheAdventuresOfLaz$Narrative$startingNarrative,
-	a7: author$project$Story$TheAdventuresOfLaz$Rules$startingState,
-	ad: 'The Adventures Of Laz The Cat'
+	ac: 'How Jarald and Tenzin Met'
 };
 var author$project$Story$AllStories$allStories = _List_fromArray(
-	[author$project$Story$HowJaraldandTenzinMet$StoryInfo$storyInfo, author$project$Story$TheAdventuresOfLaz$StoryInfo$storyInfo]);
+	[author$project$Story$HowJaraldandTenzinMet$StoryInfo$storyInfo]);
 var elm$core$List$foldrHelper = F4(
 	function (fn, acc, ctr, ls) {
 		if (!ls.b) {
@@ -5568,15 +5488,15 @@ var author$project$Page$Home$init = function () {
 	var loadImagesMsg = author$project$Port$PreloadImages(
 		A2(
 			elm$core$List$cons,
-			'img/home-background.png?v=1',
+			'img/logo.png',
 			A2(
 				elm$core$List$map,
 				function ($) {
-					return $.ai;
+					return $.ah;
 				},
 				author$project$Story$AllStories$allStories)));
 	return _Utils_Tuple2(
-		{ab: author$project$Story$AllStories$allStories},
+		{aa: author$project$Story$AllStories$allStories},
 		author$project$Port$toJavaScript(
 			author$project$Port$encode(loadImagesMsg)));
 }();
@@ -6209,18 +6129,18 @@ var jschomay$elm_narrative_engine$Engine$changeWorld = F2(
 						var location = change.a;
 						return _Utils_update(
 							story_,
-							{M: location});
+							{ai: location});
 					case 9:
 						var sceneName = change.a;
 						return _Utils_update(
 							story_,
-							{U: sceneName});
+							{T: sceneName});
 					case 10:
 						var ending = change.a;
 						return _Utils_update(
 							story_,
 							{
-								ac: elm$core$Maybe$Just(ending)
+								ab: elm$core$Maybe$Just(ending)
 							});
 					default:
 						return _Utils_update(
@@ -6238,7 +6158,7 @@ var jschomay$elm_narrative_engine$Engine$Manifest$location = jschomay$elm_narrat
 var jschomay$elm_narrative_engine$Engine$Manifest$init = function (_n0) {
 	var items = _n0.ap;
 	var locations = _n0.ar;
-	var characters = _n0.ah;
+	var characters = _n0.ag;
 	var insertFn = F3(
 		function (interactableConstructor, id, acc) {
 			return A3(elm$core$Dict$insert, id, interactableConstructor, acc);
@@ -6264,12 +6184,12 @@ var jschomay$elm_narrative_engine$Engine$Manifest$init = function (_n0) {
 var jschomay$elm_narrative_engine$Engine$init = F2(
 	function (manifest, rules) {
 		return {
-			M: '',
-			U: '',
+			ai: '',
+			T: '',
 			e: _List_Nil,
 			aZ: jschomay$elm_narrative_engine$Engine$Manifest$init(manifest),
 			a4: rules,
-			ac: elm$core$Maybe$Nothing
+			ab: elm$core$Maybe$Nothing
 		};
 	});
 var author$project$Page$Story$init = function (story) {
@@ -6283,7 +6203,7 @@ var author$project$Page$Story$init = function (story) {
 		A2(
 			jschomay$elm_narrative_engine$Engine$init,
 			{
-				ah: A2(elm$core$List$map, elm$core$Tuple$first, manifest.ah),
+				ag: A2(elm$core$List$map, elm$core$Tuple$first, manifest.ag),
 				ap: A2(elm$core$List$map, elm$core$Tuple$first, manifest.ap),
 				ar: A2(elm$core$List$map, elm$core$Tuple$first, manifest.ar)
 			},
@@ -6291,8 +6211,8 @@ var author$project$Page$Story$init = function (story) {
 	return _Utils_Tuple2(
 		{
 			l: engineModel,
-			X: A2(elm$core$Dict$map, author$project$Story$Components$getNarrative, rules),
-			A: story,
+			W: A2(elm$core$Dict$map, author$project$Story$Components$getNarrative, rules),
+			s: story,
 			h: _List_fromArray(
 				[
 					author$project$Story$getStartingNarrative(story)
@@ -6308,7 +6228,7 @@ var author$project$Main$changeRouteTo = F2(
 				author$project$Main$updateModelWith,
 				_Utils_update(
 					model,
-					{v: true}),
+					{w: true}),
 				A3(author$project$Main$updatePageWith, author$project$Main$NotFound, author$project$Main$GotNotFoundMsg, author$project$Page$NotFound$init));
 		} else {
 			if (!maybeRoute.a.$) {
@@ -6338,11 +6258,11 @@ var author$project$Story$Story = elm$core$Basics$identity;
 var elm$url$Url$Parser$Parser = elm$core$Basics$identity;
 var elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
-		return {p: frag, r: params, o: unvisited, j: value, s: visited};
+		return {p: frag, r: params, o: unvisited, j: value, t: visited};
 	});
 var elm$url$Url$Parser$mapState = F2(
 	function (func, _n0) {
-		var visited = _n0.s;
+		var visited = _n0.t;
 		var unvisited = _n0.o;
 		var params = _n0.r;
 		var frag = _n0.p;
@@ -6359,7 +6279,7 @@ var elm$url$Url$Parser$map = F2(
 	function (subValue, _n0) {
 		var parseArg = _n0;
 		return function (_n1) {
-			var visited = _n1.s;
+			var visited = _n1.t;
 			var unvisited = _n1.o;
 			var params = _n1.r;
 			var frag = _n1.p;
@@ -6400,7 +6320,7 @@ var elm$url$Url$Parser$oneOf = function (parsers) {
 };
 var elm$url$Url$Parser$s = function (str) {
 	return function (_n0) {
-		var visited = _n0.s;
+		var visited = _n0.t;
 		var unvisited = _n0.o;
 		var params = _n0.r;
 		var frag = _n0.p;
@@ -6584,11 +6504,11 @@ var author$project$Main$init = F3(
 			author$project$Main$changeRouteTo,
 			author$project$Route$fromUrl(url),
 			{
-				v: false,
-				w: navKey,
+				w: false,
+				x: navKey,
 				G: author$project$Main$NotFound(
 					{}),
-				P: false
+				O: false
 			});
 	});
 var author$project$Main$GotSubscription = function (a) {
@@ -6891,7 +6811,7 @@ var author$project$Story$Components$findEntity = F2(
 						elm$core$Basics$eq(id)),
 					_Utils_ap(
 						manifest.ap,
-						_Utils_ap(manifest.ar, manifest.ah)))));
+						_Utils_ap(manifest.ar, manifest.ag)))));
 	});
 var author$project$Story$Components$getClassName = function (_n0) {
 	var id = _n0.a;
@@ -7112,8 +7032,8 @@ var jschomay$elm_narrative_engine$Engine$Manifest$itemIsInLocation = F3(
 var jschomay$elm_narrative_engine$Engine$Rules$matchesCondition = F2(
 	function (_n0, condition) {
 		var history = _n0.e;
-		var currentLocation = _n0.M;
-		var currentScene = _n0.U;
+		var currentLocation = _n0.ai;
+		var currentScene = _n0.T;
 		var manifest = _n0.aZ;
 		switch (condition.$) {
 			case 0:
@@ -7184,8 +7104,8 @@ var jschomay$elm_narrative_engine$Engine$Rules$matchesInteraction = F3(
 	});
 var jschomay$elm_narrative_engine$Engine$Rules$matchesRule = F3(
 	function (story, interaction, rule) {
-		var currentLocation = story.M;
-		var currentScene = story.U;
+		var currentLocation = story.ai;
+		var currentScene = story.T;
 		var manifest = story.aZ;
 		var history = story.e;
 		return A3(jschomay$elm_narrative_engine$Engine$Rules$matchesInteraction, manifest, rule.aY, interaction) && A2(
@@ -7291,7 +7211,7 @@ var author$project$Page$Story$update = F3(
 		switch (msg.$) {
 			case 0:
 				var interactableId = msg.a;
-				var manifest = author$project$Story$getManifest(model.A);
+				var manifest = author$project$Story$getManifest(model.s);
 				var _n1 = A2(jschomay$elm_narrative_engine$Engine$update, interactableId, model.l);
 				var newEngineModel = _n1.a;
 				var maybeMatchedRuleId = _n1.b;
@@ -7311,7 +7231,7 @@ var author$project$Page$Story$update = F3(
 						A2(author$project$Story$Components$findEntity, manifest, interactableId)),
 					aX: author$project$Story$Components$getName(
 						A2(author$project$Story$Components$findEntity, manifest, interactableId)),
-					O: A2(
+					N: A2(
 						elm$core$Maybe$withDefault,
 						A2(
 							elm$core$Maybe$withDefault,
@@ -7319,13 +7239,13 @@ var author$project$Page$Story$update = F3(
 							A2(
 								elm$core$Maybe$map,
 								function ($) {
-									return $.O;
+									return $.N;
 								},
 								elm$core$List$head(model.h))),
 						A2(
 							elm$core$Maybe$andThen,
 							function (id) {
-								return A2(elm$core$Dict$get, id, model.X);
+								return A2(elm$core$Dict$get, id, model.W);
 							},
 							maybeMatchedRuleId))
 				};
@@ -7340,7 +7260,7 @@ var author$project$Page$Story$update = F3(
 						author$project$Port$encode(
 							author$project$Port$Speak(''))));
 			case 1:
-				return author$project$Page$Story$init(model.A);
+				return author$project$Page$Story$init(model.s);
 			case 2:
 				return _Utils_Tuple2(
 					model,
@@ -7359,7 +7279,7 @@ var author$project$Page$Story$update = F3(
 					A2(
 						elm$core$Maybe$map,
 						function ($) {
-							return $.O;
+							return $.N;
 						},
 						elm$core$List$head(model.h)));
 				return _Utils_Tuple2(
@@ -7469,7 +7389,7 @@ var author$project$Main$update = F2(
 								model,
 								A2(
 									elm$browser$Browser$Navigation$pushUrl,
-									model.w,
+									model.x,
 									elm$url$Url$toString(url)));
 						}
 					} else {
@@ -7495,7 +7415,7 @@ var author$project$Main$update = F2(
 								author$project$Main$updatePageWith,
 								author$project$Main$NotFound,
 								author$project$Main$GotNotFoundMsg,
-								A3(author$project$Page$NotFound$update, model.w, subMsg, notFoundModel)));
+								A3(author$project$Page$NotFound$update, model.x, subMsg, notFoundModel)));
 					} else {
 						break _n0$7;
 					}
@@ -7510,7 +7430,7 @@ var author$project$Main$update = F2(
 								author$project$Main$updatePageWith,
 								author$project$Main$Home,
 								author$project$Main$GotHomeMsg,
-								A3(author$project$Page$Home$update, model.w, subMsg, homeModel)));
+								A3(author$project$Page$Home$update, model.x, subMsg, homeModel)));
 					} else {
 						break _n0$7;
 					}
@@ -7525,7 +7445,7 @@ var author$project$Main$update = F2(
 								author$project$Main$updatePageWith,
 								author$project$Main$Story,
 								author$project$Main$GotStoryMsg,
-								A3(author$project$Page$Story$update, model.w, subMsg, storyModel)));
+								A3(author$project$Page$Story$update, model.x, subMsg, storyModel)));
 					} else {
 						break _n0$7;
 					}
@@ -7538,13 +7458,13 @@ var author$project$Main$update = F2(
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{v: true}),
+									{w: true}),
 								elm$core$Platform$Cmd$none);
 						} else {
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{P: true}),
+									{O: true}),
 								elm$core$Platform$Cmd$none);
 						}
 					} else {
@@ -7556,9 +7476,11 @@ var author$project$Main$update = F2(
 		}
 		return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 	});
-var author$project$Page$Home$SelectedStory = elm$core$Basics$identity;
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$img = _VirtualDom_node('img');
+var elm$html$Html$p = _VirtualDom_node('p');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -7574,6 +7496,54 @@ var elm$html$Html$Attributes$src = function (url) {
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
+var author$project$Page$Home$viewHeader = A2(
+	elm$html$Html$div,
+	_List_fromArray(
+		[
+			elm$html$Html$Attributes$class('row')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('one column')
+				]),
+			_List_Nil),
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('ten columns header clearfix')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$img,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$src('img/logo.png'),
+							elm$html$Html$Attributes$alt('logo')
+						]),
+					_List_Nil),
+					A2(
+					elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('Stories By Iot')
+						]))
+				])),
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('one column stories')
+				]),
+			_List_Nil)
+		]));
+var author$project$Page$Home$SelectedStory = elm$core$Basics$identity;
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 0, a: a};
 };
@@ -7596,8 +7566,7 @@ var author$project$Page$Home$viewStory = function (storyInfo) {
 		elm$html$Html$div,
 		_List_fromArray(
 			[
-				elm$html$Html$Attributes$class('story__item'),
-				elm$html$Html$Events$onClick(storyInfo.a5)
+				elm$html$Html$Attributes$class('one-half column story')
 			]),
 		_List_fromArray(
 			[
@@ -7605,8 +7574,9 @@ var author$project$Page$Home$viewStory = function (storyInfo) {
 				elm$html$Html$img,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$src(storyInfo.ai),
-						elm$html$Html$Attributes$alt(storyInfo.ad)
+						elm$html$Html$Attributes$src(storyInfo.ah),
+						elm$html$Html$Attributes$alt(storyInfo.ac),
+						elm$html$Html$Events$onClick(storyInfo.a5)
 					]),
 				_List_Nil)
 			]));
@@ -7625,18 +7595,26 @@ var author$project$Page$Home$view = function (model) {
 					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$class('story__list')
+							elm$html$Html$Attributes$class('container')
 						]),
-					A2(elm$core$List$map, author$project$Page$Home$viewStory, model.ab))
+					_List_fromArray(
+						[
+							author$project$Page$Home$viewHeader,
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('row')
+								]),
+							A2(elm$core$List$map, author$project$Page$Home$viewStory, model.aa))
+						]))
 				])),
-		ad: 'Story Telling'
+		ac: 'Stories By Iot'
 	};
 };
 var author$project$Page$NotFound$GoHome = 0;
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var author$project$Page$NotFound$view = function (model) {
 	return {
 		aN: A2(
@@ -7662,8 +7640,12 @@ var author$project$Page$NotFound$view = function (model) {
 							elm$html$Html$text('not found')
 						]))
 				])),
-		ad: 'Not Found'
+		ac: 'Not Found'
 	};
+};
+var author$project$Story$getTitle = function (story) {
+	var title = story.ac;
+	return title;
 };
 var author$project$Story$Components$getConnectingLocations = function (_n0) {
 	var id = _n0.a;
@@ -7678,47 +7660,46 @@ var author$project$Story$Components$getConnectingLocations = function (_n0) {
 };
 var jschomay$elm_narrative_engine$Engine$getCharactersInCurrentLocation = function (_n0) {
 	var story = _n0;
-	return A2(jschomay$elm_narrative_engine$Engine$Manifest$getCharactersInLocation, story.M, story.aZ);
+	return A2(jschomay$elm_narrative_engine$Engine$Manifest$getCharactersInLocation, story.ai, story.aZ);
 };
 var jschomay$elm_narrative_engine$Engine$getCurrentLocation = function (_n0) {
 	var story = _n0;
-	return story.M;
+	return story.ai;
 };
 var jschomay$elm_narrative_engine$Engine$getEnding = function (_n0) {
 	var story = _n0;
-	return story.ac;
+	return story.ab;
 };
 var jschomay$elm_narrative_engine$Engine$getItemsInCurrentLocation = function (_n0) {
 	var story = _n0;
-	return A2(jschomay$elm_narrative_engine$Engine$Manifest$getItemsInLocation, story.M, story.aZ);
+	return A2(jschomay$elm_narrative_engine$Engine$Manifest$getItemsInLocation, story.ai, story.aZ);
 };
 var author$project$Page$Story$getDisplayState = function (model) {
-	var manifest = author$project$Story$getManifest(model.A);
+	var manifest = author$project$Story$getManifest(model.s);
 	var currentLocation = A2(
 		author$project$Story$Components$findEntity,
 		manifest,
 		jschomay$elm_narrative_engine$Engine$getCurrentLocation(model.l));
 	return {
-		S: A2(
+		R: A2(
 			elm$core$List$map,
 			author$project$Story$Components$findEntity(manifest),
 			jschomay$elm_narrative_engine$Engine$getCharactersInCurrentLocation(model.l)),
-		T: A2(
+		S: A2(
 			elm$core$List$map,
 			author$project$Story$Components$findEntity(manifest),
 			author$project$Story$Components$getConnectingLocations(currentLocation)),
-		M: currentLocation,
-		N: jschomay$elm_narrative_engine$Engine$getEnding(model.l),
-		V: A2(
+		ai: currentLocation,
+		M: jschomay$elm_narrative_engine$Engine$getEnding(model.l),
+		U: A2(
 			elm$core$List$map,
 			author$project$Story$Components$findEntity(manifest),
 			jschomay$elm_narrative_engine$Engine$getItemsInCurrentLocation(model.l)),
-		h: model.h
+		h: model.h,
+		ac: author$project$Story$getTitle(model.s)
 	};
 };
-var author$project$Page$Story$GoHome = {$: 2};
 var author$project$Page$Story$Restart = {$: 1};
-var author$project$Page$Story$Speak = {$: 3};
 var author$project$Page$Story$Interact = function (a) {
 	return {$: 0, a: a};
 };
@@ -7807,6 +7788,70 @@ var author$project$Page$Story$viewConnectingLocations = function (locations) {
 			]),
 		A2(elm$core$List$map, viewLocation, locations));
 };
+var author$project$Page$Story$GoHome = {$: 2};
+var author$project$Page$Story$Speak = {$: 3};
+var elm$html$Html$i = _VirtualDom_node('i');
+var author$project$Page$Story$viewIcons = function (voiceLoaded) {
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('clearfix')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('story__icon story__icon--home')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$button,
+						_List_fromArray(
+							[
+								elm$html$Html$Events$onClick(author$project$Page$Story$GoHome)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$i,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('icon-home')
+									]),
+								_List_Nil)
+							]))
+					])),
+				voiceLoaded ? A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('story__icon story__icon--speak')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$button,
+						_List_fromArray(
+							[
+								elm$html$Html$Events$onClick(author$project$Page$Story$Speak)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$i,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('icon-volume-up')
+									]),
+								_List_Nil)
+							]))
+					])) : elm$html$Html$text('')
+			]));
+};
 var author$project$Story$Components$getActionTextOrName = function (_n0) {
 	var id = _n0.a;
 	var components = _n0.b;
@@ -7866,7 +7911,7 @@ var author$project$Page$Story$viewStoryLine = F2(
 					function () {
 					var _n0 = elm$core$List$head(storyLine);
 					if (!_n0.$) {
-						var narrative = _n0.a.O;
+						var narrative = _n0.a.N;
 						return A2(
 							elm$html$Html$section,
 							_List_Nil,
@@ -7897,90 +7942,86 @@ var author$project$Page$Story$viewStoryLine = F2(
 						])) : elm$html$Html$text('')
 				]));
 	});
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
+var elm$html$Html$h2 = _VirtualDom_node('h2');
+var author$project$Page$Story$viewTitle = function (title) {
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('row story__title')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$h2,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text(title)
+					]))
+			]));
+};
 var author$project$Page$Story$viewLayout = F2(
 	function (voiceLoaded, displayState) {
 		return A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class(
-					'Location Location--' + author$project$Story$Components$getClassName(displayState.M)),
-					A2(
-					elm$html$Html$Attributes$style,
-					'background-image',
-					'url(' + (A2(
-						elm$core$Maybe$withDefault,
-						'',
-						author$project$Story$Components$getImage(displayState.M)) + ')'))
+					elm$html$Html$Attributes$class('page page__story')
 				]),
 			_List_fromArray(
 				[
 					A2(
-					elm$html$Html$button,
-					_List_fromArray(
-						[
-							elm$html$Html$Events$onClick(author$project$Page$Story$GoHome)
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Go Home')
-						])),
-					voiceLoaded ? A2(
-					elm$html$Html$button,
-					_List_fromArray(
-						[
-							elm$html$Html$Events$onClick(author$project$Page$Story$Speak)
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Speak')
-						])) : elm$html$Html$text(''),
-					A2(
 					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$class('Layout')
+							elm$html$Html$Attributes$class('container')
 						]),
 					_List_fromArray(
 						[
-							author$project$Page$Story$viewCharacters(displayState.S),
+							author$project$Page$Story$viewTitle(displayState.ac),
+							author$project$Page$Story$viewIcons(voiceLoaded),
 							A2(
 							elm$html$Html$div,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$class('Layout__Main')
+									elm$html$Html$Attributes$class('row')
 								]),
 							_List_fromArray(
 								[
-									A2(author$project$Page$Story$viewStoryLine, displayState.h, displayState.N),
+									author$project$Page$Story$viewCharacters(displayState.R),
 									A2(
 									elm$html$Html$div,
-									_List_Nil,
-									(!_Utils_eq(displayState.N, elm$core$Maybe$Nothing)) ? _List_fromArray(
+									_List_fromArray(
 										[
+											elm$html$Html$Attributes$class('Layout__Main')
+										]),
+									_List_fromArray(
+										[
+											A2(author$project$Page$Story$viewStoryLine, displayState.h, displayState.M),
 											A2(
-											elm$html$Html$button,
-											_List_fromArray(
+											elm$html$Html$div,
+											_List_Nil,
+											(!_Utils_eq(displayState.M, elm$core$Maybe$Nothing)) ? _List_fromArray(
 												[
-													elm$html$Html$Attributes$class('StoryRestart'),
-													elm$html$Html$Events$onClick(author$project$Page$Story$Restart)
-												]),
-											_List_fromArray(
-												[
-													elm$html$Html$text('Restart')
-												]))
-										]) : A2(elm$core$List$map, author$project$Page$Story$viewItem, displayState.V))
-								])),
-							author$project$Page$Story$viewConnectingLocations(displayState.T)
+													A2(
+													elm$html$Html$button,
+													_List_fromArray(
+														[
+															elm$html$Html$Attributes$class('StoryRestart'),
+															elm$html$Html$Events$onClick(author$project$Page$Story$Restart)
+														]),
+													_List_fromArray(
+														[
+															elm$html$Html$text('Restart')
+														]))
+												]) : A2(elm$core$List$map, author$project$Page$Story$viewItem, displayState.U))
+										])),
+									author$project$Page$Story$viewConnectingLocations(displayState.S)
+								]))
 						]))
 				]));
 	});
-var author$project$Story$getTitle = function (story) {
-	var title = story.ad;
-	return title;
-};
 var author$project$Page$Story$view = F2(
 	function (voiceLoaded, model) {
 		return {
@@ -7988,36 +8029,89 @@ var author$project$Page$Story$view = F2(
 				author$project$Page$Story$viewLayout,
 				voiceLoaded,
 				author$project$Page$Story$getDisplayState(model)),
-			ad: author$project$Story$getTitle(model.A)
+			ac: author$project$Story$getTitle(model.s)
 		};
 	});
+var elm$html$Html$a = _VirtualDom_node('a');
 var elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var elm$html$Html$map = elm$virtual_dom$VirtualDom$map;
+var elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
 var author$project$Main$view = function (model) {
 	var viewPage = F2(
 		function (_n1, toMsg) {
-			var title = _n1.ad;
+			var title = _n1.ac;
 			var content = _n1.aN;
 			return {
-				af: _List_fromArray(
+				ae: _List_fromArray(
 					[
 						A2(elm$html$Html$map, toMsg, content)
 					]),
-				ad: title
+				ac: title
 			};
 		});
 	var viewLoading = {
-		af: _List_fromArray(
+		ae: _List_fromArray(
 			[
 				A2(
 				elm$html$Html$div,
-				_List_Nil,
 				_List_fromArray(
 					[
-						elm$html$Html$text('Loading')
+						elm$html$Html$Attributes$class('page page__loading')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('container')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('loading__icon columns')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$img,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$src('img/loading.gif')
+											]),
+										_List_Nil)
+									]))
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('attribution')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$a,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$href('https://loading.io/')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('spinner by loading.io')
+									]))
+							]))
 					]))
 			]),
-		ad: 'Stories By Iot'
+		ac: 'Stories By Iot'
 	};
 	var _n0 = model.G;
 	switch (_n0.$) {
@@ -8029,15 +8123,15 @@ var author$project$Main$view = function (model) {
 				author$project$Main$GotNotFoundMsg);
 		case 1:
 			var homeModel = _n0.a;
-			return model.v ? A2(
+			return model.w ? A2(
 				viewPage,
 				author$project$Page$Home$view(homeModel),
 				author$project$Main$GotHomeMsg) : viewLoading;
 		default:
 			var storyModel = _n0.a;
-			return model.v ? A2(
+			return model.w ? A2(
 				viewPage,
-				A2(author$project$Page$Story$view, model.P, storyModel),
+				A2(author$project$Page$Story$view, model.O, storyModel),
 				author$project$Main$GotStoryMsg) : viewLoading;
 	}
 };
