@@ -69,6 +69,63 @@ img {
   clear: both;
 }
 
+/** PAGE **/
+
+.page .header {
+  margin-top: 1.25em;
+  padding: 0.2em;
+  text-align: right;
+}
+
+.page .header img {
+  float: left;
+  width: 25%;
+}
+.page .header p {
+  padding-top: 1.5em;
+  margin: 0;
+  padding-right: 1em;
+  font-size: 1.5em;
+}
+.page .header h1 {
+  display: inline;
+}
+
+.page .story__icon button {
+  background: transparent;
+  width: 50px !important;
+  height: 50px;
+  width: 100%;
+  margin: 1em;
+  border: 2px solid #5aa6e9;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+}
+.page .story__icon i {
+  font-size: 3em;
+  color: #5aa6e9;
+  margin-top: -4px !important;
+  display: block;
+  cursor: pointer;
+}
+.page .story__icon--home {
+  float: left;
+}
+.page .story__icon--speak {
+  float: right;
+}
+
+.page .highlight__primary {
+  color: #075725;
+}
+
+.page .highlight__secondary {
+  color: #5aa6e9;
+}
+
+.page .highlight__tertiary {
+  color: #d90808;
+}
+
 /** LOADING **/
 
 .page__loading {
@@ -84,25 +141,6 @@ img {
 }
 
 /** HOME **/
-.page__home .header {
-  margin-top: 1.25em;
-  padding: 0.2em;
-  text-align: right;
-}
-
-.page__home .header img {
-  float: left;
-  width: 25%;
-}
-.page__home .header p {
-  padding-top: 1.5em;
-  margin: 0;
-  padding-right: 1em;
-  font-size: 1.5em;
-}
-.page__home .header h1 {
-  display: inline;
-}
 .page__home .stories {
   padding-top: 1em;
 }
@@ -126,29 +164,6 @@ img {
 .page__story .story__title h2 {
   margin: 0;
   padding: 0;
-}
-
-.page__story .story__icon button {
-  background: transparent;
-  width: 50px !important;
-  height: 50px;
-  width: 100%;
-  margin: 1em;
-  border: 2px solid #5aa6e9;
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-}
-.page__story .story__icon i {
-  font-size: 3em;
-  color: #5aa6e9;
-  margin-top: -4px !important;
-  display: block;
-  cursor: pointer;
-}
-.page__story .story__icon--home {
-  float: left;
-}
-.page__story .story__icon--speak {
-  float: right;
 }
 
 .page__story .story__wrapper {
@@ -213,14 +228,18 @@ img {
 }
 
 
-.page .highlight__primary {
-  color: #075725;
+/** NOT FOUND **/
+.page_notFound .notFound__message {
+  text-align: center;
+  margin-top: .5em;
 }
 
-.page .highlight__secondary {
-  color: #5aa6e9;
-}
-
-.page .highlight__tertiary {
+.page_notFound .notFound__message i {
+  font-size: 4.5em;
+  margin: .5em;
   color: #d90808;
+}
+
+.page_notFound .notFound__message p {
+  font-size: 1.5em
 }

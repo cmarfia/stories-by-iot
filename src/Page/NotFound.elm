@@ -27,9 +27,27 @@ view : Model -> { title : String, content : Html Msg }
 view model =
     { title = "Stories By Iot > Not Found"
     , content =
-        div []
-            [ button [ onClick GoHome ] [ text "Go Home" ]
-            , h1 [] [ text "not found" ]
+        div [ class "page page_notFound" ]
+            [ div [ class "Container" ]
+                [ div [ class "row" ]
+                    [ div [ class "one column" ] []
+                    , div [ class "ten columns header clearfix" ]
+                        [ img [ src "img/logo.png", alt "logo" ] []
+                        , p [] [ text "Stories By Iot" ]
+                        ]
+                    , div [ class "one column stories" ] []
+                    ]
+                , div [ class "clearfix" ]
+                    [ div [ class "story__icon story__icon--home" ]
+                        [ button [ onClick GoHome ] [ i [ class "icon-home" ] [] ]
+                        ]
+                    ]
+                , div [ class "row notFound__message" ]
+                    [ i [ class "icon-frown-o" ] []
+                    , p [] [ text "Ope!" ]
+                    , p [] [ text "Looks like nothing is here..." ]
+                    ]
+                ]
             ]
     }
 
