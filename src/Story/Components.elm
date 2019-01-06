@@ -56,7 +56,6 @@ type alias StoryInfo =
 
 type alias Snippet =
     { interactableName : String
-    , interactableCssSelector : String
     , narrative : String
     }
 

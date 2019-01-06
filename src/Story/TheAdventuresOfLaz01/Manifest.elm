@@ -11,34 +11,60 @@ import Story.Components exposing (..)
 
 items : List Entity
 items =
-    [ entity "next"
+    [ entity "continue"
         |> addActionText "Continue"
-    , entity "rock"
-        |> addActionText "Grab The Rock"
+    , entity "meanwhile"
+        |> addActionText "Meanwhile"
+    , entity "log"
+        |> addActionText "Climb over log"
+    , entity "stairs"
+        |> addActionText "Take the stairs"
     ]
 
 
 characters : List Entity
 characters =
-    [ entity "jarald"
-        |> addName "Jarald the Giraffe"
+    [ entity "laz"
+        |> addName "Laz"
         |> addImage "img/laz.png?v=1"
-        |> addInteractable
-        |> addActionText "Speak with Jarald"
-    , entity "tenzin"
-        |> addName "Tenzin the Panda"
+
+    --|> addInteractable
+    --|> addActionText "Speak with Laz"
+    , entity "sparky"
+        |> addName "Sparky"
         |> addImage "img/sparky.png?v=1"
+        |> addInteractable
+        |> addActionText "Speak with Sparky"
     ]
 
 
 locations : List Entity
 locations =
-    [ entity "forest"
-        |> addName "The Forest"
-        |> addConnectingLocations [ "castle" ]
+    [ entity "plains"
+        |> addName "The Plains"
+        --|> addConnectingLocations [ "forest" ]
+        |> addImage "img/plains.png?v=1"
+    , entity "forest-start"
+        |> addName "The Deep Forest"
         |> addImage "img/forest.png?v=1"
-    , entity "castle"
-        |> addName "The Castle"
-        |> addImage "img/castle.png?v=1"
-        |> addActionText "Enter the Castle"
+        |> addActionText "Enter the Deep Forest"
+    , entity "forest-end"
+        |> addName "The Deep Forest"
+        |> addImage "img/forest.png?v=1"
+        |> addConnectingLocations [ "lighthouse" ]
+    , entity "village"
+        |> addName "The Village of Light"
+        |> addImage "img/village.png?v=1"
+        |> addConnectingLocations [ "forest" ]
+    , entity "lighthouse"
+        |> addName "The Lighthouse"
+        |> addImage "img/lighthouse.png"
+        |> addActionText "Enter the Lighthouse"
+    , entity "lighthouse-outside"
+        |> addName "The Lighthouse"
+        |> addImage "img/lighthouse.png"
+        |> addConnectingLocations [ "bridge" ]
+    , entity "bridge"
+        |> addName "The Bridge"
+        |> addImage "img/bridge.png?v=1"
     ]

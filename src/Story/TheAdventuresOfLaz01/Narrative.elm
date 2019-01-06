@@ -1,4 +1,4 @@
-module Story.TheAdventuresOfLaz01.Narrative exposing (entersClearing, jaraldHearsASounds, startingNarrative, tenzinIntro, theEnd, throughTheClearing)
+module Story.TheAdventuresOfLaz01.Narrative exposing (lazEntersThePlains, startingNarrative, theEnd)
 
 {-| The text that will show when the story first starts, before the player interacts with anythin.
 -}
@@ -10,53 +10,20 @@ module Story.TheAdventuresOfLaz01.Narrative exposing (entersClearing, jaraldHear
 -}
 
 
-startingNarrative : { interactableName : String, interactableCssSelector : String, narrative : String }
+startingNarrative : { interactableName : String, narrative : String }
 startingNarrative =
     { interactableName = ""
-    , interactableCssSelector = "opening"
-    , narrative = """Once upon a time there was a peaceful forest..."""
+    , narrative = """Our journey begins in the grassy plains close to the base of a tall mountain.
+
+The grass is the greenest green that you have ever seen. There is a rocky dirt road that splits the grass in two."""
     }
 
 
-jaraldHearsASounds : String
-jaraldHearsASounds =
-    """A giraffe named <span class="highlight__primary">Jarald</span> was walking through that forest on his way to a mightly castle.
+lazEntersThePlains : String
+lazEntersThePlains =
+    """A traveler enters the plains from a far away land. The travelers name was <span class="highlight__primary">Laz the Cat</span>.
 
-# THis is a heading
-
-## Sub heading
-
-- A
-- B 
-- C
-
-Just when everything seems calm Jarald heard a noise. <span class="highlight__primary">"What was that"</span> cried <span class="highlight__primary">Jarald</span>."""
-
-
-tenzinIntro : String
-tenzinIntro =
-    """ "It's only me!" said tenzin. 
-
-"Why are you always so scared?"
-"""
-
-
-throughTheClearing : String
-throughTheClearing =
-    """ "Don't scare me like that Tenzin" said jarald. 
-
-He look we are almost there.
-"""
-
-
-entersClearing : String
-entersClearing =
-    """ "Wow" they both said.
-
-<span class="highlight__primary">"Should we go inside?"</span> ask Tenzin with much excitement.
-
-<span class="highlight__secondary">"Last one there cooks dinner"</span> Jarald yelled as he took a head start.
-"""
+He was on an endless journey searching for the fabled Castle of Light."""
 
 
 theEnd : String

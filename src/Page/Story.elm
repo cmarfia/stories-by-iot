@@ -66,7 +66,7 @@ type alias DisplayState =
     , charactersInCurrentLocation : List Entity
     , connectingLocations : List Entity
     , ending : Maybe String
-    , storyLine : List { interactableName : String, interactableCssSelector : String, narrative : String }
+    , storyLine : List { interactableName : String, narrative : String }
     }
 
 
@@ -263,7 +263,6 @@ update navKey msg model =
 
                 narrativeForThisInteraction =
                     { interactableName = findEntity manifest interactableId |> getName
-                    , interactableCssSelector = findEntity manifest interactableId |> getClassName
                     , narrative =
                         maybeMatchedRuleId
                             |> Maybe.andThen (\id -> Dict.get id model.narrativeContent)
