@@ -28,7 +28,7 @@ view model =
     { title = "Stories By Iot > Not Found"
     , content =
         div [ class "page page_notFound clearfix" ]
-            [ div [ class "Container" ]
+            [ div [ class "container" ]
                 [ div [ class "row" ]
                     [ div [ class "one column" ] []
                     , div [ class "ten columns header clearfix" ]
