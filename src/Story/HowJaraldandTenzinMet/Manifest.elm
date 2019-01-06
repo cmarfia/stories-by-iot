@@ -22,11 +22,11 @@ characters : List Entity
 characters =
     [ entity "jarald"
         |> addName "Jarald the Giraffe"
-        |> addImage "img/giraffe.png?v=1"
+        |> addImage "img/laz.png?v=1"
         |> addInteractable
     , entity "tenzin"
         |> addName "Tenzin the Panda"
-        |> addImage "img/panda.png?v=1"
+        |> addImage "img/sparky.png?v=1"
     ]
 
 

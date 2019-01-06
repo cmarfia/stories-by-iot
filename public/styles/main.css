@@ -63,7 +63,7 @@ img {
 }
 
 .page__home {
-  background-image: url(../img/home-background.png?v=1);
+  background-color: #fbfbf8;
   padding: 2em;
 	background-attachment: fixed;
 }
@@ -78,7 +78,7 @@ img {
 
 .story__item {
   flex: 1 50%;
-  border: 2px solid white;
+  border: 2px solid black;
   cursor: pointer;
   min-height: 250px;
   max-width: 250px;
