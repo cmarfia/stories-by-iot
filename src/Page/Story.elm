@@ -9,6 +9,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Keyed
 import Json.Encode
+import List.Extra
 import Markdown
 import Port
 import Story exposing (Story)
@@ -88,9 +89,9 @@ viewLayout voiceLoaded displayState =
                     , viewCharacters displayState.charactersInCurrentLocation
                     ]
                 , viewStoryLine displayState.storyLine
-                ] 
+                ]
             , div [ class "story__actions" ]
-                    [ viewActions displayState.ending <| displayState.charactersInCurrentLocation ++ displayState.itemsInCurrentLocation ++ displayState.connectingLocations
+                [ viewActions displayState.ending <| displayState.charactersInCurrentLocation ++ displayState.itemsInCurrentLocation ++ displayState.connectingLocations
                 ]
             ]
         ]
@@ -123,8 +124,9 @@ viewItem : Entity -> Html Msg
 viewItem item =
     button [ class "story__action", onClick <| Interact <| Tuple.first item ] [ text <| getActionTextOrName item ]
 
+
 viewLocation : Entity -> Html Msg
-viewLocation location = 
+viewLocation location =
     let
         locationName =
             getName location
@@ -132,15 +134,17 @@ viewLocation location =
     div [ class "story__location" ]
         [ h3 [] [ text locationName ]
         , img [ src <| Maybe.withDefault "" <| getImage location, alt locationName ] []
-        ] 
+        ]
+
 
 viewCharacters : List Entity -> Html Msg
 viewCharacters characters =
     let
         classByIndex : Int -> String
-        classByIndex index = 
+        classByIndex index =
             if modBy 2 index == 0 then
                 "story__character--primary"
+
             else
                 "story__character--secondary"
 
@@ -153,44 +157,37 @@ viewCharacters characters =
     div [ class "story__characters clearfix" ] <|
         List.indexedMap toImage characters
 
+
 viewActions : Maybe String -> List Entity -> Html Msg
 viewActions endStory actions =
     let
+        viewAction : Int -> Entity -> ( Int, Html Msg )
         viewAction index action =
             ( index
-            , div [ class "one-half column story__action"]  
-                [ button [ onClick <| Interact <| Tuple.first action ] [ text <| (++) "Go To " <| getName action ] 
+            , div [ class "one-half column story__action" ]
+                [ button [ onClick <| Interact <| Tuple.first action ] [ text <| (++) "Go To " <| getName action ]
                 ]
             )
-        
-        group groups (index, html ) =
-            if modby 2 index == 0 then
-                [ html ] :: groups
-            else 
-                case groups of 
-                    [] ->
-                        []
-                    
-                    head :: tail ->
-                       (html ++ head) :: tail
-        
-        wrapRows list =
-            div [ class "row" ] list
 
+        wrapRows : List ( Int, Html Msg ) -> Html Msg
+        wrapRows list =
+            list
+                |> List.map Tuple.second
+                |> div [ class "row" ]
     in
-    div [ ] <|
+    div [] <|
         if endStory /= Nothing then
-            [ div [ class "row" ] 
-                [ div [ class "one-half column story__action"]  
-                    [ button [ onClick Restart ] [ text "Read Again" ] 
+            [ div [ class "row" ]
+                [ div [ class "one-half column story__action" ]
+                    [ button [ onClick Restart ] [ text "Read Again" ]
                     ]
                 ]
             ]
-        else 
+
+        else
             List.indexedMap viewAction actions
-                |> List.foldl group
+                |> List.Extra.greedyGroupsOf 2
                 |> List.map wrapRows
-                |> div [ ]
 
 
 viewStoryLine : List Snippet -> Html Msg
@@ -204,7 +201,7 @@ viewStoryLine storyLine =
                 text ""
         ]
 
- 
+
 getDisplayState : Model -> DisplayState
 getDisplayState model =
     let

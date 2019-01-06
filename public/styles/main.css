@@ -85,8 +85,6 @@ img {
 
 /** HOME **/
 .page__home .header {
-  border-radius: 10%;
-  background: white;
   margin-top: 1.25em;
   padding: 0.2em;
   text-align: right;
@@ -108,17 +106,19 @@ img {
 .page__home .stories {
   padding-top: 1em;
 }
+.page__home .story {
+  border: 2px solid #5aa6e9;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  padding: 15px;
+}
+
 .page__home .story img {
-  border: 4px solid #5aa6e9;
-  border-radius: 5%;
   cursor: pointer;
 }
 
 /** STORY **/
 
 .page__story .story__title {
-  background: white;
-  border-radius: 10%;
   padding: 0.5em;
   margin-top: 0.5em;
 }
@@ -153,8 +153,6 @@ img {
 
 .page__story .story__wrapper {
   border: none;
-  border-radius: 10%;
-  background: white;
   margin-top: 0.5em;
   padding: 1em;
 }
@@ -175,6 +173,7 @@ img {
 .page__story .story__characters {
   position: absolute;
   bottom: 0;
+  width: 100%;
 }
 
 .page__story .story__characters img {
