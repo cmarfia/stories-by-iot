@@ -1,4 +1,4 @@
-module Story.HowJaraldandTenzinMet.Manifest exposing (characters, items, locations)
+module Story.TheAdventuresOfLaz01.Manifest exposing (characters, items, locations)
 
 import Story.Components exposing (..)
 

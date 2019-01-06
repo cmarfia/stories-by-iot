@@ -1,9 +1,9 @@
-module Story.HowJaraldandTenzinMet.Rules exposing (rules, startingState)
+module Story.TheAdventuresOfLaz01.Rules exposing (rules, startingState)
 
 import Dict exposing (Dict)
 import Engine exposing (..)
 import Story.Components exposing (..)
-import Story.HowJaraldandTenzinMet.Narrative as Narrative
+import Story.TheAdventuresOfLaz01.Narrative as Narrative
 
 
 startingState : List Engine.ChangeWorldCommand

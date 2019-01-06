@@ -1,4 +1,4 @@
-module Story.HowJaraldandTenzinMet.Narrative exposing (entersClearing, jaraldHearsASounds, startingNarrative, tenzinIntro, theEnd, throughTheClearing)
+module Story.TheAdventuresOfLaz01.Narrative exposing (entersClearing, jaraldHearsASounds, startingNarrative, tenzinIntro, theEnd, throughTheClearing)
 
 {-| The text that will show when the story first starts, before the player interacts with anythin.
 -}
@@ -21,6 +21,14 @@ startingNarrative =
 jaraldHearsASounds : String
 jaraldHearsASounds =
     """A giraffe named <span class="highlight__primary">Jarald</span> was walking through that forest on his way to a mightly castle.
+
+# THis is a heading
+
+## Sub heading
+
+- A
+- B 
+- C
 
 Just when everything seems calm Jarald heard a noise. <span class="highlight__primary">"What was that"</span> cried <span class="highlight__primary">Jarald</span>."""
 

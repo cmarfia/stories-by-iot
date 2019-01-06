@@ -15,7 +15,7 @@ import Dict exposing (Dict)
 import Engine exposing (..)
 import Story.AllStories exposing (allStories)
 import Story.Components exposing (..)
-import Story.HowJaraldandTenzinMet.StoryInfo as HowJaraldandTenzinMet
+import Story.TheAdventuresOfLaz01.StoryInfo as TheAdventuresOfLaz01
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, string)
 
 

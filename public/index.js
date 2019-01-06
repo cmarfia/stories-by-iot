@@ -1,4 +1,4 @@
-void (function (Elm) {
+void (function (Elm, marked) {
   var imagesPreloaded = [];
   var imagesToPreload = [];
   var synthVoice = null;
@@ -71,7 +71,16 @@ void (function (Elm) {
       return;
     }
 
-    var utterance = new window.SpeechSynthesisUtterance(text);
+    var sanitizeTextDiv = document.createElement('div');
+    sanitizeTextDiv.innerHTML = marked(text, {
+      gfm: true,
+      tables: false,
+      breaks: false,
+      sanitize: false,
+      smartypants: true
+    });
+
+    var utterance = new window.SpeechSynthesisUtterance(sanitizeTextDiv.innerText);
 
     if (synthVoice) {
       utterance.voice = synthVoice;
@@ -102,4 +111,4 @@ void (function (Elm) {
         break
     }
   })
-})(window.Elm);
+})(window.Elm, window.marked);
