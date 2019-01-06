@@ -1,4 +1,4 @@
-void (function(Elm) {
+void (function (Elm) {
   var imagesPreloaded = []
   var imagesToPreload = []
   var synthVoice = null
@@ -9,7 +9,7 @@ void (function(Elm) {
   }
 
   function assetLoaded(image) {
-    return function() {
+    return function () {
       var imageIndex = imagesToPreload.indexOf(image)
       if (imageIndex === -1) {
         return
@@ -84,7 +84,7 @@ void (function(Elm) {
     speechSynthesis.onvoiceschanged = populateVoiceList
   }
 
-  app.ports.toJavaScript.subscribe(function(msg) {
+  app.ports.toJavaScript.subscribe(function (msg) {
     switch (msg.command) {
       case 'PRELOAD_IMAGES':
         if (!Array.isArray(msg.data)) {

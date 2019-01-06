@@ -59,7 +59,8 @@ init story =
 
 
 type alias DisplayState =
-    { currentLocation : Entity
+    { title : String
+    , currentLocation : Entity
     , itemsInCurrentLocation : List Entity
     , charactersInCurrentLocation : List Entity
     , connectingLocations : List Entity
@@ -77,28 +78,49 @@ view voiceLoaded model =
 
 viewLayout : Bool -> DisplayState -> Html Msg
 viewLayout voiceLoaded displayState =
-    div [ class <| "Location Location--" ++ getClassName displayState.currentLocation, style "background-image" ("url(" ++ (Maybe.withDefault "" <| getImage displayState.currentLocation) ++ ")") ]
-        [ button [ onClick GoHome ] [ text "Go Home" ]
+    div [ class "page page__story" ]
+        [ div [ class "container" ]
+            [ viewTitle displayState.title
+            , viewIcons voiceLoaded
+            , div
+                [ class "row" ]
+                [ viewCharacters displayState.charactersInCurrentLocation
+                , div [ class "Layout__Main" ] <|
+                    [ viewStoryLine displayState.storyLine displayState.ending
+                    , div []
+                        (if displayState.ending /= Nothing then
+                            [ button [ class "StoryRestart", onClick Restart ] [ text "Restart" ] ]
+
+                         else
+                            List.map viewItem displayState.itemsInCurrentLocation
+                        )
+                    ]
+                , viewConnectingLocations displayState.connectingLocations
+                ]
+            ]
+        ]
+
+
+viewTitle : String -> Html Msg
+viewTitle title =
+    div [ class "row story__title" ]
+        [ h2 [] [ text title ]
+        ]
+
+
+viewIcons : Bool -> Html Msg
+viewIcons voiceLoaded =
+    div [ class "clearfix" ]
+        [ div [ class "story__icon story__icon--home" ]
+            [ button [ onClick GoHome ] [ i [ class "icon-home" ] [] ]
+            ]
         , if voiceLoaded then
-            button [ onClick Speak ] [ text "Speak" ]
+            div [ class "story__icon story__icon--speak" ]
+                [ button [ onClick Speak ] [ i [ class "icon-volume-up" ] [] ]
+                ]
 
           else
             text ""
-        , div
-            [ class "Layout" ]
-            [ viewCharacters displayState.charactersInCurrentLocation
-            , div [ class "Layout__Main" ] <|
-                [ viewStoryLine displayState.storyLine displayState.ending
-                , div []
-                    (if displayState.ending /= Nothing then
-                        [ button [ class "StoryRestart", onClick Restart ] [ text "Restart" ] ]
-
-                     else
-                        List.map viewItem displayState.itemsInCurrentLocation
-                    )
-                ]
-            , viewConnectingLocations displayState.connectingLocations
-            ]
         ]
 
 
@@ -162,7 +184,8 @@ getDisplayState model =
         currentLocation =
             Engine.getCurrentLocation model.engineModel |> findEntity manifest
     in
-    { currentLocation = currentLocation
+    { title = Story.getTitle model.story
+    , currentLocation = currentLocation
     , itemsInCurrentLocation = Engine.getItemsInCurrentLocation model.engineModel |> List.map (findEntity manifest)
     , charactersInCurrentLocation = Engine.getCharactersInCurrentLocation model.engineModel |> List.map (findEntity manifest)
     , connectingLocations = getConnectingLocations currentLocation |> List.map (findEntity manifest)

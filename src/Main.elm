@@ -54,7 +54,16 @@ view model =
         viewLoading =
             { title = "Stories By Iot"
             , body =
-                [ div [] [ text "Loading" ]
+                [ div [ class "page page__loading" ]
+                    [ div [ class "container" ]
+                        [ div [ class "loading__icon columns" ]
+                            [ img [ src "img/loading.gif" ] []
+                            ]
+                        ]
+                    , div [ class "attribution" ]
+                        [ a [ href "https://loading.io/" ] [ text "spinner by loading.io" ]
+                        ]
+                    ]
                 ]
             }
     in

@@ -25,7 +25,7 @@ init : ( Model, Cmd Msg )
 init =
     let
         loadImagesMsg =
-            Port.PreloadImages ("img/home-background.png?v=1" :: List.map .cover allStories)
+            Port.PreloadImages ("img/logo.png" :: List.map .cover allStories)
     in
     ( { stories = allStories }, Port.toJavaScript (Port.encode loadImagesMsg) )
 
@@ -36,19 +36,33 @@ init =
 
 view : Model -> { title : String, content : Html Msg }
 view model =
-    { title = "Story Telling"
+    { title = "Stories By Iot"
     , content =
         div [ class "page page__home" ]
-            [ div [ class "story__list" ]
-                (List.map viewStory model.stories)
+            [ div [ class "container" ]
+                [ viewHeader
+                , div [ class "row" ] (List.map viewStory model.stories)
+                ]
             ]
     }
 
 
+viewHeader : Html Msg
+viewHeader =
+    div [ class "row" ]
+        [ div [ class "one column" ] []
+        , div [ class "ten columns header clearfix" ]
+            [ img [ src "img/logo.png", alt "logo" ] []
+            , p [] [ text "Stories By Iot" ]
+            ]
+        , div [ class "one column stories" ] []
+        ]
+
+
 viewStory : StoryInfo -> Html Msg
 viewStory storyInfo =
-    div [ class "story__item", onClick <| SelectedStory storyInfo.slug ]
-        [ img [ src storyInfo.cover, alt storyInfo.title ] []
+    div [ class "one-half column story" ]
+        [ img [ src storyInfo.cover, alt storyInfo.title, onClick <| SelectedStory storyInfo.slug ] []
         ]
 
 
