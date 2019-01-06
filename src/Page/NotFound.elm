@@ -4,6 +4,7 @@ import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Port
 
 
 
@@ -16,7 +17,11 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    let
+        loadImagesMsg =
+            Port.PreloadImages [ "img/logo.png" ]
+    in
+    ( {}, Port.toJavaScript (Port.encode loadImagesMsg) )
 
 
 
