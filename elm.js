@@ -1842,8 +1842,8 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 		flagDecoder,
 		args,
 		impl.aT,
-		impl.ba,
-		impl.a8,
+		impl.a9,
+		impl.a7,
 		function() { return function() {} }
 	);
 });
@@ -3885,10 +3885,10 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 		flagDecoder,
 		args,
 		impl.aT,
-		impl.ba,
-		impl.a8,
+		impl.a9,
+		impl.a7,
 		function(sendToApp, initialModel) {
-			var view = impl.bc;
+			var view = impl.bb;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3921,11 +3921,11 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 		flagDecoder,
 		args,
 		impl.aT,
-		impl.ba,
-		impl.a8,
+		impl.a9,
+		impl.a7,
 		function(sendToApp, initialModel) {
 			var divertHrefToApp = impl.H && impl.H(sendToApp)
-			var view = impl.bc;
+			var view = impl.bb;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3989,8 +3989,8 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.aZ;
-	var onUrlRequest = impl.a_;
+	var onUrlChange = impl.aY;
+	var onUrlRequest = impl.aZ;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
@@ -4024,9 +4024,9 @@ function _Browser_application(impl)
 		{
 			return A3(impl.aT, flags, _Browser_getUrl(), key);
 		},
-		bc: impl.bc,
-		ba: impl.ba,
-		a8: impl.a8
+		bb: impl.bb,
+		a9: impl.a9,
+		a7: impl.a7
 	});
 }
 
@@ -4399,10 +4399,10 @@ function _Markdown_formatOptions(options)
 	return {
 		highlight: toHighlight,
 		gfm: gfm,
-		tables: gfm && gfm.a9,
+		tables: gfm && gfm.a8,
 		breaks: gfm && gfm.aG,
-		sanitize: options.a3,
-		smartypants: options.a5
+		sanitize: options.a2,
+		smartypants: options.a4
 	};
 }
 var author$project$Main$ChangedUrl = function (a) {
@@ -5134,34 +5134,42 @@ var author$project$Story$Components$entity = function (id) {
 var author$project$Story$TheAdventuresOfLaz01$Manifest$characters = _List_fromArray(
 	[
 		A2(
+		author$project$Story$Components$addImage,
+		'img/laz.png?v=1',
+		A2(
+			author$project$Story$Components$addName,
+			'Laz',
+			author$project$Story$Components$entity('laz'))),
+		A2(
 		author$project$Story$Components$addActionText,
-		'Speak with Jarald',
+		'Speak with Sparky',
 		author$project$Story$Components$addInteractable(
 			A2(
 				author$project$Story$Components$addImage,
-				'img/laz.png?v=1',
+				'img/sparky.png?v=1',
 				A2(
 					author$project$Story$Components$addName,
-					'Jarald the Giraffe',
-					author$project$Story$Components$entity('jarald'))))),
-		A2(
-		author$project$Story$Components$addImage,
-		'img/sparky.png?v=1',
-		A2(
-			author$project$Story$Components$addName,
-			'Tenzin the Panda',
-			author$project$Story$Components$entity('tenzin')))
+					'Sparky',
+					author$project$Story$Components$entity('sparky')))))
 	]);
 var author$project$Story$TheAdventuresOfLaz01$Manifest$items = _List_fromArray(
 	[
 		A2(
 		author$project$Story$Components$addActionText,
 		'Continue',
-		author$project$Story$Components$entity('next')),
+		author$project$Story$Components$entity('continue')),
 		A2(
 		author$project$Story$Components$addActionText,
-		'Grab The Rock',
-		author$project$Story$Components$entity('rock'))
+		'Meanwhile',
+		author$project$Story$Components$entity('meanwhile')),
+		A2(
+		author$project$Story$Components$addActionText,
+		'Climb over log',
+		author$project$Story$Components$entity('log')),
+		A2(
+		author$project$Story$Components$addActionText,
+		'Take the stairs',
+		author$project$Story$Components$entity('stairs'))
 	]);
 var author$project$Story$Components$ConnectingLocations = function (a) {
 	return {$: 6, a: a};
@@ -5176,27 +5184,73 @@ var author$project$Story$TheAdventuresOfLaz01$Manifest$locations = _List_fromArr
 	[
 		A2(
 		author$project$Story$Components$addImage,
-		'img/forest.png?v=1',
+		'img/plains.png?v=1',
 		A2(
-			author$project$Story$Components$addConnectingLocations,
-			_List_fromArray(
-				['castle']),
-			A2(
-				author$project$Story$Components$addName,
-				'The Forest',
-				author$project$Story$Components$entity('forest')))),
+			author$project$Story$Components$addName,
+			'The Plains',
+			author$project$Story$Components$entity('plains'))),
 		A2(
 		author$project$Story$Components$addActionText,
-		'Enter the Castle',
+		'Enter the Deep Forest',
 		A2(
 			author$project$Story$Components$addImage,
-			'img/castle.png?v=1',
+			'img/forest.png?v=1',
 			A2(
 				author$project$Story$Components$addName,
-				'The Castle',
-				author$project$Story$Components$entity('castle'))))
+				'The Deep Forest',
+				author$project$Story$Components$entity('forest-start')))),
+		A2(
+		author$project$Story$Components$addConnectingLocations,
+		_List_fromArray(
+			['lighthouse']),
+		A2(
+			author$project$Story$Components$addImage,
+			'img/forest.png?v=1',
+			A2(
+				author$project$Story$Components$addName,
+				'The Deep Forest',
+				author$project$Story$Components$entity('forest-end')))),
+		A2(
+		author$project$Story$Components$addConnectingLocations,
+		_List_fromArray(
+			['forest']),
+		A2(
+			author$project$Story$Components$addImage,
+			'img/village.png?v=1',
+			A2(
+				author$project$Story$Components$addName,
+				'The Village of Light',
+				author$project$Story$Components$entity('village')))),
+		A2(
+		author$project$Story$Components$addActionText,
+		'Enter the Lighthouse',
+		A2(
+			author$project$Story$Components$addImage,
+			'img/lighthouse.png',
+			A2(
+				author$project$Story$Components$addName,
+				'The Lighthouse',
+				author$project$Story$Components$entity('lighthouse')))),
+		A2(
+		author$project$Story$Components$addConnectingLocations,
+		_List_fromArray(
+			['bridge']),
+		A2(
+			author$project$Story$Components$addImage,
+			'img/lighthouse.png',
+			A2(
+				author$project$Story$Components$addName,
+				'The Lighthouse',
+				author$project$Story$Components$entity('lighthouse-outside')))),
+		A2(
+		author$project$Story$Components$addImage,
+		'img/bridge.png?v=1',
+		A2(
+			author$project$Story$Components$addName,
+			'The Bridge',
+			author$project$Story$Components$entity('bridge')))
 	]);
-var author$project$Story$TheAdventuresOfLaz01$Narrative$startingNarrative = {aU: 'opening', aV: '', N: 'Once upon a time there was a peaceful forest...'};
+var author$project$Story$TheAdventuresOfLaz01$Narrative$startingNarrative = {aU: '', N: 'Our journey begins in the grassy plains close to the base of a tall mountain.\n\nThe grass is the greenest green that you have ever seen. There is a rocky dirt road that splits the grass in two.'};
 var author$project$Story$Components$Narrative = function (a) {
 	return {$: 4, a: a};
 };
@@ -5225,11 +5279,8 @@ var author$project$Story$Components$createRule = F3(
 				ruleData,
 				author$project$Story$Components$entity(id)));
 	});
-var author$project$Story$TheAdventuresOfLaz01$Narrative$entersClearing = ' "Wow" they both said.\n\n<span class="highlight__primary">"Should we go inside?"</span> ask Tenzin with much excitement.\n\n<span class="highlight__secondary">"Last one there cooks dinner"</span> Jarald yelled as he took a head start.\n';
-var author$project$Story$TheAdventuresOfLaz01$Narrative$jaraldHearsASounds = 'A giraffe named <span class="highlight__primary">Jarald</span> was walking through that forest on his way to a mightly castle.\n\n# THis is a heading\n\n## Sub heading\n\n- A\n- B \n- C\n\nJust when everything seems calm Jarald heard a noise. <span class="highlight__primary">"What was that"</span> cried <span class="highlight__primary">Jarald</span>.';
-var author$project$Story$TheAdventuresOfLaz01$Narrative$tenzinIntro = ' "It\'s only me!" said tenzin. \n\n"Why are you always so scared?"\n';
+var author$project$Story$TheAdventuresOfLaz01$Narrative$lazEntersThePlains = 'A traveler enters the plains from a far away land. The travelers name was <span class="highlight__primary">Laz the Cat</span>.\n\nHe was on an endless journey searching for the fabled Castle of Light.';
 var author$project$Story$TheAdventuresOfLaz01$Narrative$theEnd = 'To Be Continued...';
-var author$project$Story$TheAdventuresOfLaz01$Narrative$throughTheClearing = ' "Don\'t scare me like that Tenzin" said jarald. \n\nHe look we are almost there.\n';
 var elm$core$Dict$fromList = function (assocs) {
 	return A3(
 		elm$core$List$foldl,
@@ -5256,24 +5307,11 @@ var jschomay$elm_narrative_engine$Types$CurrentLocationIs = function (a) {
 	return {$: 3, a: a};
 };
 var jschomay$elm_narrative_engine$Engine$currentLocationIs = jschomay$elm_narrative_engine$Types$CurrentLocationIs;
-var jschomay$elm_narrative_engine$Types$MoveCharacterOffScreen = function (a) {
-	return {$: 8, a: a};
-};
-var jschomay$elm_narrative_engine$Engine$moveCharacterOffScreen = jschomay$elm_narrative_engine$Types$MoveCharacterOffScreen;
 var jschomay$elm_narrative_engine$Types$MoveCharacterToLocation = F2(
 	function (a, b) {
 		return {$: 7, a: a, b: b};
 	});
 var jschomay$elm_narrative_engine$Engine$moveCharacterToLocation = jschomay$elm_narrative_engine$Types$MoveCharacterToLocation;
-var jschomay$elm_narrative_engine$Types$MoveItemOffScreen = function (a) {
-	return {$: 6, a: a};
-};
-var jschomay$elm_narrative_engine$Engine$moveItemOffScreen = jschomay$elm_narrative_engine$Types$MoveItemOffScreen;
-var jschomay$elm_narrative_engine$Types$MoveItemToLocation = F2(
-	function (a, b) {
-		return {$: 4, a: a, b: b};
-	});
-var jschomay$elm_narrative_engine$Engine$moveItemToLocation = jschomay$elm_narrative_engine$Types$MoveItemToLocation;
 var jschomay$elm_narrative_engine$Types$MoveTo = function (a) {
 	return {$: 0, a: a};
 };
@@ -5289,135 +5327,57 @@ var author$project$Story$TheAdventuresOfLaz01$Rules$rules = elm$core$Dict$fromLi
 		[
 			A3(
 			author$project$Story$Components$createRule,
-			'entering the forest',
+			'the start',
 			{
 				aH: _List_fromArray(
 					[
-						A2(jschomay$elm_narrative_engine$Engine$moveCharacterToLocation, 'jarald', 'forest')
+						A2(jschomay$elm_narrative_engine$Engine$moveCharacterToLocation, 'laz', 'plains')
 					]),
 				aI: _List_fromArray(
 					[
-						jschomay$elm_narrative_engine$Engine$currentLocationIs('forest'),
-						A2(jschomay$elm_narrative_engine$Engine$characterIsNotInLocation, 'jarald', 'forest')
+						jschomay$elm_narrative_engine$Engine$currentLocationIs('plains'),
+						A2(jschomay$elm_narrative_engine$Engine$characterIsNotInLocation, 'laz', 'plains')
 					]),
-				aW: jschomay$elm_narrative_engine$Engine$with('next')
+				aV: jschomay$elm_narrative_engine$Engine$with('continue')
 			},
-			author$project$Story$TheAdventuresOfLaz01$Narrative$jaraldHearsASounds),
-			A3(
-			author$project$Story$Components$createRule,
-			'interact with rock',
-			{
-				aH: _List_Nil,
-				aI: _List_Nil,
-				aW: jschomay$elm_narrative_engine$Engine$with('rock')
-			},
-			'You touched the rock'),
-			A3(
-			author$project$Story$Components$createRule,
-			'interact with castle',
-			{
-				aH: _List_Nil,
-				aI: _List_Nil,
-				aW: jschomay$elm_narrative_engine$Engine$with('castle')
-			},
-			'lets go to the castle'),
-			A3(
-			author$project$Story$Components$createRule,
-			'interact with jarald',
-			{
-				aH: _List_Nil,
-				aI: _List_Nil,
-				aW: jschomay$elm_narrative_engine$Engine$with('jarald')
-			},
-			'You talked with jarald'),
-			A3(
-			author$project$Story$Components$createRule,
-			'Introduction to tenzin',
-			{
-				aH: _List_fromArray(
-					[
-						A2(jschomay$elm_narrative_engine$Engine$moveCharacterToLocation, 'tenzin', 'forest'),
-						jschomay$elm_narrative_engine$Engine$moveCharacterOffScreen('jarald')
-					]),
-				aI: _List_fromArray(
-					[
-						jschomay$elm_narrative_engine$Engine$currentLocationIs('forest'),
-						A2(jschomay$elm_narrative_engine$Engine$characterIsInLocation, 'jarald', 'forest'),
-						A2(jschomay$elm_narrative_engine$Engine$characterIsNotInLocation, 'tenzin', 'forest')
-					]),
-				aW: jschomay$elm_narrative_engine$Engine$with('next')
-			},
-			author$project$Story$TheAdventuresOfLaz01$Narrative$tenzinIntro),
-			A3(
-			author$project$Story$Components$createRule,
-			'through the clearing',
-			{
-				aH: _List_fromArray(
-					[
-						A2(jschomay$elm_narrative_engine$Engine$moveCharacterToLocation, 'jarald', 'forest')
-					]),
-				aI: _List_fromArray(
-					[
-						jschomay$elm_narrative_engine$Engine$currentLocationIs('forest'),
-						A2(jschomay$elm_narrative_engine$Engine$characterIsNotInLocation, 'jarald', 'forest'),
-						A2(jschomay$elm_narrative_engine$Engine$characterIsInLocation, 'tenzin', 'forest')
-					]),
-				aW: jschomay$elm_narrative_engine$Engine$with('next')
-			},
-			author$project$Story$TheAdventuresOfLaz01$Narrative$throughTheClearing),
-			A3(
-			author$project$Story$Components$createRule,
-			'enters clearing',
-			{
-				aH: _List_fromArray(
-					[
-						A2(jschomay$elm_narrative_engine$Engine$moveCharacterToLocation, 'jarald', 'castle'),
-						A2(jschomay$elm_narrative_engine$Engine$moveCharacterToLocation, 'tenzin', 'castle'),
-						jschomay$elm_narrative_engine$Engine$moveTo('castle'),
-						A2(jschomay$elm_narrative_engine$Engine$moveItemToLocation, 'next', 'castle')
-					]),
-				aI: _List_fromArray(
-					[
-						jschomay$elm_narrative_engine$Engine$currentLocationIs('forest'),
-						A2(jschomay$elm_narrative_engine$Engine$characterIsInLocation, 'jarald', 'forest'),
-						A2(jschomay$elm_narrative_engine$Engine$characterIsInLocation, 'tenzin', 'forest')
-					]),
-				aW: jschomay$elm_narrative_engine$Engine$with('next')
-			},
-			author$project$Story$TheAdventuresOfLaz01$Narrative$entersClearing),
+			author$project$Story$TheAdventuresOfLaz01$Narrative$lazEntersThePlains),
 			A3(
 			author$project$Story$Components$createRule,
 			'TheEnd',
 			{
 				aH: _List_fromArray(
 					[
-						jschomay$elm_narrative_engine$Engine$moveItemOffScreen('next')
+						jschomay$elm_narrative_engine$Engine$moveTo('bridge'),
+						A2(jschomay$elm_narrative_engine$Engine$moveCharacterToLocation, 'laz', 'bridge')
 					]),
 				aI: _List_fromArray(
 					[
-						jschomay$elm_narrative_engine$Engine$currentLocationIs('castle'),
-						A2(jschomay$elm_narrative_engine$Engine$characterIsInLocation, 'jarald', 'castle'),
-						A2(jschomay$elm_narrative_engine$Engine$characterIsInLocation, 'tenzin', 'castle')
+						jschomay$elm_narrative_engine$Engine$currentLocationIs('plains'),
+						A2(jschomay$elm_narrative_engine$Engine$characterIsInLocation, 'laz', 'plains')
 					]),
-				aW: jschomay$elm_narrative_engine$Engine$with('next')
+				aV: jschomay$elm_narrative_engine$Engine$with('continue')
 			},
 			author$project$Story$TheAdventuresOfLaz01$Narrative$theEnd)
 		]));
+var jschomay$elm_narrative_engine$Types$MoveItemToLocation = F2(
+	function (a, b) {
+		return {$: 4, a: a, b: b};
+	});
+var jschomay$elm_narrative_engine$Engine$moveItemToLocation = jschomay$elm_narrative_engine$Types$MoveItemToLocation;
 var author$project$Story$TheAdventuresOfLaz01$Rules$startingState = _List_fromArray(
 	[
-		jschomay$elm_narrative_engine$Engine$moveTo('forest'),
-		A2(jschomay$elm_narrative_engine$Engine$moveItemToLocation, 'next', 'forest'),
-		A2(jschomay$elm_narrative_engine$Engine$moveItemToLocation, 'rock', 'forest')
+		jschomay$elm_narrative_engine$Engine$moveTo('plains'),
+		A2(jschomay$elm_narrative_engine$Engine$moveItemToLocation, 'continue', 'plains')
 	]);
 var author$project$Story$TheAdventuresOfLaz01$StoryInfo$storyInfo = {
 	ai: 'img/laz_01_cover.png',
 	aR: _List_fromArray(
 		['img/bridge.png', 'img/forest.png', 'img/laz_01_cover.png', 'img/laz.png', 'img/lighthouse.png', 'img/plains.png', 'img/sparky.png', 'img/village.png']),
-	aX: {ah: author$project$Story$TheAdventuresOfLaz01$Manifest$characters, an: author$project$Story$TheAdventuresOfLaz01$Manifest$items, ap: author$project$Story$TheAdventuresOfLaz01$Manifest$locations},
-	a2: author$project$Story$TheAdventuresOfLaz01$Rules$rules,
-	a4: 'the-adventrues-of-laz-the-cat-01',
-	a6: author$project$Story$TheAdventuresOfLaz01$Narrative$startingNarrative,
-	a7: author$project$Story$TheAdventuresOfLaz01$Rules$startingState,
+	aW: {ah: author$project$Story$TheAdventuresOfLaz01$Manifest$characters, an: author$project$Story$TheAdventuresOfLaz01$Manifest$items, ap: author$project$Story$TheAdventuresOfLaz01$Manifest$locations},
+	a1: author$project$Story$TheAdventuresOfLaz01$Rules$rules,
+	a3: 'the-adventrues-of-laz-the-cat-01',
+	a5: author$project$Story$TheAdventuresOfLaz01$Narrative$startingNarrative,
+	a6: author$project$Story$TheAdventuresOfLaz01$Rules$startingState,
 	ad: 'The Adventures of Laz the Cat 01'
 };
 var author$project$Story$AllStories$allStories = _List_fromArray(
@@ -5521,19 +5481,19 @@ var author$project$Story$getImagesToPreload = function (story) {
 	return imagesToPreLoad;
 };
 var author$project$Story$getManifest = function (story) {
-	var manifest = story.aX;
+	var manifest = story.aW;
 	return manifest;
 };
 var author$project$Story$getRules = function (story) {
-	var rules = story.a2;
+	var rules = story.a1;
 	return rules;
 };
 var author$project$Story$getStartingNarrative = function (story) {
-	var startingNarrative = story.a6;
+	var startingNarrative = story.a5;
 	return startingNarrative;
 };
 var author$project$Story$getStartingState = function (story) {
-	var startingState = story.a7;
+	var startingState = story.a6;
 	return startingState;
 };
 var elm$core$Dict$get = F2(
@@ -5587,7 +5547,7 @@ var author$project$Story$Components$getRuleData = F2(
 			return {
 				aH: _List_Nil,
 				aI: _List_Nil,
-				aW: jschomay$elm_narrative_engine$Engine$with('')
+				aV: jschomay$elm_narrative_engine$Engine$with('')
 			};
 		}
 	});
@@ -6157,7 +6117,7 @@ var jschomay$elm_narrative_engine$Engine$changeWorld = F2(
 						return _Utils_update(
 							story_,
 							{
-								aX: A2(jschomay$elm_narrative_engine$Engine$Manifest$update, change, story_.aX)
+								aW: A2(jschomay$elm_narrative_engine$Engine$Manifest$update, change, story_.aW)
 							});
 				}
 			});
@@ -6198,8 +6158,8 @@ var jschomay$elm_narrative_engine$Engine$init = F2(
 			S: '',
 			T: '',
 			e: _List_Nil,
-			aX: jschomay$elm_narrative_engine$Engine$Manifest$init(manifest),
-			a2: rules,
+			aW: jschomay$elm_narrative_engine$Engine$Manifest$init(manifest),
+			a1: rules,
 			ac: elm$core$Maybe$Nothing
 		};
 	});
@@ -6359,7 +6319,7 @@ var author$project$Story$parser = function () {
 		return A2(
 			elm$url$Url$Parser$map,
 			storyInfo,
-			elm$url$Url$Parser$s(storyInfo.a4));
+			elm$url$Url$Parser$s(storyInfo.a3));
 	};
 	return elm$url$Url$Parser$oneOf(
 		A2(elm$core$List$map, toParser, author$project$Story$AllStories$allStories));
@@ -6493,7 +6453,7 @@ var elm$url$Url$Parser$parse = F2(
 				A5(
 					elm$url$Url$Parser$State,
 					_List_Nil,
-					elm$url$Url$Parser$preparePath(url.a0),
+					elm$url$Url$Parser$preparePath(url.a$),
 					elm$url$Url$Parser$prepareQuery(url.ax),
 					url.aO,
 					elm$core$Basics$identity)));
@@ -6506,7 +6466,7 @@ var author$project$Route$fromUrl = function (url) {
 			url,
 			{
 				aO: elm$core$Maybe$Nothing,
-				a0: A2(elm$core$Maybe$withDefault, '', url.aO)
+				a$: A2(elm$core$Maybe$withDefault, '', url.aO)
 			}));
 };
 var author$project$Main$init = F3(
@@ -6661,7 +6621,7 @@ var elm$core$String$contains = _String_contains;
 var elm$core$String$toInt = _String_toInt;
 var elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {aO: fragment, am: host, a0: path, at: port_, aw: protocol, ax: query};
+		return {aO: fragment, am: host, a$: path, at: port_, aw: protocol, ax: query};
 	});
 var elm$url$Url$chompBeforePath = F5(
 	function (protocol, path, params, frag, str) {
@@ -6824,17 +6784,6 @@ var author$project$Story$Components$findEntity = F2(
 						manifest.an,
 						_Utils_ap(manifest.ap, manifest.ah)))));
 	});
-var author$project$Story$Components$getClassName = function (_n0) {
-	var id = _n0.a;
-	var components = _n0.b;
-	var _n1 = A2(elm$core$Dict$get, 'classname', components);
-	if ((!_n1.$) && (_n1.a.$ === 3)) {
-		var className = _n1.a.a;
-		return className;
-	} else {
-		return '';
-	}
-};
 var author$project$Story$Components$getName = function (_n0) {
 	var id = _n0.a;
 	var components = _n0.b;
@@ -7046,7 +6995,7 @@ var jschomay$elm_narrative_engine$Engine$Rules$matchesCondition = F2(
 		var history = _n0.e;
 		var currentLocation = _n0.S;
 		var currentScene = _n0.T;
-		var manifest = _n0.aX;
+		var manifest = _n0.aW;
 		switch (condition.$) {
 			case 0:
 				var item = condition.a;
@@ -7118,9 +7067,9 @@ var jschomay$elm_narrative_engine$Engine$Rules$matchesRule = F3(
 	function (story, interaction, rule) {
 		var currentLocation = story.S;
 		var currentScene = story.T;
-		var manifest = story.aX;
+		var manifest = story.aW;
 		var history = story.e;
-		return A3(jschomay$elm_narrative_engine$Engine$Rules$matchesInteraction, manifest, rule.aW, interaction) && A2(
+		return A3(jschomay$elm_narrative_engine$Engine$Rules$matchesInteraction, manifest, rule.aV, interaction) && A2(
 			elm$core$List$all,
 			jschomay$elm_narrative_engine$Engine$Rules$matchesCondition(story),
 			rule.aI);
@@ -7142,7 +7091,7 @@ var jschomay$elm_narrative_engine$Engine$Rules$sceneConstraintWeight = function 
 	return A2(elm$core$List$any, hasSceneConstraints, rule.aI) ? 300 : 0;
 };
 var jschomay$elm_narrative_engine$Engine$Rules$specificityWeight = function (rule) {
-	var _n0 = rule.aW;
+	var _n0 = rule.aV;
 	switch (_n0.$) {
 		case 4:
 			return 200;
@@ -7174,7 +7123,7 @@ var jschomay$elm_narrative_engine$Engine$Rules$findMatchingRule = F2(
 					elm$core$Basics$composeR,
 					elm$core$Tuple$second,
 					A2(jschomay$elm_narrative_engine$Engine$Rules$matchesRule, story, interactableId)),
-				elm$core$Dict$toList(story.a2)));
+				elm$core$Dict$toList(story.a1)));
 	});
 var jschomay$elm_narrative_engine$Types$MoveItemToInventory = function (a) {
 	return {$: 5, a: a};
@@ -7183,10 +7132,10 @@ var jschomay$elm_narrative_engine$Engine$update = F2(
 	function (interactableId, model) {
 		var story = model;
 		var matchingRule = A2(jschomay$elm_narrative_engine$Engine$Rules$findMatchingRule, story, interactableId);
-		var defaultChanges = A2(jschomay$elm_narrative_engine$Engine$Manifest$isLocation, interactableId, story.aX) ? _List_fromArray(
+		var defaultChanges = A2(jschomay$elm_narrative_engine$Engine$Manifest$isLocation, interactableId, story.aW) ? _List_fromArray(
 			[
 				jschomay$elm_narrative_engine$Types$MoveTo(interactableId)
-			]) : (A2(jschomay$elm_narrative_engine$Engine$Manifest$isItem, interactableId, story.aX) ? _List_fromArray(
+			]) : (A2(jschomay$elm_narrative_engine$Engine$Manifest$isItem, interactableId, story.aW) ? _List_fromArray(
 			[
 				jschomay$elm_narrative_engine$Types$MoveItemToInventory(interactableId)
 			]) : _List_Nil);
@@ -7239,9 +7188,7 @@ var author$project$Page$Story$update = F3(
 					}
 				}();
 				var narrativeForThisInteraction = {
-					aU: author$project$Story$Components$getClassName(
-						A2(author$project$Story$Components$findEntity, manifest, interactableId)),
-					aV: author$project$Story$Components$getName(
+					aU: author$project$Story$Components$getName(
 						A2(author$project$Story$Components$findEntity, manifest, interactableId)),
 					N: A2(
 						elm$core$Maybe$withDefault,
@@ -7379,7 +7326,7 @@ var elm$url$Url$toString = function (url) {
 					elm$url$Url$addPort,
 					url.at,
 					_Utils_ap(http, url.am)),
-				url.a0)));
+				url.a$)));
 };
 var author$project$Main$update = F2(
 	function (msg, model) {
@@ -7589,7 +7536,7 @@ var author$project$Page$Home$viewStory = function (storyInfo) {
 					[
 						elm$html$Html$Attributes$src(storyInfo.ai),
 						elm$html$Html$Attributes$alt(storyInfo.ad),
-						elm$html$Html$Events$onClick(storyInfo.a4)
+						elm$html$Html$Events$onClick(storyInfo.a3)
 					]),
 				_List_Nil)
 			]));
@@ -7779,7 +7726,7 @@ var author$project$Story$Components$getConnectingLocations = function (_n0) {
 };
 var jschomay$elm_narrative_engine$Engine$getCharactersInCurrentLocation = function (_n0) {
 	var story = _n0;
-	return A2(jschomay$elm_narrative_engine$Engine$Manifest$getCharactersInLocation, story.S, story.aX);
+	return A2(jschomay$elm_narrative_engine$Engine$Manifest$getCharactersInLocation, story.S, story.aW);
 };
 var jschomay$elm_narrative_engine$Engine$getCurrentLocation = function (_n0) {
 	var story = _n0;
@@ -7791,7 +7738,7 @@ var jschomay$elm_narrative_engine$Engine$getEnding = function (_n0) {
 };
 var jschomay$elm_narrative_engine$Engine$getItemsInCurrentLocation = function (_n0) {
 	var story = _n0;
-	return A2(jschomay$elm_narrative_engine$Engine$Manifest$getItemsInLocation, story.S, story.aX);
+	return A2(jschomay$elm_narrative_engine$Engine$Manifest$getItemsInLocation, story.S, story.aW);
 };
 var author$project$Page$Story$getDisplayState = function (model) {
 	var manifest = author$project$Story$getManifest(model.s);
@@ -8237,9 +8184,9 @@ var author$project$Page$Story$viewLocation = function (location) {
 var author$project$Page$Story$markdownOptions = {
 	aK: elm$core$Maybe$Nothing,
 	aP: elm$core$Maybe$Just(
-		{aG: false, a9: false}),
-	a3: false,
-	a5: true
+		{aG: false, a8: false}),
+	a2: false,
+	a4: true
 };
 var elm$html$Html$section = _VirtualDom_node('section');
 var elm$core$Maybe$isJust = function (maybe) {
@@ -8471,6 +8418,6 @@ var author$project$Main$view = function (model) {
 };
 var elm$browser$Browser$application = _Browser_application;
 var author$project$Main$main = elm$browser$Browser$application(
-	{aT: author$project$Main$init, aZ: author$project$Main$ChangedUrl, a_: author$project$Main$RequestedUrl, a8: author$project$Main$subscriptions, ba: author$project$Main$update, bc: author$project$Main$view});
+	{aT: author$project$Main$init, aY: author$project$Main$ChangedUrl, aZ: author$project$Main$RequestedUrl, a7: author$project$Main$subscriptions, a9: author$project$Main$update, bb: author$project$Main$view});
 _Platform_export({'Main':{'init':author$project$Main$main(
 	elm$json$Json$Decode$succeed(0))(0)}});}(this));
