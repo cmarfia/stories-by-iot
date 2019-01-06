@@ -67,7 +67,6 @@ viewStory storyInfo =
 
 
 
--- a [ Route.toHref (Route.Story (Story.toStory storyInfo)) ] [ text storyInfo.title ]
 -- Update
 
 
