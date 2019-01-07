@@ -66,7 +66,7 @@ type alias DisplayState =
     , charactersInCurrentLocation : List Entity
     , connectingLocations : List Entity
     , ending : Maybe String
-    , storyLine : List { interactableName : String, narrative : String }
+    , storyLine : List Snippet
     }
 
 
@@ -91,7 +91,7 @@ viewLayout voiceLoaded displayState =
                 , viewStoryLine displayState.storyLine
                 ]
             , div [ class "story__actions" ]
-                [ viewActions displayState.ending displayState.charactersInCurrentLocation displayState.itemsInCurrentLocation displayState.connectingLocations
+                [ viewActions displayState.ending displayState.storyLine displayState.charactersInCurrentLocation displayState.itemsInCurrentLocation displayState.connectingLocations
                 ]
             ]
         ]
@@ -158,8 +158,8 @@ viewCharacters characters =
         List.indexedMap toImage characters
 
 
-viewActions : Maybe String -> List Entity -> List Entity -> List Entity -> Html Msg
-viewActions endStory characters items locations =
+viewActions : Maybe String -> List Snippet -> List Entity -> List Entity -> List Entity -> Html Msg
+viewActions endStory storyLine characters items locations =
     div [] <|
         if endStory /= Nothing then
             [ div [ class "row" ]
@@ -181,9 +181,17 @@ viewActions endStory characters items locations =
                 wrapRows =
                     div [ class "row" ]
 
+                lastActionId =
+                    storyLine
+                        |> List.head
+                        |> Maybe.map .interactableId
+                        |> Maybe.withDefault ""
+                        |> Debug.log "last action"
+
                 characterActions =
                     characters
                         |> List.filter getInteractable
+                        |> List.filter (Tuple.first >> (/=) lastActionId)
                         |> List.map viewAction
 
                 itemActions =
@@ -262,7 +270,7 @@ update navKey msg model =
                     Engine.update interactableId model.engineModel
 
                 narrativeForThisInteraction =
-                    { interactableName = findEntity manifest interactableId |> getName
+                    { interactableId = interactableId
                     , narrative =
                         maybeMatchedRuleId
                             |> Maybe.andThen (\id -> Dict.get id model.narrativeContent)

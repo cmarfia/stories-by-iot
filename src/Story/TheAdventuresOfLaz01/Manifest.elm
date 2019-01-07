@@ -27,9 +27,8 @@ characters =
     [ entity "laz"
         |> addName "Laz"
         |> addImage "img/laz.png?v=1"
-
-    --|> addInteractable
-    --|> addActionText "Speak with Laz"
+        |> addInteractable
+        |> addActionText "Speak with Laz"
     , entity "sparky"
         |> addName "Sparky"
         |> addImage "img/sparky.png?v=1"
@@ -42,7 +41,6 @@ locations : List Entity
 locations =
     [ entity "plains"
         |> addName "The Plains"
-        --|> addConnectingLocations [ "forest" ]
         |> addImage "img/plains.png?v=1"
     , entity "forest-start"
         |> addName "The Deep Forest"

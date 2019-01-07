@@ -1,4 +1,9 @@
-module Story.TheAdventuresOfLaz01.Narrative exposing (lazEntersThePlains, startingNarrative, theEnd)
+module Story.TheAdventuresOfLaz01.Narrative exposing
+    ( introductionToLaz
+    , lazEntersThePlains
+    , startingNarrative
+    , theEnd
+    )
 
 {-| The text that will show when the story first starts, before the player interacts with anythin.
 -}
@@ -10,9 +15,9 @@ module Story.TheAdventuresOfLaz01.Narrative exposing (lazEntersThePlains, starti
 -}
 
 
-startingNarrative : { interactableName : String, narrative : String }
+startingNarrative : { interactableId : String, narrative : String }
 startingNarrative =
-    { interactableName = ""
+    { interactableId = ""
     , narrative = """Our journey begins in the grassy plains close to the base of a tall mountain.
 
 The grass is the greenest green that you have ever seen. There is a rocky dirt road that splits the grass in two."""
@@ -24,6 +29,11 @@ lazEntersThePlains =
     """A traveler enters the plains from a far away land. The travelers name was <span class="highlight__primary">Laz the Cat</span>.
 
 He was on an endless journey searching for the fabled Castle of Light."""
+
+
+introductionToLaz : String
+introductionToLaz =
+    """<span class="highlight__primary">"At last the mountain I have been searching for is in sight!"</span> exclaimed <span class="highlight__primary">Laz</span>."""
 
 
 theEnd : String

@@ -23,9 +23,23 @@ rules =
             [ currentLocationIs "plains"
             , characterIsNotInLocation "laz" "plains"
             ]
-        , changes = [ moveCharacterToLocation "laz" "plains" ]
+        , changes =
+            [ moveCharacterToLocation "laz" "plains"
+            , moveItemOffScreen "continue"
+            ]
         }
         Narrative.lazEntersThePlains
+    , createRule "introduction to laz"
+        { interaction = with "laz"
+        , conditions =
+            [ currentLocationIs "plains"
+            , characterIsInLocation "laz" "plains"
+            ]
+        , changes =
+            [ moveItemToLocation "continue" "plains"
+            ]
+        }
+        Narrative.introductionToLaz
     , createRule
         "TheEnd"
         { interaction = with "continue"
