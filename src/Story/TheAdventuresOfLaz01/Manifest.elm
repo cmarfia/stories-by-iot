@@ -53,7 +53,10 @@ locations =
     , entity "village"
         |> addName "The Village of Light"
         |> addImage "img/village.png?v=1"
-        |> addConnectingLocations [ "forest" ]
+    , entity "village-exit"
+        |> addName "The Village of Light"
+        |> addImage "img/village.png?v=1"
+        |> addConnectingLocations [ "forest-start" ]
     , entity "lighthouse"
         |> addName "The Lighthouse"
         |> addImage "img/lighthouse.png"
