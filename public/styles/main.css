@@ -55,6 +55,8 @@ img {
   margin: 5px;
 }
 
+#audioPlayback { display: none; }
+
 .page {
   position: relative;
   width: 100%;

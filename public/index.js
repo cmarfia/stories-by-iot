@@ -1,4 +1,9 @@
 void (function (Elm, marked) {
+  AWS.config.region = 'us-east-1';
+  AWS.config.credentials = new AWS.CognitoIdentityCredentials({ IdentityPoolId: 'us-east-1:72e56431-5930-4bb9-a461-ac16bc848f6d' });
+  var polly = new AWS.Polly({ apiVersion: '2016-06-10' });
+  var audioElem = document.getElementById('audioPlayback');
+  var canUsePolly = true;
   var imagesPreloaded = [];
   var imagesToPreload = [];
   var synthVoice = null;
@@ -64,13 +69,23 @@ void (function (Elm, marked) {
     sendToElm('VOICE_LOADED');
   }
 
-  function speak(text) {
+  function speakFallback(text) {
     window.speechSynthesis.cancel();
 
     if (text === '') {
       return;
     }
 
+    var utterance = new window.SpeechSynthesisUtterance(text);
+
+    if (synthVoice) {
+      utterance.voice = synthVoice;
+    }
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function speak(text) {
     var sanitizeTextDiv = document.createElement('div');
     sanitizeTextDiv.innerHTML = marked(text, {
       gfm: true,
@@ -79,14 +94,44 @@ void (function (Elm, marked) {
       sanitize: false,
       smartypants: true
     });
+    var sanitizedText = sanitizeTextDiv.innerText;
 
-    var utterance = new window.SpeechSynthesisUtterance(sanitizeTextDiv.innerText);
-
-    if (synthVoice) {
-      utterance.voice = synthVoice;
+    if (!canUsePolly) {
+      speakFallback(sanitizedText);
+      return;
     }
 
-    window.speechSynthesis.speak(utterance);
+    if (audioElem === null) {
+      audioElem = document.getElementById('audioPlayback');
+
+      if (audioElem === null) {
+        canUsePolly = false;
+        speakFallback(sanitizedText);
+        return;
+      }
+    }
+
+
+    audioElem.pause();
+
+    var speechParams = {
+      OutputFormat: "mp3",
+      SampleRate: "16000",
+      Text: sanitizedText,
+      TextType: "text",
+      VoiceId: "Justin"
+    };
+
+    var signer = new AWS.Polly.Presigner(speechParams, polly);
+    signer.getSynthesizeSpeechUrl(speechParams, function (error, url) {
+      if (error) {
+        canUsePolly = false;
+        speakFallback(sanitizedText);
+      } else {
+        audioElem.src = url;
+        audioElem.play();
+      }
+    });
   }
 
   if (window.speechSynthesis && !window.speechSynthesis.onvoiceschanged) {
