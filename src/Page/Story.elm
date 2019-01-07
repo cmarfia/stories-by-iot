@@ -186,7 +186,6 @@ viewActions endStory storyLine characters items locations =
                         |> List.head
                         |> Maybe.map .interactableId
                         |> Maybe.withDefault ""
-                        |> Debug.log "last action"
 
                 characterActions =
                     characters
