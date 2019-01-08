@@ -1,17 +1,25 @@
 void (function (Elm, marked) {
-  AWS.config.region = 'us-east-1';
-  AWS.config.credentials = new AWS.CognitoIdentityCredentials({ IdentityPoolId: 'us-east-1:72e56431-5930-4bb9-a461-ac16bc848f6d' });
+  var app = Elm.Main.init({ node: document.getElementsByTagName('main')[0] });
   var polly = new AWS.Polly({ apiVersion: '2016-06-10' });
-  var audioElem = document.getElementById('audioPlayback');
-  var canUsePolly = true;
+  var audioElem = document.createElement('audio');
   var imagesPreloaded = [];
   var imagesToPreload = [];
-  var synthVoice = null;
-  var app = Elm.Main.init({ node: document.getElementsByTagName('main')[0] });
+  var markdownOpts = {
+    gfm: true,
+    tables: false,
+    breaks: false,
+    sanitize: false,
+    smartypants: true
+  };
 
   function sendToElm(command, data = {}) {
     app.ports.fromJavaScript.send({ command, data });
   }
+
+  // Text-to-speech always enabled with polly.
+  AWS.config.region = 'us-east-1';
+  AWS.config.credentials = new AWS.CognitoIdentityCredentials({ IdentityPoolId: 'us-east-1:72e56431-5930-4bb9-a461-ac16bc848f6d' });
+  sendToElm('VOICE_LOADED');
 
   function assetLoaded(image) {
     return function () {
@@ -52,67 +60,16 @@ void (function (Elm, marked) {
     }
   }
 
-  function populateVoiceList() {
-    if (synthVoice !== null) {
-      return;
-    }
-
-    synthVoice = undefined;
-    var voices = window.speechSynthesis.getVoices();
-    for (var i = 0; i < voices.length; i++) {
-      var voice = voices[i];
-      if (voice.name === 'Google US English') {
-        synthVoice = voice;
-      }
-    }
-
-    sendToElm('VOICE_LOADED');
-  }
-
-  function speakFallback(text) {
-    window.speechSynthesis.cancel();
+  function speak(text) {
+    audioElem.pause();
 
     if (text === '') {
       return;
     }
 
-    var utterance = new window.SpeechSynthesisUtterance(text);
-
-    if (synthVoice) {
-      utterance.voice = synthVoice;
-    }
-
-    window.speechSynthesis.speak(utterance);
-  }
-
-  function speak(text) {
     var sanitizeTextDiv = document.createElement('div');
-    sanitizeTextDiv.innerHTML = marked(text, {
-      gfm: true,
-      tables: false,
-      breaks: false,
-      sanitize: false,
-      smartypants: true
-    });
+    sanitizeTextDiv.innerHTML = marked(text, markdownOpts);
     var sanitizedText = sanitizeTextDiv.innerText;
-
-    if (!canUsePolly) {
-      speakFallback(sanitizedText);
-      return;
-    }
-
-    if (audioElem === null) {
-      audioElem = document.getElementById('audioPlayback');
-
-      if (audioElem === null) {
-        canUsePolly = false;
-        speakFallback(sanitizedText);
-        return;
-      }
-    }
-
-
-    audioElem.pause();
 
     var speechParams = {
       OutputFormat: "mp3",
@@ -125,17 +82,13 @@ void (function (Elm, marked) {
     var signer = new AWS.Polly.Presigner(speechParams, polly);
     signer.getSynthesizeSpeechUrl(speechParams, function (error, url) {
       if (error) {
-        canUsePolly = false;
-        speakFallback(sanitizedText);
-      } else {
-        audioElem.src = url;
-        audioElem.play();
+        alert('Text to Speech is currently not available.')
+        return;
       }
-    });
-  }
 
-  if (window.speechSynthesis && !window.speechSynthesis.onvoiceschanged) {
-    speechSynthesis.onvoiceschanged = populateVoiceList;
+      audioElem.src = url;
+      audioElem.play();
+    });
   }
 
   app.ports.toJavaScript.subscribe(function (msg) {
