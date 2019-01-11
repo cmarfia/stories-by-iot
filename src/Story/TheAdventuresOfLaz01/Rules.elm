@@ -112,134 +112,217 @@ rules =
             ]
         }
         Narrative.sparkyLeavesHome
+    , createRule "sparky walks through the forest"
+        { interaction = with "sparky"
+        , conditions =
+            [ currentLocationIs "forest-start"
+            , characterIsInLocation "sparky" "forest-start"
+            ]
+        , changes =
+            [ moveTo "forest-end"
+            , moveCharacterToLocation "sparky" "forest-end"
+            ]
+        }
+        Narrative.sparkyWalksThroughTheForest
+    , createRule "sparky in the forest"
+        { interaction = with "sparky"
+        , conditions =
+            [ currentLocationIs "forest-end"
+            , characterIsInLocation "sparky" "forest-end"
+            ]
+        , changes =
+            []
+        }
+        Narrative.sparkyWalksThroughTheForest
+    , createRule "sparky enters the lighthouse"
+        { interaction = with "lighthouse"
+        , conditions =
+            [ currentLocationIs "forest-end"
+            , characterIsInLocation "sparky" "forest-end"
+            , characterIsInLocation "laz" "plains"
+            ]
+        , changes =
+            [ moveTo "lighthouse"
+            , moveCharacterToLocation "sparky" "lighthouse"
+            , moveItemToLocation "meanwhile" "lighthouse"
+            ]
+        }
+        Narrative.sparkyEntersTheLighthouse
+    , createRule "sparky is scared"
+        { interaction = with "sparky"
+        , conditions =
+            [ currentLocationIs "lighthouse"
+            , characterIsInLocation "sparky" "lighthouse"
+            , characterIsInLocation "laz" "plains"
+            ]
+        , changes =
+            []
+        }
+        Narrative.sparkyIsScared
+    , createRule "laz enters the forest"
+        { interaction = with "meanwhile"
+        , conditions =
+            [ currentLocationIs "lighthouse"
+            , characterIsInLocation "sparky" "lighthouse"
+            , characterIsInLocation "laz" "plains"
+            ]
+        , changes =
+            [ moveTo "forest-start"
+            , moveCharacterToLocation "laz" "forest-start"
+            , moveItemToLocation "continue" "forest-start"
+            ]
+        }
+        Narrative.lazEntersTheForest
+    , createRule "laz's thoughts of the forest"
+        { interaction = with "laz"
+        , conditions =
+            [ currentLocationIs "forest-start"
+            , characterIsInLocation "laz" "forest-start"
+            , itemIsNotInLocation "log" "forest-start"
+            , hasNotPreviouslyInteractedWith "log"
+            ]
+        , changes =
+            []
+        }
+        Narrative.lazsThoughtsOfTheForest
+    , createRule "laz's thoughts of the forest"
+        { interaction = with "continue"
+        , conditions =
+            [ currentLocationIs "forest-start"
+            , characterIsInLocation "laz" "forest-start"
+            , itemIsNotInLocation "log" "forest-start"
+            , hasNotPreviouslyInteractedWith "log"
+            ]
+        , changes =
+            [ moveItemToLocation "log" "forest-start"
+            , moveItemOffScreen "continue"
+            ]
+        }
+        Narrative.lazsFindsTheLog
+    , createRule "laz thinks about the log"
+        { interaction = with "laz"
+        , conditions =
+            [ currentLocationIs "forest-start"
+            , characterIsInLocation "laz" "forest-start"
+            , itemIsInLocation "log" "forest-start"
+            ]
+        , changes =
+            []
+        }
+        Narrative.lazThoughtsOnTheLog
+    , createRule "laz climb the log"
+        { interaction = with "log"
+        , conditions =
+            [ currentLocationIs "forest-start"
+            , characterIsInLocation "laz" "forest-start"
+            , itemIsInLocation "log" "forest-start"
+            ]
+        , changes =
+            [ moveItemOffScreen "log"
+            , moveItemToLocation "meanwhile" "forest-start"
+            ]
+        }
+        Narrative.climbingTheLog
+    , createRule "laz was victorious"
+        { interaction = with "laz"
+        , conditions =
+            [ currentLocationIs "forest-start"
+            , characterIsInLocation "laz" "forest-start"
+            , itemIsNotInLocation "log" "forest-start"
+            , hasPreviouslyInteractedWith "log"
+            ]
+        , changes =
+            []
+        }
+        Narrative.lazWasVictorious
+    , createRule "sparky is brave"
+        { interaction = with "meanwhile"
+        , conditions =
+            [ currentLocationIs "forest-start"
+            , characterIsInLocation "laz" "forest-start"
+            , itemIsNotInLocation "log" "forest-start"
+            , hasPreviouslyInteractedWith "log"
+            ]
+        , changes =
+            [ moveTo "lighthouse"
+            , moveItemToLocation "stairs" "lighthouse"
+            ]
+        }
+        Narrative.sparkyIsBrave
+    , createRule "sparky has to go up the stairs"
+        { interaction = with "sparky"
+        , conditions =
+            [ currentLocationIs "lighthouse"
+            , characterIsInLocation "sparky" "lighthouse"
+            , itemIsInLocation "stairs" "lighthouse"
+            ]
+        , changes =
+            []
+        }
+        Narrative.sparkyHasToGoUpTheStairs
+    , createRule "sparky climbs the stairs"
+        { interaction = with "stairs"
+        , conditions =
+            [ currentLocationIs "lighthouse"
+            , characterIsInLocation "sparky" "lighthouse"
+            , itemIsInLocation "stairs" "lighthouse"
+            ]
+        , changes =
+            [ moveItemOffScreen "stairs"
+            , moveItemToLocation "meanwhile" "lighthouse"
+            ]
+        }
+        Narrative.sparkyClimbsTheStairs
+    , createRule "sparkys thoughts at the top of the lighthouse"
+        { interaction = with "sparky"
+        , conditions =
+            [ currentLocationIs "lighthouse"
+            , characterIsInLocation "sparky" "lighthouse"
+            , hasPreviouslyInteractedWith "stairs"
+            ]
+        , changes =
+            []
+        }
+        Narrative.sparkysThoughtsAtTheLighthouse
+    , createRule "laz continues through the forest"
+        { interaction = with "meanwhile"
+        , conditions =
+            [ currentLocationIs "lighthouse"
+            , characterIsInLocation "sparky" "lighthouse"
+            , hasPreviouslyInteractedWith "stairs"
+            ]
+        , changes =
+            [ moveTo "forest-end"
+            , moveCharacterToLocation "laz" "forest-end"
+            ]
+        }
+        Narrative.lazContinuesThroughTheForest
+    , createRule "laz makes it to the end of the forest"
+        { interaction = with "laz"
+        , conditions =
+            [ currentLocationIs "forest-end"
+            , characterIsInLocation "laz" "forest-end"
+            ]
+        , changes =
+            []
+        }
+        Narrative.lazMakesItToTheEndOfTheForest
+    , createRule "laz makes it to the end of the forest"
+        { interaction = with "lighthouse"
+        , conditions =
+            [ currentLocationIs "forest-end"
+            , characterIsInLocation "laz" "forest-end"
+            ]
+        , changes =
+            [ moveCharacterToLocation "laz" "lighthouse"
+            , moveItemToLocation "continue" "lighthouse"
+            , moveCharacterOffScreen "sparky"
+            , moveTo "lighthouse"
+            ]
+        }
+        Narrative.lazEntersTheLighthouse
 
     {-
-               1. | Speak with Sparky
-
-       > move to forest-end
-
-       > move sparky to forest-end
-
-       "If I make my way to the lighthouse I'll be able shine so bright" says Sparky, "the mountains will be so bright"
-
-       1 | Speak with Sparky
-
-       "If I make my way to the lighthouse I'll be able shine so bright" says Sparky, "the mountains will be so bright"
-
-       2 | Enter lighthouse
-
-       > move to lighthouse
-
-       > move sparky to lighthouse
-
-       > move meanwhile to lighthouse
-
-       Sparky arrived at the lighthouse. It appeared that no one has been there for a very long time.'
-
-       Sparky started to look around the outside of the lighthouse. The lighthouse was bright red and white. Inside the lighthouse was a spiral set of stairs.
-
-       Sparky was scared of the empty lighthouse.
-
-       1 | Speak to Sparky
-
-       "I... I... want to light up the whole mountain, but... this lighthouse is scary" said sparky
-
-       2 | Meanwhile
-
-       > Move to the forest-start
-
-       > move laz to forest-start
-
-       Laz the Cat has made it across the great green plains and to the start of the forest.
-
-       He had never been in a forest before.
-
-       1 | Speak with Laz
-
-       "The forest is darker than I thought it would be" said Laz.
-
-       2 | Continue
-
-       > move log to forest-start
-
-       As Laz worked through the forest he ran into a huge log. It was the biggest.
-
-       He couldn't go under the log, couldn't go around the log, Laz had to climb over the log.
-
-       1 | Speak to Laz
-
-       "I will have to climb over this log" said Laz.
-
-       2 | Climb over the log
-
-       > move log off screen
-
-       > move meanwhile to forest-start
-
-       Laz climbed over the log and continued his journey though the deep forest.
-
-       1 | Speak with Laz
-
-       "That really was the biggest log that could have smashed me up" says Laz
-
-       2 | Meanwhile
-
-       > move to lighthouse
-
-       > move stairs to lighthouse
-
-       Sparky thought about this lighthouse for a long time. He decided to go into the lighthouse.
-
-       1 | Speak with Sparky
-
-       "I have to go in the lighthouse if I want to light up the whole mountain" says Sparky
-
-       2 | Climb the Stairs
-
-       > move stairs off screen
-
-       > move meanwhile to lighthouse
-
-       Sparky climbed the stairs to the top of the lighthouse. There it could use his bright light to light up the whole mountains.
-
-       Sparky was very happy he is able to do what he wanted. He also found that the lighthouse was not scary at all after using his bright light.
-
-       1 | Speak with Sparky
-
-       "I can see the entire mountain from way up here" says Sparky
-
-       2 | Meanwhile
-
-       > move to forest-end
-
-       > move laz to forest-end
-
-       Laz continued his journey through the forest.
-
-       Just then Laz sees a bright light peaking through the trees.
-
-       "What could that be?" wondered Laz
-
-       Laz could see a lighthouse in the distance where the bright light was coming from.
-
-       1 | Speak with Laz
-
-       "Could this be... have I finally made it..." thought Laz.
-
-       2 | Enter Lighthouse
-
-       > move laz to lighthouse
-
-       > move continue to lighthouse
-
-       > move sparky off screen
-
-       Laz stood at the base of the lighthouse looking up to the bright light shining from the top.
-
-       "It's not the castle" Laz says "I wonder what that light is?"
-
-       Laz entered the lighthouse and started climbing the stairs to the top of the lighthouse.
-
         1 | Speak with Laz
 
        I wonder what the bright light is?" Laz said
@@ -297,23 +380,11 @@ rules =
 
        == End ==
     -}
-    , createRule "sparky walks through the forest"
-        { interaction = with "sparky"
-        , conditions =
-            [ currentLocationIs "forest-start"
-            , characterIsInLocation "sparky" "forest-start"
-            ]
-        , changes =
-            [ moveItemToLocation "continue" "forest-start"
-            ]
-        }
-        Narrative.sparkyWalksThroughTheForest
-    , createRule
-        "TheEnd"
+    , createRule "TheEnd"
         { interaction = with "continue"
         , conditions =
-            [ currentLocationIs "forest-start"
-            , characterIsInLocation "sparky" "forest-start"
+            [ currentLocationIs "bridge"
+            , characterIsInLocation "laz" "bridge"
             ]
         , changes =
             []
