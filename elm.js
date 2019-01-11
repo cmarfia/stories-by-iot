@@ -7811,26 +7811,13 @@ var author$project$Page$NotFound$view = function (model) {
 							_List_fromArray(
 								[
 									A2(
-									elm$html$Html$i,
+									elm$html$Html$img,
 									_List_fromArray(
 										[
-											elm$html$Html$Attributes$class('icon-frown-o')
+											elm$html$Html$Attributes$src('img/404.png'),
+											elm$html$Html$Attributes$alt('Page Not Found')
 										]),
-									_List_Nil),
-									A2(
-									elm$html$Html$p,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('Ope!')
-										])),
-									A2(
-									elm$html$Html$p,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('Looks like nothing is here...')
-										]))
+									_List_Nil)
 								]))
 						]))
 				])),

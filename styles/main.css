@@ -241,12 +241,6 @@ img {
   margin-top: .5em;
 }
 
-.page_notFound .notFound__message i {
-  font-size: 4.5em;
-  margin: .5em;
-  color: #d90808;
-}
-
-.page_notFound .notFound__message p {
-  font-size: 1.5em
+.page_notFound .notFound__message img {
+  border-bottom: 2px solid black;
 }
