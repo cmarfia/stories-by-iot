@@ -18,7 +18,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "elm-live": "^3.4.0",
-    "node-gyp": "^3.8.0"
+    "elm-live": "^3.4.1",
+    "node-gyp": "^5.0.0"
   }
 }
