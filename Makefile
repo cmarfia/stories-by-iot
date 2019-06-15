@@ -26,5 +26,8 @@ build: clean build-ui-prod
 run: build
 	./cmd/api/bin/api
 
-install-global:
+install:
+	npm i
+
+install-global: install
 	npm i -g elm elm-test elm-format chokidar-cli
