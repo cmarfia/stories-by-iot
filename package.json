@@ -8,17 +8,7 @@
     "type": "git",
     "url": "https://github.com/jschomay/elm-interactive-story-starter"
   },
-  "scripts": {
-    "start": "elm-live src/Main.elm --open --start-page=index.html --dir=public -- --output=public/elm.js --debug",
-    "build": "rimraf ./dist && copyfiles -f ./public/* ./dist && copyfiles -f ./public/img/* ./dist/img/ && copyfiles -f ./public/styles/* ./dist/styles && copyfiles -f ./public/styles/fonts/* ./dist/styles/fonts && elm make src/Main.elm --optimize --output=dist/elm.js",
-    "serve-build": "http-server ./dist"
-  },
-  "devDependencies": {
-    "copyfiles": "^2.1.0",
-    "rimraf": "^2.6.2"
-  },
-  "dependencies": {
-    "elm-live": "^3.4.1",
-    "node-gyp": "^5.0.0"
-  }
+  "scripts": {},
+  "devDependencies": {},
+  "dependencies": {}
 }
