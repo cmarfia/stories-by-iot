@@ -3,10 +3,12 @@ clean:
 
 build-ui-prod:
 	cp -R public/ dist/
+	./node_modules/.bin/babel ui/js --out-dir dist
 	elm make ui/elm/src/Main.elm --optimize --output=dist/elm.js
 
 build-ui:
 	cp -R public/ dist/
+	./node_modules/.bin/babel ui/js --out-dir dist
 	elm make ui/elm/src/Main.elm --output=dist/elm.js --debug
 
 watch-ui: build-ui
