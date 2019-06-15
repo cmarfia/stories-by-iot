@@ -4,3 +4,4 @@ tmp/
 dist/
 public/elm.js
 elm-package.json
+cmd/api/bin/
