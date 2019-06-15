@@ -6,5 +6,5 @@ type Location struct {
 	Name string
 	ImageLink string
 	ActionText *string
-	ConnectingLocations []string
+	ConnectingLocations []ConnectingLocation
 }
