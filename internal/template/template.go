@@ -1,11 +1,12 @@
+// Package template defined the renderable HTML templates for the server
 package template
 
 import (
-	"errors"
 	"html/template"
 	"io"
 
 	"github.com/labstack/echo"
+	"github.com/pkg/errors"
 )
 
 type renderer struct {
@@ -17,14 +18,14 @@ func (t *renderer) Render(w io.Writer, name string, data interface{}, c echo.Con
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
-// Index ...
+// Index defines the template data for the Index template
 type Index struct {
 	Title   string
 	Version int
 }
 
-// Init sets the template renderer for the echo framework
-func Init(e *echo.Echo) error {
+// NewRenderer creates a new template renderer for the echo framework
+func NewRenderer() (echo.Renderer, error) {
 	t, err := template.New("index").Parse(`
 		<!DOCTYPE html>
 		<html lang="en-us">
@@ -49,13 +50,12 @@ func Init(e *echo.Echo) error {
 		</html>
 	`)
 	if err != nil {
-		return err
+		return nil, errors.Wrap(err, "template: could not parse index template")
 	}
 
 	if t == nil {
-		return errors.New("template: error creating template, template is nil")
+		return nil, errors.New("template: error creating template, template is nil")
 	}
 
-	e.Renderer = &renderer{t}
-	return nil
+	return &renderer{t}, nil
 }

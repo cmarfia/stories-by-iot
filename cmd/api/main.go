@@ -1,30 +1,20 @@
+// Package main is responsible for initializing and running the application
 package main
 
 import (
-	"net/http"
-	"github.com/cmarfia/stories-by-iot/internal/template"
+	"log"
 
-	"github.com/labstack/echo"
-	"github.com/labstack/gommon/log"
+	"github.com/cmarfia/stories-by-iot/internal/routes"
+	"github.com/cmarfia/stories-by-iot/internal/server"
 )
 
 func main() {
-	e := echo.New() 
-	e.HideBanner = true
-
-	template.Init(e)
-	if l, ok := e.Logger.(*log.Logger); ok {
-		l.SetHeader("${time_rfc3339} ${level}")
+	e, err := server.New()
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	// set up static resources
-	e.Static("/img", "dist/img")
-	e.Static("/css", "dist/css")
-	e.Static("/js", "dist/js")
-	
-	e.GET("/", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "index", template.Index{Title: "Story By Iot", Version: 2})
-	})
+	routes.Register(e)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
