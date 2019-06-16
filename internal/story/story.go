@@ -7,22 +7,22 @@ import (
 
 // Story represents an entire story
 type Story struct {
-	ID string `json:"id"`
-	Title string `json:"title"`
-	Slug string `json:"slug"`
-	CoverImage string `json:"cover"`
-	StartingNarrative Narrative `json:"startingNarrative"`
-	StartingState []ChangeWorldCommand `json:"startingState"`
-	ImagesToPreload []string `json:"images"`
-	Characters []Character `json:"characters"`
-	Items []Item `json:"items"`
-	Locations []Location `json:"locations"`
-	Scenes []Scene `json:"scenes"`
+	ID                string               `json:"id"`
+	Title             string               `json:"title"`
+	Slug              string               `json:"slug"`
+	CoverImage        string               `json:"cover"`
+	StartingNarrative Narrative            `json:"startingNarrative"`
+	StartingState     []ChangeWorldCommand `json:"startingState"`
+	ImagesToPreload   []string             `json:"images"`
+	Characters        []Character          `json:"characters"`
+	Items             []Item               `json:"items"`
+	Locations         []Location           `json:"locations"`
+	Scenes            []Scene              `json:"scenes"`
 }
- 
+
 func marshalType(t string, d interface{}) ([]byte, error) {
-	return json.Marshal(&struct{
-		Type string `json:"type"`
+	return json.Marshal(&struct {
+		Type string      `json:"type"`
 		Data interface{} `json:"data"`
-	}{t,d})
+	}{t, d})
 }

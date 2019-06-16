@@ -13,4 +13,4 @@ func Register(e *echo.Echo) {
 	{
 		registerStoriesRoutes(v1)
 	}
-} 
+}

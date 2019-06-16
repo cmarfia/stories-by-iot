@@ -6,18 +6,18 @@ import (
 
 	"github.com/cmarfia/stories-by-iot/internal/template"
 
-	"github.com/pkg/errors"
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
+	"github.com/pkg/errors"
 )
 
 // New create an initializes a echo.Echo server
-func New() (*echo.Echo, error){
+func New() (*echo.Echo, error) {
 	echo.NotFoundHandler = func(c echo.Context) error {
 		return c.Redirect(http.StatusPermanentRedirect, "/#/404")
 	}
-	
-	e := echo.New() 
+
+	e := echo.New()
 	e.HideBanner = true // Hide console banner
 
 	r, err := template.NewRenderer()
@@ -26,7 +26,7 @@ func New() (*echo.Echo, error){
 	}
 
 	e.Renderer = r
-	
+
 	if l, ok := e.Logger.(*log.Logger); ok {
 		l.SetHeader("${time_rfc3339} ${level}")
 	}

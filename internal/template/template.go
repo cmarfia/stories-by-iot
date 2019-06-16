@@ -5,8 +5,8 @@ import (
 	"html/template"
 	"io"
 
-	"github.com/pkg/errors"
 	"github.com/labstack/echo"
+	"github.com/pkg/errors"
 )
 
 type renderer struct {

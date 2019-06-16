@@ -26,12 +26,12 @@ func ptrString(str string) *string {
 }
 
 var exampleStory = story.Story{
-	ID: "90905b00-11f4-4726-8020-4ad6b102fceb",
-	Title: "Example Story",
-	Slug: "example-story",
+	ID:         "90905b00-11f4-4726-8020-4ad6b102fceb",
+	Title:      "Example Story",
+	Slug:       "example-story",
 	CoverImage: "img/laz_01_cover.png",
 	StartingNarrative: story.Narrative{
-		Text: "Intro",
+		Text:      "Intro",
 		AudioLink: "--link--",
 	},
 	StartingState: []story.ChangeWorldCommand{
@@ -48,24 +48,24 @@ var exampleStory = story.Story{
 	},
 	Characters: []story.Character{
 		{
-			ID: "laz",
-			Name: "Laz",
-			ImageLink: "img/laz.png",
+			ID:           "laz",
+			Name:         "Laz",
+			ImageLink:    "img/laz.png",
 			Interactable: true,
-			ActionText: ptrString("Speak with Laz"),
+			ActionText:   ptrString("Speak with Laz"),
 		},
 	},
 	Items: []story.Item{
 		{
-			ID: "continue",
+			ID:         "continue",
 			ActionText: "Continue",
 		},
 	},
 	Locations: []story.Location{
 		{
-			ID: "plains",
-			Name: "The Plains",
-			ImageLink: "img/plains.png",
+			ID:         "plains",
+			Name:       "The Plains",
+			ImageLink:  "img/plains.png",
 			ActionText: nil,
 			ConnectingLocations: []story.ConnectingLocation{
 				{
@@ -77,10 +77,10 @@ var exampleStory = story.Story{
 			},
 		},
 		{
-			ID: "forest",
-			Name: "The Deep Forest",
-			ImageLink: "img/forest.png", 
-			ActionText: ptrString("Enter the Deep Forest"),
+			ID:                  "forest",
+			Name:                "The Deep Forest",
+			ImageLink:           "img/forest.png",
+			ActionText:          ptrString("Enter the Deep Forest"),
 			ConnectingLocations: nil,
 		},
 	},
@@ -89,7 +89,7 @@ var exampleStory = story.Story{
 			ID: "intro",
 			Passages: []story.Passage{
 				{
-					ID: "passage_1",
+					ID:          "passage_1",
 					Interaction: &story.With{Entity: "continue"},
 					Conditions: []story.Condition{
 						&story.ItemIsInLocation{Item: "continue", Location: "plains"},
@@ -99,12 +99,12 @@ var exampleStory = story.Story{
 						&story.LoadScene{Scene: "middle"},
 					},
 					Narrative: story.Narrative{
-						Text: "entered passage 1 after clicking continue",
+						Text:      "entered passage 1 after clicking continue",
 						AudioLink: "--link--",
 					},
 				},
 				{
-					ID: "passage_2",
+					ID:          "passage_2",
 					Interaction: &story.With{Entity: "laz"},
 					Conditions: []story.Condition{
 						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
@@ -114,7 +114,7 @@ var exampleStory = story.Story{
 						&story.LoadScene{Scene: "middle"},
 					},
 					Narrative: story.Narrative{
-						Text: "talked with laz entering passage 2",
+						Text:      "talked with laz entering passage 2",
 						AudioLink: "--link--",
 					},
 				},
@@ -124,7 +124,7 @@ var exampleStory = story.Story{
 			ID: "middle",
 			Passages: []story.Passage{
 				{
-					ID: "passage_3",
+					ID:          "passage_3",
 					Interaction: &story.With{Entity: "continue"},
 					Conditions: []story.Condition{
 						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
@@ -136,12 +136,12 @@ var exampleStory = story.Story{
 						&story.LoadScene{Scene: "ending"},
 					},
 					Narrative: story.Narrative{
-						Text: "passage 3 continuing on",
+						Text:      "passage 3 continuing on",
 						AudioLink: "--link--",
 					},
 				},
 				{
-					ID: "passage_4",
+					ID:          "passage_4",
 					Interaction: &story.With{Entity: "laz"},
 					Conditions: []story.Condition{
 						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
@@ -154,12 +154,12 @@ var exampleStory = story.Story{
 						&story.LoadScene{Scene: "ending"},
 					},
 					Narrative: story.Narrative{
-						Text: "passage 4 talking with laz",
+						Text:      "passage 4 talking with laz",
 						AudioLink: "--link--",
 					},
 				},
 				{
-					ID: "passage_5",
+					ID:          "passage_5",
 					Interaction: &story.With{Entity: "laz"},
 					Conditions: []story.Condition{
 						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
@@ -172,7 +172,7 @@ var exampleStory = story.Story{
 						&story.LoadScene{Scene: "ending"},
 					},
 					Narrative: story.Narrative{
-						Text: "passage 5 talking with laz again",
+						Text:      "passage 5 talking with laz again",
 						AudioLink: "--link--",
 					},
 				},
@@ -182,7 +182,7 @@ var exampleStory = story.Story{
 			ID: "ending",
 			Passages: []story.Passage{
 				{
-					ID: "passage_6",
+					ID:          "passage_6",
 					Interaction: &story.With{Entity: "laz"},
 					Conditions: []story.Condition{
 						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
@@ -192,12 +192,12 @@ var exampleStory = story.Story{
 						&story.MoveCharacterOffScreen{Character: "laz"},
 					},
 					Narrative: story.Narrative{
-						Text: "passage 6 Talking with laz for the first time",
+						Text:      "passage 6 Talking with laz for the first time",
 						AudioLink: "--link--",
 					},
 				},
 				{
-					ID: "passage_7",
+					ID:          "passage_7",
 					Interaction: &story.With{Entity: "forest"},
 					Conditions: []story.Condition{
 						&story.CurrentLocationIs{Location: "plains"},
@@ -205,14 +205,14 @@ var exampleStory = story.Story{
 					Changes: []story.ChangeWorldCommand{
 						&story.EndStory{
 							EndingNarrative: story.Narrative{
-								Text: "The End",
+								Text:      "The End",
 								AudioLink: "--link--",
 							},
 						},
 						&story.MoveToLocation{Location: "forest"},
 					},
 					Narrative: story.Narrative{
-						Text: "passage 7 moving to the forest",
+						Text:      "passage 7 moving to the forest",
 						AudioLink: "--link--",
 					},
 				},

@@ -6,21 +6,21 @@ import (
 
 // ChangeWorldCommand names
 const (
-	moveTo = "MOVE_TO" 
-	addLocation = "ADD_LOCATION" 
-	removeLocation = "REMOVE_LOCATION"
-	moveItemToInventory = "MOVE_ITEM_TO_INVENTORY"
+	moveTo                  = "MOVE_TO"
+	addLocation             = "ADD_LOCATION"
+	removeLocation          = "REMOVE_LOCATION"
+	moveItemToInventory     = "MOVE_ITEM_TO_INVENTORY"
 	moveCharacterToLocation = "MOVE_CHARACTER_TO_LOCATION"
-	moveCharacterOffScreen = "MOVE_CHARACTER_OFF_SCREEN"
-	moveItemToLocation = "MOVE_ITEM_TO_LOCATION"
+	moveCharacterOffScreen  = "MOVE_CHARACTER_OFF_SCREEN"
+	moveItemToLocation      = "MOVE_ITEM_TO_LOCATION"
 	moveItemToLocationFixed = "MOVE_ITEM_TO_LOCATION_FIXED"
-	moveItemOffScreen = "MOVE_ITEM_OFF_SCREEN"
-	loadScene = "LOAD_SCENE"
-	endStory = "END_STORY"
-) 
+	moveItemOffScreen       = "MOVE_ITEM_OFF_SCREEN"
+	loadScene               = "LOAD_SCENE"
+	endStory                = "END_STORY"
+)
 
 // ChangeWorldCommand is an interface to defines a command to change
-// the story 
+// the story
 type ChangeWorldCommand interface {
 	json.Marshaler
 }
@@ -42,7 +42,7 @@ type AddLocation struct {
 	Location string `json:"location"`
 }
 
-// MarshalJSON marshals the addLocation ChangeWorldCommand  
+// MarshalJSON marshals the addLocation ChangeWorldCommand
 func (c *AddLocation) MarshalJSON() ([]byte, error) {
 	return marshalType(addLocation, *c)
 }
@@ -53,7 +53,7 @@ type RemoveLocation struct {
 	Location string `json:"location"`
 }
 
-// MarshalJSON marshals the removeLocation ChangeWorldCommand  
+// MarshalJSON marshals the removeLocation ChangeWorldCommand
 func (c *RemoveLocation) MarshalJSON() ([]byte, error) {
 	return marshalType(removeLocation, *c)
 }
@@ -64,7 +64,7 @@ type MoveItemToInventory struct {
 	Item string `json:"item"`
 }
 
-// MarshalJSON marshals the moveItemToInventory ChangeWorldCommand  
+// MarshalJSON marshals the moveItemToInventory ChangeWorldCommand
 func (c *MoveItemToInventory) MarshalJSON() ([]byte, error) {
 	return marshalType(moveItemToInventory, *c)
 }
@@ -73,10 +73,10 @@ func (c *MoveItemToInventory) MarshalJSON() ([]byte, error) {
 // character to a specific location
 type MoveCharacterToLocation struct {
 	Character string `json:"character"`
-	Location string `json:"location"`
+	Location  string `json:"location"`
 }
 
-// MarshalJSON marshals the moveCharacterToLocation ChangeWorldCommand  
+// MarshalJSON marshals the moveCharacterToLocation ChangeWorldCommand
 func (c *MoveCharacterToLocation) MarshalJSON() ([]byte, error) {
 	return marshalType(moveCharacterToLocation, *c)
 }
@@ -87,7 +87,7 @@ type MoveCharacterOffScreen struct {
 	Character string `json:"character"`
 }
 
-// MarshalJSON marshals the moveCharacterOffScreen ChangeWorldCommand  
+// MarshalJSON marshals the moveCharacterOffScreen ChangeWorldCommand
 func (c *MoveCharacterOffScreen) MarshalJSON() ([]byte, error) {
 	return marshalType(moveCharacterOffScreen, *c)
 }
@@ -95,11 +95,11 @@ func (c *MoveCharacterOffScreen) MarshalJSON() ([]byte, error) {
 // MoveItemToLocation represents the ChangeWorldCommand for moving an
 // item to a specific location
 type MoveItemToLocation struct {
-	Item string `json:"item"`
+	Item     string `json:"item"`
 	Location string `json:"location"`
 }
 
-// MarshalJSON marshals the moveItemToLocation ChangeWorldCommand  
+// MarshalJSON marshals the moveItemToLocation ChangeWorldCommand
 func (c *MoveItemToLocation) MarshalJSON() ([]byte, error) {
 	return marshalType(moveItemToLocation, *c)
 }
@@ -108,11 +108,11 @@ func (c *MoveItemToLocation) MarshalJSON() ([]byte, error) {
 // item to a specific location, where the item cannot be added to the
 // readers inventory
 type MoveItemToFixedLocation struct {
-	Item string `json:"item"`
+	Item     string `json:"item"`
 	Location string `json:"location"`
 }
 
-// MarshalJSON marshals the moveItemToLocationFixed ChangeWorldCommand  
+// MarshalJSON marshals the moveItemToLocationFixed ChangeWorldCommand
 func (c *MoveItemToFixedLocation) MarshalJSON() ([]byte, error) {
 	return marshalType(moveItemToLocationFixed, *c)
 }
@@ -123,7 +123,7 @@ type MoveItemOffScreen struct {
 	Item string `json:"item"`
 }
 
-// MarshalJSON marshals the moveItemOffScreen ChangeWorldCommand  
+// MarshalJSON marshals the moveItemOffScreen ChangeWorldCommand
 func (c *MoveItemOffScreen) MarshalJSON() ([]byte, error) {
 	return marshalType(moveItemOffScreen, *c)
 }
@@ -133,7 +133,7 @@ type LoadScene struct {
 	Scene string `json:"scene"`
 }
 
-// MarshalJSON marshals the loadScene ChangeWorldCommand  
+// MarshalJSON marshals the loadScene ChangeWorldCommand
 func (c *LoadScene) MarshalJSON() ([]byte, error) {
 	return marshalType(loadScene, *c)
 }
@@ -143,7 +143,7 @@ type EndStory struct {
 	EndingNarrative Narrative `json:"endingNarrative"`
 }
 
-// MarshalJSON marshals the endStory ChangeWorldCommand  
+// MarshalJSON marshals the endStory ChangeWorldCommand
 func (c *EndStory) MarshalJSON() ([]byte, error) {
 	return marshalType(endStory, *c)
 }

@@ -4,8 +4,8 @@ package main
 import (
 	"log"
 
-	"github.com/cmarfia/stories-by-iot/internal/server"
 	"github.com/cmarfia/stories-by-iot/internal/routes"
+	"github.com/cmarfia/stories-by-iot/internal/server"
 )
 
 func main() {
@@ -15,6 +15,6 @@ func main() {
 	}
 
 	routes.Register(e)
-	
+
 	e.Logger.Fatal(e.Start(":8080"))
 }

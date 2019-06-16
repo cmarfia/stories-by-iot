@@ -6,10 +6,10 @@ import (
 
 // Interaction names
 const (
-	with = "WITH"
-	withAnything = "WITH_ANYTHING"
-	withAnyItem = "WITH_ANY_ITEM"
-	withAnyLocation = "WITH_ANY_LOCATION"
+	with             = "WITH"
+	withAnything     = "WITH_ANYTHING"
+	withAnyItem      = "WITH_ANY_ITEM"
+	withAnyLocation  = "WITH_ANY_LOCATION"
 	withAnyCharacter = "WITH_ANY_CHARACTER"
 )
 
@@ -19,14 +19,13 @@ type Interaction interface {
 	json.Marshaler
 }
 
-
 // With represents the InteractionMatcher for interacting with a
 // specific entity
 type With struct {
 	Entity string `json:"entity"`
 }
 
-// MarshalJSON marshals the with InteractionMatcher  
+// MarshalJSON marshals the with InteractionMatcher
 func (i *With) MarshalJSON() ([]byte, error) {
 	return marshalType(with, *i)
 }
@@ -36,7 +35,7 @@ func (i *With) MarshalJSON() ([]byte, error) {
 type WithAnything struct {
 }
 
-// MarshalJSON marshals the withAnything InteractionMatcher  
+// MarshalJSON marshals the withAnything InteractionMatcher
 func (i *WithAnything) MarshalJSON() ([]byte, error) {
 	return marshalType(withAnything, *i)
 }
@@ -46,7 +45,7 @@ func (i *WithAnything) MarshalJSON() ([]byte, error) {
 type WithAnyItem struct {
 }
 
-// MarshalJSON marshals the withAnyItem InteractionMatcher  
+// MarshalJSON marshals the withAnyItem InteractionMatcher
 func (i *WithAnyItem) MarshalJSON() ([]byte, error) {
 	return marshalType(withAnyItem, *i)
 }
@@ -56,7 +55,7 @@ func (i *WithAnyItem) MarshalJSON() ([]byte, error) {
 type WithAnyLocation struct {
 }
 
-// MarshalJSON marshals the withAnyLocation InteractionMatcher  
+// MarshalJSON marshals the withAnyLocation InteractionMatcher
 func (i *WithAnyLocation) MarshalJSON() ([]byte, error) {
 	return marshalType(withAnyLocation, *i)
 }
@@ -66,7 +65,7 @@ func (i *WithAnyLocation) MarshalJSON() ([]byte, error) {
 type WithAnyCharacter struct {
 }
 
-// MarshalJSON marshals the withAnyCharacter InteractionMatcher  
+// MarshalJSON marshals the withAnyCharacter InteractionMatcher
 func (i *WithAnyCharacter) MarshalJSON() ([]byte, error) {
 	return marshalType(withAnyCharacter, *i)
 }
