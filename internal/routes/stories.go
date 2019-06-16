@@ -14,11 +14,11 @@ func registerStoriesRoutes(e *echo.Group) {
 }
 
 func fetchStories(c echo.Context) error {
-	return c.JSON(http.StatusOK, []story.Story{exampleStory})
+	return c.JSON(http.StatusOK, []*story.Story{&exampleStory})
 }
 
 func fetchStory(c echo.Context) error {
-	return c.JSON(http.StatusOK, exampleStory)
+	return c.JSON(http.StatusOK, &exampleStory)
 }
 
 func ptrString(str string) *string {
@@ -94,7 +94,6 @@ var exampleStory = story.Story{
 					Conditions: []story.Condition{
 						&story.ItemIsInLocation{Item: "continue", Location: "plains"},
 						&story.CurrentLocationIs{Location: "plains"},
-						&story.CurrentSceneIs{Scene: "intro"},
 					},
 					Changes: []story.ChangeWorldCommand{
 						&story.LoadScene{Scene: "middle"},
@@ -103,7 +102,6 @@ var exampleStory = story.Story{
 						Text: "entered passage 1 after clicking continue",
 						AudioLink: "--link--",
 					},
-					IsEnding: false,
 				},
 				{
 					ID: "passage_2",
@@ -111,7 +109,6 @@ var exampleStory = story.Story{
 					Conditions: []story.Condition{
 						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
 						&story.CurrentLocationIs{Location: "plains"},
-						&story.CurrentSceneIs{Scene: "intro"},
 					},
 					Changes: []story.ChangeWorldCommand{
 						&story.LoadScene{Scene: "middle"},
@@ -120,7 +117,6 @@ var exampleStory = story.Story{
 						Text: "talked with laz entering passage 2",
 						AudioLink: "--link--",
 					},
-					IsEnding: false,
 				},
 			},
 		},
@@ -134,7 +130,6 @@ var exampleStory = story.Story{
 						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
 						&story.CurrentLocationIs{Location: "plains"},
 						&story.HasNotPreviouslyInteractedWith{Entity: "laz"},
-						&story.CurrentSceneIs{Scene: "middle"},
 					},
 					Changes: []story.ChangeWorldCommand{
 						&story.MoveItemOffScreen{Item: "continue"},
@@ -144,7 +139,6 @@ var exampleStory = story.Story{
 						Text: "passage 3 continuing on",
 						AudioLink: "--link--",
 					},
-					IsEnding: false,
 				},
 				{
 					ID: "passage_4",
@@ -153,7 +147,6 @@ var exampleStory = story.Story{
 						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
 						&story.CurrentLocationIs{Location: "plains"},
 						&story.HasNotPreviouslyInteractedWith{Entity: "laz"},
-						&story.CurrentSceneIs{Scene: "middle"},
 					},
 					Changes: []story.ChangeWorldCommand{
 						&story.MoveItemOffScreen{Item: "continue"},
@@ -164,7 +157,6 @@ var exampleStory = story.Story{
 						Text: "passage 4 talking with laz",
 						AudioLink: "--link--",
 					},
-					IsEnding: false,
 				},
 				{
 					ID: "passage_5",
@@ -173,7 +165,6 @@ var exampleStory = story.Story{
 						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
 						&story.CurrentLocationIs{Location: "plains"},
 						&story.HasPreviouslyInteractedWith{Entity: "laz"},
-						&story.CurrentSceneIs{Scene: "middle"},
 					},
 					Changes: []story.ChangeWorldCommand{
 						&story.MoveItemOffScreen{Item: "continue"},
@@ -184,7 +175,6 @@ var exampleStory = story.Story{
 						Text: "passage 5 talking with laz again",
 						AudioLink: "--link--",
 					},
-					IsEnding: false,
 				},
 			},
 		},
@@ -197,7 +187,6 @@ var exampleStory = story.Story{
 					Conditions: []story.Condition{
 						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
 						&story.CurrentLocationIs{Location: "plains"},
-						&story.CurrentSceneIs{Scene: "ending"},
 					},
 					Changes: []story.ChangeWorldCommand{
 						&story.MoveCharacterOffScreen{Character: "laz"},
@@ -206,21 +195,26 @@ var exampleStory = story.Story{
 						Text: "passage 6 Talking with laz for the first time",
 						AudioLink: "--link--",
 					},
-					IsEnding: false,
 				},
 				{
 					ID: "passage_7",
 					Interaction: &story.With{Entity: "forest"},
 					Conditions: []story.Condition{
 						&story.CurrentLocationIs{Location: "plains"},
-						&story.CurrentSceneIs{Scene: "ending"},
 					},
-					Changes: []story.ChangeWorldCommand{},
+					Changes: []story.ChangeWorldCommand{
+						&story.EndStory{
+							EndingNarrative: story.Narrative{
+								Text: "The End",
+								AudioLink: "--link--",
+							},
+						},
+						&story.MoveToLocation{Location: "forest"},
+					},
 					Narrative: story.Narrative{
 						Text: "passage 7 moving to the forest",
 						AudioLink: "--link--",
 					},
-					IsEnding: true,
 				},
 			},
 		},

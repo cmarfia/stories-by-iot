@@ -1,31 +1,34 @@
 package story
 
+import (
+	"encoding/json"
+)
+
 // Interaction names
 const (
 	with = "WITH"
-	withAnything = "WITHANYTHING"
-	withAnyItem = "WITHANYITEM"
-	withAnyLocation = "WITHANYLOCATION"
-	withAnyCharacter = "WITHANYCHARACTER"
+	withAnything = "WITH_ANYTHING"
+	withAnyItem = "WITH_ANY_ITEM"
+	withAnyLocation = "WITH_ANY_LOCATION"
+	withAnyCharacter = "WITH_ANY_CHARACTER"
 )
 
 // Interaction is an interface to defines the different interactions
 // a reader can make
 type Interaction interface {
-	Interaction() (string, []string)
+	json.Marshaler
 }
 
 
 // With represents the InteractionMatcher for interacting with a
 // specific entity
 type With struct {
-	Entity string
+	Entity string `json:"entity"`
 }
 
-// Interaction returns the name of arguments for the with
-// InteractionMatcher  
-func (i *With) Interaction() (string, []string) {
-	return with, []string{i.Entity}
+// MarshalJSON marshals the with InteractionMatcher  
+func (i *With) MarshalJSON() ([]byte, error) {
+	return marshalType(with, *i)
 }
 
 // WithAnything represents the InteractionMatcher for interacting with
@@ -33,10 +36,9 @@ func (i *With) Interaction() (string, []string) {
 type WithAnything struct {
 }
 
-// Interaction returns the name of arguments for the withAnything
-// InteractionMatcher  
-func (i *WithAnything) Interaction() (string, []string) {
-	return withAnything, []string{}
+// MarshalJSON marshals the withAnything InteractionMatcher  
+func (i *WithAnything) MarshalJSON() ([]byte, error) {
+	return marshalType(withAnything, *i)
 }
 
 // WithAnyItem represents the InteractionMatcher for interacting with
@@ -44,10 +46,9 @@ func (i *WithAnything) Interaction() (string, []string) {
 type WithAnyItem struct {
 }
 
-// Interaction returns the name of arguments for the withAnyItem
-// InteractionMatcher  
-func (i *WithAnyItem) Interaction() (string, []string) {
-	return withAnyItem, []string{}
+// MarshalJSON marshals the withAnyItem InteractionMatcher  
+func (i *WithAnyItem) MarshalJSON() ([]byte, error) {
+	return marshalType(withAnyItem, *i)
 }
 
 // WithAnyLocation represents the InteractionMatcher for interacting with
@@ -55,10 +56,9 @@ func (i *WithAnyItem) Interaction() (string, []string) {
 type WithAnyLocation struct {
 }
 
-// Interaction returns the name of arguments for the withAnyLocation
-// InteractionMatcher  
-func (i *WithAnyLocation) Interaction() (string, []string) {
-	return withAnyLocation, []string{}
+// MarshalJSON marshals the withAnyLocation InteractionMatcher  
+func (i *WithAnyLocation) MarshalJSON() ([]byte, error) {
+	return marshalType(withAnyLocation, *i)
 }
 
 // WithAnyCharacter represents the InteractionMatcher for interacting with
@@ -66,8 +66,7 @@ func (i *WithAnyLocation) Interaction() (string, []string) {
 type WithAnyCharacter struct {
 }
 
-// Interaction returns the name of arguments for the withAnyCharacter
-// InteractionMatcher  
-func (i *WithAnyCharacter) Interaction() (string, []string) {
-	return withAnyCharacter, []string{}
+// MarshalJSON marshals the withAnyCharacter InteractionMatcher  
+func (i *WithAnyCharacter) MarshalJSON() ([]byte, error) {
+	return marshalType(withAnyCharacter, *i)
 }

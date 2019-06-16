@@ -2,10 +2,9 @@ package story
 
 // Passage defines a specific section of the story.
 type Passage struct {
-	ID string
-	Interaction Interaction
-	Conditions []Condition
-	Changes []ChangeWorldCommand
-	Narrative Narrative
-	IsEnding bool
+	ID string `json:"id"`
+	Interaction Interaction `json:"interaction"`
+	Conditions []Condition `json:"conditions"`
+	Changes []ChangeWorldCommand `json:"changes"`
+	Narrative Narrative `json:"narrative"`
 }
