@@ -6,10 +6,19 @@ import (
 
 	"github.com/cmarfia/stories-by-iot/internal/routes"
 	"github.com/cmarfia/stories-by-iot/internal/server"
+	"github.com/cmarfia/stories-by-iot/internal/dynamodb"
 )
 
 func main() {
-	e, err := server.New()
+    defer func() {
+        if r := recover(); r != nil {
+            log.Println("Recovered from ", r)
+        }
+	}()
+
+	dynamoService := dynamodb.MustInitialize()
+
+	e, err := server.New(&dynamoService)
 	if err != nil {
 		log.Fatal(err)
 	}
