@@ -18,7 +18,6 @@ type OutgoingMsg
 
 type IncomingMsg
     = ImagesLoaded
-    | VoiceLoaded
 
 
 encode : OutgoingMsg -> Encode.Value
@@ -44,9 +43,6 @@ decode =
             case command of
                 "IMAGES_LOADED" ->
                     Decode.succeed ImagesLoaded
-
-                "VOICE_LOADED" ->
-                    Decode.succeed VoiceLoaded
 
                 _ ->
                     Decode.fail "Invalid command received"

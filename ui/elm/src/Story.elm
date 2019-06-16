@@ -1,47 +1,81 @@
 module Story exposing
-    ( Story
+    ( Manifest
+    , Narrative
+    , Story
+    , getCover
     , getImagesToPreload
     , getManifest
     , getRules
+    , getSlug
     , getStartingNarrative
     , getStartingState
     , getTitle
     , parser
-    , toStory
-    , toUrlString
     )
 
 import Dict exposing (Dict)
 import Engine exposing (..)
-import Story.AllStories exposing (allStories)
 import Story.Components exposing (..)
-import Story.TheAdventuresOfLaz01.StoryInfo as TheAdventuresOfLaz01
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, string)
 
 
 type Story
-    = Story StoryInfo
+    = Story FullStory
 
 
-toStory : StoryInfo -> Story
-toStory =
-    Story
+type alias Manifest =
+    { items : List Entity
+    , characters : List Entity
+    , locations : List Entity
+    }
+
+
+type alias FullStory =
+    { id : String
+    , title : String
+    , slug : String
+    , cover : String
+    , manifest : Manifest
+    , startingNarrative : Narrative
+    , startingState : List Engine.ChangeWorldCommand
+    , rules : Dict String Components
+    , imagesToPreLoad : List String
+    }
+
+
+type alias Narrative =
+    { interactableId : String
+    , narrative : String
+    , audio : Maybe String
+    }
+
+
+new : FullStory -> Story
+new story =
+    Story story
 
 
 parser : Parser (Story -> a) a
 parser =
     let
-        toParser storyInfo =
-            Parser.map (Story storyInfo) (s storyInfo.slug)
+        toParser story =
+            Parser.map (Story story) (s story.slug)
     in
-    oneOf (List.map toParser allStories)
+    oneOf (List.map toParser [])
 
 
-toUrlString : Story -> String
-toUrlString story =
+getCover : Story -> String
+getCover story =
     case story of
-        Story storyInfo ->
-            storyInfo.slug
+        Story { cover } ->
+            cover
+
+
+getSlug : Story -> String
+getSlug story =
+    case story of
+        Story { slug } ->
+            slug
 
 
 getTitle : Story -> String
@@ -72,7 +106,7 @@ getStartingState story =
             startingState
 
 
-getStartingNarrative : Story -> Snippet
+getStartingNarrative : Story -> Narrative
 getStartingNarrative story =
     case story of
         Story { startingNarrative } ->

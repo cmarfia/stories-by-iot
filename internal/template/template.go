@@ -22,6 +22,7 @@ func (t *renderer) Render(w io.Writer, name string, data interface{}, c echo.Con
 type Index struct {
 	Title   string
 	Version int
+	Flags	map[string]interface{}
 }
 
 // NewRenderer creates a new template renderer for the echo framework
@@ -44,8 +45,13 @@ func NewRenderer() (echo.Renderer, error) {
 			<main></main>
 			<script src="/js/marked.min.js?v={{.Version}}"></script>
 			<script src="/js/elm.js?v={{.Version}}"></script>
-  			<script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
 			<script src="/js/index.js?v={{.Version}}"></script>
+			<script type="text/javascript">
+				window.storybook.init(
+					document.getElementsByTagName('main')[0],
+					{{.Flags}}
+				);
+			</script>
 		</body>
 		</html>
 	`)

@@ -11,22 +11,23 @@ import Html.Keyed
 import Json.Encode
 import List.Extra
 import Markdown
-import Port
-import Story exposing (Story)
+import Port 
+import Story exposing (Story, Narrative)
 import Story.Components exposing (..)
 import Url
+import Flags exposing (Flags)
 
 
 type alias Model =
     { engineModel : Engine.Model
     , story : Story
-    , storyLine : List Snippet
+    , storyLine : List Narrative 
     , narrativeContent : Dict String String
     }
 
 
-init : Story -> ( Model, Cmd Msg )
-init story =
+init : Flags -> Story -> ( Model, Cmd Msg )
+init _ story =
     let
         manifest =
             Story.getManifest story
@@ -66,7 +67,7 @@ type alias DisplayState =
     , charactersInCurrentLocation : List Entity
     , connectingLocations : List Entity
     , ending : Maybe String
-    , storyLine : List Snippet
+    , storyLine : List Narrative
     }
 
 
@@ -158,7 +159,7 @@ viewCharacters characters =
         List.indexedMap toImage characters
 
 
-viewActions : Maybe String -> List Snippet -> List Entity -> List Entity -> List Entity -> Html Msg
+viewActions : Maybe String -> List Narrative -> List Entity -> List Entity -> List Entity -> Html Msg
 viewActions endStory storyLine characters items locations =
     div [] <|
         if endStory /= Nothing then
@@ -206,7 +207,7 @@ viewActions endStory storyLine characters items locations =
                 |> List.map wrapRows
 
 
-viewStoryLine : List Snippet -> Html Msg
+viewStoryLine : List Narrative -> Html Msg
 viewStoryLine storyLine =
     div [ class "story__narrative" ]
         [ case List.head storyLine of
@@ -257,8 +258,8 @@ type Msg
     | Speak
 
 
-update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
-update navKey msg model =
+update : Nav.Key -> Flags -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey flags msg model =
     case msg of
         Interact interactableId ->
             let
@@ -270,6 +271,7 @@ update navKey msg model =
 
                 narrativeForThisInteraction =
                     { interactableId = interactableId
+                    , audio = Nothing
                     , narrative =
                         maybeMatchedRuleId
                             |> Maybe.andThen (\id -> Dict.get id model.narrativeContent)
@@ -294,7 +296,7 @@ update navKey msg model =
             )
 
         Restart ->
-            init model.story
+            init flags model.story
 
         GoHome ->
             ( model
