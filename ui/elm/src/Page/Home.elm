@@ -6,8 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Port
 import Route
-import Story
-import Story.AllStories exposing (..)
+import Story exposing (Story)
 import Story.Components exposing (..)
 import Url exposing (Url)
 
@@ -17,7 +16,7 @@ import Url exposing (Url)
 
 
 type alias Model =
-    { stories : List StoryInfo
+    { stories : List Story
     }
 
 
@@ -25,9 +24,9 @@ init : ( Model, Cmd Msg )
 init =
     let
         loadImagesMsg =
-            Port.PreloadImages ("img/logo.png" :: List.map .cover allStories)
+            Port.PreloadImages ("img/logo.png" :: List.map .cover [])
     in
-    ( { stories = allStories }, Port.toJavaScript (Port.encode loadImagesMsg) )
+    ( { stories = [] }, Port.toJavaScript (Port.encode loadImagesMsg) )
 
 
 
@@ -59,10 +58,15 @@ viewHeader =
         ]
 
 
-viewStory : StoryInfo -> Html Msg
-viewStory storyInfo =
+viewStory : Story -> Html Msg
+viewStory story =
     div [ class "one-half column story" ]
-        [ img [ src storyInfo.cover, alt storyInfo.title, onClick <| SelectedStory storyInfo.slug ] []
+        [ img
+            [ src <| Story.getCover story
+            , alt <| Story.getTitle story
+            , onClick <| SelectedStory <| Story.getSlug story
+            ]
+            []
         ]
 
 

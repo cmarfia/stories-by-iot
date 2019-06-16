@@ -48,6 +48,6 @@ routeToString page =
                     []
 
                 Story story ->
-                    [ Story.toUrlString story ]
+                    [ Story.getSlug story ]
     in
     "#/" ++ String.join "/" pieces

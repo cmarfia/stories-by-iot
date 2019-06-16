@@ -2,10 +2,7 @@ module Story.Components exposing
     ( Component(..)
     , Components
     , Entity
-    , Manifest
-    , Snippet
     , SpeakingPosition(..)
-    , StoryInfo
     , addActionText
     , addClassName
     , addComponent
@@ -33,32 +30,6 @@ module Story.Components exposing
 
 import Dict exposing (..)
 import Engine
-
-
-type alias Manifest =
-    { items : List Entity
-    , characters : List Entity
-    , locations : List Entity
-    }
-
-
-type alias StoryInfo =
-    { title : String
-    , slug : String
-    , cover : String
-    , manifest : Manifest
-    , startingNarrative : Snippet
-    , startingState : List Engine.ChangeWorldCommand
-    , rules : Dict String Components
-    , imagesToPreLoad : List String
-    }
-
-
-type alias Snippet =
-    { interactableId : String
-    , narrative : String
-    }
-
 
 {-| An entity is simply an id associated with some potential components and their data.
 Each object in your story is an entity - this includes items, locations, and characters, but also rules too.
@@ -253,7 +224,7 @@ createRule id ruleData narrative =
         |> addNarrative narrative
 
 
-findEntity : Manifest -> String -> Entity
+findEntity : { e | items : List Entity, locations : List Entity, characters : List Entity } -> String -> Entity
 findEntity manifest id =
     (manifest.items ++ manifest.locations ++ manifest.characters)
         |> List.filter (Tuple.first >> (==) id)

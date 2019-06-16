@@ -13,7 +13,7 @@ import Port
 import Route exposing (Route)
 import Tuple
 import Url exposing (Url)
-
+import Flags exposing (Flags)
 
 
 -- MODEL
@@ -28,15 +28,18 @@ type Page
 type alias Model =
     { navKey : Nav.Key
     , loaded : Bool
-    , voiceLoaded : Bool
     , page : Page
     }
 
 
-init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url navKey =
-    { navKey = navKey, loaded = False, voiceLoaded = False, page = NotFound {} }
-        |> changeRouteTo (Route.fromUrl url)
+init : Json.Decode.Value -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init flagsValue url navKey =
+    case Json.Decode.decodeValue Flags.decode flagsValue of
+        Ok flags ->
+            { navKey = navKey, loaded = False, page = NotFound {} }
+                |> changeRouteTo (Route.fromUrl url)
+        Err error ->
+            Debug.todo "add error handling"
 
 
 
@@ -80,7 +83,7 @@ view model =
 
         Story storyModel ->
             if model.loaded then
-                viewPage (Story.view model.voiceLoaded storyModel) GotStoryMsg
+                viewPage (Story.view True storyModel) GotStoryMsg
 
             else
                 viewLoading
@@ -91,8 +94,7 @@ view model =
 
 
 type Msg
-    = Ignored
-    | Loaded Bool
+    = Loaded Bool
     | RequestedUrl Browser.UrlRequest
     | ChangedUrl Url.Url
     | GotNotFoundMsg NotFound.Msg
@@ -104,9 +106,6 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model.page ) of
-        ( Ignored, _ ) ->
-            ( model, Cmd.none )
-
         ( RequestedUrl urlRequest, _ ) ->
             case urlRequest of
                 Browser.Internal url ->
@@ -144,9 +143,6 @@ update msg model =
                     case portMsg of
                         Port.ImagesLoaded ->
                             ( { model | loaded = True }, Cmd.none )
-
-                        Port.VoiceLoaded ->
-                            ( { model | voiceLoaded = True }, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -192,7 +188,7 @@ subscriptions _ =
     Port.fromJavaScript GotSubscription
 
 
-main : Program () Model Msg
+main : Program Json.Decode.Value Model Msg
 main =
     Browser.application
         { init = init
