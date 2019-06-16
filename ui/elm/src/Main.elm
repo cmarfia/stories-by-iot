@@ -38,7 +38,7 @@ init flagsValue url navKey =
         Ok flags ->
             let
                 ( page, cmds ) =
-                    initPageFromRoute (Route.fromUrl url)
+                    initPageFromRoute flags (Route.fromUrl url)
             in
             ( Loading navKey flags page, cmds )
 
@@ -145,7 +145,7 @@ update msg model =
                 ChangedUrl url ->
                     let
                         ( updatedPage, cmds ) =
-                            initPageFromRoute (Route.fromUrl url)
+                            initPageFromRoute flags (Route.fromUrl url)
                     in
                     ( Loading navKey flags updatedPage, cmds )
 
@@ -181,14 +181,14 @@ update msg model =
                 ( ChangedUrl url, _ ) ->
                     let
                         ( updatedPage, cmds ) =
-                            initPageFromRoute (Route.fromUrl url)
+                            initPageFromRoute flags (Route.fromUrl url)
                     in
                     ( Loading navKey flags updatedPage, cmds )
 
                 ( GotNotFoundMsg subMsg, NotFound notFoundModel ) ->
                     let
                         ( updatedPage, cmds ) =
-                            NotFound.update navKey subMsg notFoundModel
+                            NotFound.update navKey flags subMsg notFoundModel
                                 |> updatePageWith NotFound GotNotFoundMsg
                     in
                     ( Viewing navKey flags updatedPage, cmds )
@@ -196,7 +196,7 @@ update msg model =
                 ( GotHomeMsg subMsg, Home homeModel ) ->
                     let
                         ( updatedPage, cmds ) =
-                            Home.update navKey subMsg homeModel
+                            Home.update navKey flags subMsg homeModel
                                 |> updatePageWith Home GotHomeMsg
                     in
                     ( Viewing navKey flags updatedPage, cmds )
@@ -204,7 +204,7 @@ update msg model =
                 ( GotStoryMsg subMsg, Story storyModel ) ->
                     let
                         ( updatedPage, cmds ) =
-                            Story.update navKey subMsg storyModel
+                            Story.update navKey flags subMsg storyModel
                                 |> updatePageWith Story GotStoryMsg
                     in
                     ( Viewing navKey flags updatedPage, cmds )
@@ -214,19 +214,19 @@ update msg model =
                     ( model, Cmd.none )
 
 
-initPageFromRoute : Maybe Route -> ( Page, Cmd Msg )
-initPageFromRoute maybeRoute =
+initPageFromRoute : Flags -> Maybe Route -> ( Page, Cmd Msg )
+initPageFromRoute flags maybeRoute =
     case maybeRoute of
         Nothing ->
-            NotFound.init
+            NotFound.init flags
                 |> updatePageWith NotFound GotNotFoundMsg
 
         Just Route.Home ->
-            Home.init
+            Home.init flags
                 |> updatePageWith Home GotHomeMsg
 
         Just (Route.Story story) ->
-            Story.init story
+            Story.init flags story
                 |> updatePageWith Story GotStoryMsg
 
 

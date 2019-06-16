@@ -5,6 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Port
+import Flags exposing (Flags)
 
 
 
@@ -15,8 +16,8 @@ type alias Model =
     {}
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Flags -> ( Model, Cmd Msg )
+init _ =
     let
         loadImagesMsg =
             Port.PreloadImages [ "img/logo.png" ]
@@ -63,8 +64,8 @@ type Msg
     = GoHome
 
 
-update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
-update navKey msg model =
+update : Nav.Key -> Flags -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey _ msg model =
     case msg of
         GoHome ->
             ( model, Nav.pushUrl navKey "/" )

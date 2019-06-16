@@ -1,13 +1,14 @@
 module Page.Home exposing (Model, Msg(..), init, update, view)
 
 import Browser.Navigation as Nav
+import Flags exposing (Flags)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Port
 import Route
-import Story exposing (Story)
 import Story.Components exposing (..)
+import Story.Info exposing (Info)
 import Url exposing (Url)
 
 
@@ -16,17 +17,17 @@ import Url exposing (Url)
 
 
 type alias Model =
-    { stories : List Story
+    { library : List Info
     }
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Flags -> ( Model, Cmd Msg )
+init { library } =
     let
         loadImagesMsg =
-            Port.PreloadImages ("img/logo.png" :: List.map .cover [])
+            Port.PreloadImages ("img/logo.png" :: List.map .cover library)
     in
-    ( { stories = [] }, Port.toJavaScript (Port.encode loadImagesMsg) )
+    ( { library = library }, Port.toJavaScript (Port.encode loadImagesMsg) )
 
 
 
@@ -40,7 +41,7 @@ view model =
         div [ class "page page__home clearfix" ]
             [ div [ class "container" ]
                 [ viewHeader
-                , div [ class "row" ] (List.map viewStory model.stories)
+                , div [ class "row" ] (List.map viewStory model.library)
                 ]
             ]
     }
@@ -58,15 +59,10 @@ viewHeader =
         ]
 
 
-viewStory : Story -> Html Msg
-viewStory story =
+viewStory : Info -> Html Msg
+viewStory { cover, title, slug } =
     div [ class "one-half column story" ]
-        [ img
-            [ src <| Story.getCover story
-            , alt <| Story.getTitle story
-            , onClick <| SelectedStory <| Story.getSlug story
-            ]
-            []
+        [ img [ src cover, alt title, onClick <| SelectedStory slug ] []
         ]
 
 
@@ -78,8 +74,8 @@ type Msg
     = SelectedStory String
 
 
-update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
-update navKey msg model =
+update : Nav.Key -> Flags -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey _ msg model =
     case msg of
         SelectedStory slug ->
             let

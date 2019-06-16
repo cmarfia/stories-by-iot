@@ -15,6 +15,7 @@ import Port
 import Story exposing (Story, Narrative)
 import Story.Components exposing (..)
 import Url
+import Flags exposing (Flags)
 
 
 type alias Model =
@@ -25,8 +26,8 @@ type alias Model =
     }
 
 
-init : Story -> ( Model, Cmd Msg )
-init story =
+init : Flags -> Story -> ( Model, Cmd Msg )
+init _ story =
     let
         manifest =
             Story.getManifest story
@@ -257,8 +258,8 @@ type Msg
     | Speak
 
 
-update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
-update navKey msg model =
+update : Nav.Key -> Flags -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey flags msg model =
     case msg of
         Interact interactableId ->
             let
@@ -295,7 +296,7 @@ update navKey msg model =
             )
 
         Restart ->
-            init model.story
+            init flags model.story
 
         GoHome ->
             ( model
