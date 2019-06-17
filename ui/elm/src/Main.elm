@@ -38,7 +38,7 @@ init flagsValue url navKey =
         Ok flags ->
             let
                 ( page, cmds ) =
-                    initPageFromRoute flags (Route.fromUrl url)
+                    initPageFromRoute flags (Route.fromUrl flags url)
             in
             ( Loading navKey flags page, cmds )
 
@@ -59,8 +59,10 @@ view model =
             { title = title
             , body = [ Html.map toMsg content ]
             }
-
-        viewError error =
+    in
+    case model of
+        InitializationError error ->
+            -- TODO better error page
             { title = "Stories By Iot"
             , body =
                 [ div [ class "page page__error" ]
@@ -71,7 +73,8 @@ view model =
                 ]
             }
 
-        viewLoading =
+        Loading _ _ _ ->
+            -- TODO better loading page
             { title = "Stories By Iot"
             , body =
                 [ div [ class "page page__loading" ]
@@ -86,13 +89,6 @@ view model =
                     ]
                 ]
             }
-    in
-    case model of
-        InitializationError error ->
-            viewError error
-
-        Loading _ _ _ ->
-            viewLoading
 
         Viewing navKey flags page ->
             case page of
@@ -103,7 +99,7 @@ view model =
                     viewPage (Home.view homeModel) GotHomeMsg
 
                 Story storyModel ->
-                    viewPage (Story.view True storyModel) GotStoryMsg
+                    viewPage (Story.view storyModel) GotStoryMsg
 
 
 
@@ -128,8 +124,8 @@ update msg model =
             ( model, Cmd.none )
 
         Loading navKey flags page ->
-            case msg of
-                RequestedUrl urlRequest ->
+            case ( msg, page ) of
+                (RequestedUrl urlRequest, _) ->
                     case urlRequest of
                         Browser.Internal url ->
                             case url.fragment of
@@ -142,14 +138,14 @@ update msg model =
                         Browser.External href ->
                             ( model, Nav.load href )
 
-                ChangedUrl url ->
+                (ChangedUrl url, _) ->
                     let
                         ( updatedPage, cmds ) =
-                            initPageFromRoute flags (Route.fromUrl url)
+                            initPageFromRoute flags (Route.fromUrl flags url)
                     in
                     ( Loading navKey flags updatedPage, cmds )
 
-                GotSubscription json ->
+                (GotSubscription json, _) ->
                     case Json.Decode.decodeValue Port.decode json of
                         Ok portMsg ->
                             case portMsg of
@@ -158,6 +154,30 @@ update msg model =
 
                         Err _ ->
                             ( model, Cmd.none )
+
+                ( GotNotFoundMsg subMsg, NotFound notFoundModel ) ->
+                    let
+                        ( updatedPage, cmds ) =
+                            NotFound.update navKey flags subMsg notFoundModel
+                                |> updatePageWith NotFound GotNotFoundMsg
+                    in
+                    ( Viewing navKey flags updatedPage, cmds )
+
+                ( GotHomeMsg subMsg, Home homeModel ) ->
+                    let
+                        ( updatedPage, cmds ) =
+                            Home.update navKey flags subMsg homeModel
+                                |> updatePageWith Home GotHomeMsg
+                    in
+                    ( Viewing navKey flags updatedPage, cmds )
+
+                ( GotStoryMsg subMsg, Story storyModel ) ->
+                    let
+                        ( updatedPage, cmds ) =
+                            Story.update navKey flags subMsg storyModel
+                                |> updatePageWith Story GotStoryMsg
+                    in
+                    ( Viewing navKey flags updatedPage, cmds )
 
                 _ ->
                     -- Disregard messages when the page is currently loading.
@@ -181,7 +201,7 @@ update msg model =
                 ( ChangedUrl url, _ ) ->
                     let
                         ( updatedPage, cmds ) =
-                            initPageFromRoute flags (Route.fromUrl url)
+                            initPageFromRoute flags (Route.fromUrl flags url)
                     in
                     ( Loading navKey flags updatedPage, cmds )
 

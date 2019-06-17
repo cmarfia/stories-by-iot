@@ -2,6 +2,7 @@ module Story exposing
     ( Manifest
     , Narrative
     , Story
+    , decode
     , getCover
     , getImagesToPreload
     , getManifest
@@ -15,12 +16,20 @@ module Story exposing
 
 import Dict exposing (Dict)
 import Engine exposing (..)
+import Flags exposing (Flags)
+import Json.Decode as Decode exposing (Decoder)
 import Story.Components exposing (..)
+import Story.Info exposing (Info)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, string)
 
 
 type Story
     = Story FullStory
+
+
+decode : Decoder Story
+decode =
+    Decode.fail "ope"
 
 
 type alias Manifest =
@@ -55,13 +64,13 @@ new story =
     Story story
 
 
-parser : Parser (Story -> a) a
-parser =
+parser : Flags -> Parser (Info -> a) a
+parser flags =
     let
         toParser story =
-            Parser.map (Story story) (s story.slug)
+            Parser.map story (s story.slug)
     in
-    oneOf (List.map toParser [])
+    oneOf (List.map toParser flags.library)
 
 
 getCover : Story -> String
