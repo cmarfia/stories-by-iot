@@ -5,7 +5,7 @@ import Browser
 import Browser.Navigation as Nav
 import Dict exposing (Dict)
 import Engine exposing (..)
-import Flags exposing (Flags)
+import Flags exposing (Flags, StoryInfo)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -15,9 +15,8 @@ import List.Extra
 import Markdown
 import Port
 import RemoteData exposing (RemoteData(..), WebData)
-import Story exposing (Narrative, Story)
+import Story exposing (Story, Narrative)
 import Story.Components exposing (..)
-import Story.Info exposing (Info)
 import Url
 
 
@@ -32,7 +31,8 @@ import Url
 
 
 type alias Model =
-    WebData Story
+    { story : WebData Story
+    }
 
 
 
@@ -43,9 +43,9 @@ type alias Model =
 -- }
 
 
-init : Flags -> Info -> ( Model, Cmd Msg )
+init : Flags -> StoryInfo -> ( Model, Cmd Msg )
 init _ story =
-    ( Loading, API.getStory story.id HandleStoryResponse )
+    ( { story = Loading }, API.getStoryById story.id HandleStoryResponse )
 
 
 
@@ -87,7 +87,7 @@ init _ story =
 
 view : Model -> { title : String, content : Html Msg }
 view model =
-    case model of
+    case model.story of
         Loading ->
             { title = "Story Page"
             , content = text "Loading..."
@@ -266,7 +266,7 @@ update : Nav.Key -> Flags -> Msg -> Model -> ( Model, Cmd Msg )
 update navKey flags msg model =
     case msg of
         HandleStoryResponse data ->
-            ( data, Cmd.none )
+            ( { story = data }, Cmd.none )
 
 
 

@@ -2,11 +2,9 @@ module Route exposing (Route(..), fromUrl, toHref)
 
 import Html exposing (Attribute)
 import Html.Attributes exposing (href)
-import Story
-import Story.Info exposing (Info)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, string)
-import Flags exposing (Flags)
+import Flags exposing (Flags, StoryInfo)
 
 
 
@@ -15,7 +13,7 @@ import Flags exposing (Flags)
 
 type Route
     = Home
-    | Story Info
+    | Story StoryInfo
 
 
 toHref : Route -> Attribute msg
@@ -37,9 +35,17 @@ parser : Flags -> Parser (Route -> a) a
 parser flags =
     oneOf
         [ Parser.map Home Parser.top
-        , Parser.map Story (Story.parser flags)
+        , Parser.map Story <| storyParser flags
         ]
 
+
+storyParser : Flags -> Parser (StoryInfo -> a) a
+storyParser flags =
+    let
+        toParser story =
+            Parser.map story (s story.slug)
+    in
+    oneOf (List.map toParser flags.library)
 
 routeToString : Route -> String
 routeToString page =

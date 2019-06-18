@@ -140,7 +140,7 @@ func (c *LoadScene) MarshalJSON() ([]byte, error) {
 
 // EndStory represents the ChangeWorldCommand for ending the story
 type EndStory struct {
-	EndingNarrative Narrative `json:"endingNarrative"`
+	EndingNarrative string `json:"endingNarrative"`
 }
 
 // MarshalJSON marshals the endStory ChangeWorldCommand

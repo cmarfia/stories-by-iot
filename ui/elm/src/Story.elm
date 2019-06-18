@@ -1,129 +1,408 @@
 module Story exposing
-    ( Manifest
+    ( Character
+    , Item
+    , Location
     , Narrative
+    , Passage
     , Story
     , decode
-    , getCover
-    , getImagesToPreload
-    , getManifest
-    , getRules
-    , getSlug
-    , getStartingNarrative
-    , getStartingState
-    , getTitle
-    , parser
     )
 
 import Dict exposing (Dict)
-import Engine exposing (..)
+import Engine
 import Flags exposing (Flags)
-import Json.Decode as Decode exposing (Decoder)
-import Story.Components exposing (..)
-import Story.Info exposing (Info)
-import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, string)
+import Json.Decode as Decode exposing (Decoder, bool, list, maybe, nullable, string)
+import Json.Decode.Pipeline exposing (custom, optional, required, requiredAt, resolve)
+import Story.Components exposing (Components, Entity)
 
 
-type Story
-    = Story FullStory
+
+-- Types
 
 
-decode : Decoder Story
-decode =
-    Decode.fail "ope"
-
-
-type alias Manifest =
-    { items : List Entity
-    , characters : List Entity
-    , locations : List Entity
-    }
-
-
-type alias FullStory =
+type alias Story =
     { id : String
     , title : String
     , slug : String
-    , cover : String
-    , manifest : Manifest
+    , coverImage : String
     , startingNarrative : Narrative
     , startingState : List Engine.ChangeWorldCommand
-    , rules : Dict String Components
     , imagesToPreLoad : List String
+    , characters : Dict String Character
+    , items : Dict String Item
+    , locations : Dict String Location
+    , scenes : Dict String (List Passage)
     }
 
 
 type alias Narrative =
-    { interactableId : String
-    , narrative : String
+    { text : String
     , audio : Maybe String
     }
 
 
-new : FullStory -> Story
-new story =
-    Story story
+type alias Character =
+    { id : String
+    , name : String
+    , image : String
+    , interactable : Bool
+    , actionText : Maybe String
+    }
 
 
-parser : Flags -> Parser (Info -> a) a
-parser flags =
+type alias Item =
+    { id : String
+    , actionText : String
+    }
+
+
+type alias Location =
+    { id : String
+    , name : String
+    , image : String
+    , actionText : Maybe String
+    , connectingLocations : List ConnectionLocation
+    }
+
+
+type alias ConnectionLocation =
+    { id : String
+    , conditions : List Engine.Condition
+    }
+
+
+type alias Scene =
+    { id : String
+    , passages : List Passage
+    }
+
+
+type alias Passage =
+    { id : String
+    , interaction : Engine.InteractionMatcher
+    , conditions : List Engine.Condition
+    , changes : List Engine.ChangeWorldCommand
+    , narrative : Narrative
+    }
+
+
+
+-- Decoders
+
+
+decode : Decoder Story
+decode =
+    Decode.succeed Story
+        |> required "id" string
+        |> required "title" string
+        |> required "slug" string
+        |> required "cover" string
+        |> required "startingNarrative" decodeNarrative
+        |> required "startingState" (list decodeChangeWorldCommand)
+        |> required "images" (list string)
+        |> custom decodeCharacters
+        |> custom decodeItems
+        |> custom decodeLocations
+        |> custom decodeScenes
+
+
+decodeNarrative : Decoder Narrative
+decodeNarrative =
+    Decode.succeed Narrative
+        |> required "text" string
+        |> required "audio" (nullable string)
+
+
+decodeCharacters : Decoder (Dict String Character)
+decodeCharacters =
     let
-        toParser story =
-            Parser.map story (s story.slug)
+        decodeCharacter =
+            Decode.succeed Character
+                |> required "id" string
+                |> required "name" string
+                |> required "image" string
+                |> required "interactable" bool
+                |> optional "actionText" (maybe string) Nothing
+
+        toCharacters characters =
+            characters
+                |> List.map (\character -> ( character.id, character ))
+                |> Dict.fromList
+                |> Decode.succeed
     in
-    oneOf (List.map toParser flags.library)
+    Decode.succeed toCharacters
+        |> required "characters" (list decodeCharacter)
+        |> resolve
 
 
-getCover : Story -> String
-getCover story =
-    case story of
-        Story { cover } ->
-            cover
+decodeItems : Decoder (Dict String Item)
+decodeItems =
+    let
+        decodeItem =
+            Decode.succeed Item
+                |> required "id" string
+                |> required "actionText" string
+
+        toItems items =
+            items
+                |> List.map (\item -> ( item.id, item ))
+                |> Dict.fromList
+                |> Decode.succeed
+    in
+    Decode.succeed toItems
+        |> required "items" (list decodeItem)
+        |> resolve
 
 
-getSlug : Story -> String
-getSlug story =
-    case story of
-        Story { slug } ->
-            slug
+decodeLocations : Decoder (Dict String Location)
+decodeLocations =
+    let
+        decodeLocation =
+            Decode.succeed Location
+                |> required "id" string
+                |> required "name" string
+                |> required "image" string
+                |> optional "actionText" (maybe string) Nothing
+                |> optional "connectingLocations" (list decodeConnectingLocation) []
+
+        toLocations locations =
+            locations
+                |> List.map (\location -> ( location.id, location ))
+                |> Dict.fromList
+                |> Decode.succeed
+    in
+    Decode.succeed toLocations
+        |> required "locations" (list decodeLocation)
+        |> resolve
 
 
-getTitle : Story -> String
-getTitle story =
-    case story of
-        Story { title } ->
-            title
+decodeConnectingLocation : Decoder ConnectionLocation
+decodeConnectingLocation =
+    Decode.succeed ConnectionLocation
+        |> required "id" string
+        |> required "conditions" (list decodeCondition)
 
 
-getManifest : Story -> Manifest
-getManifest story =
-    case story of
-        Story { manifest } ->
-            manifest
+decodeScenes : Decoder (Dict String (List Passage))
+decodeScenes =
+    let
+        decodeScene =
+            Decode.succeed Scene
+                |> required "id" string
+                |> required "passages" (list decodePassage)
+
+        toScenes scenes =
+            scenes
+                |> List.map (\scene -> ( scene.id, scene.passages ))
+                |> Dict.fromList
+                |> Decode.succeed
+    in
+    Decode.succeed toScenes
+        |> required "scenes" (list decodeScene)
+        |> resolve
 
 
-getRules : Story -> Dict String Components
-getRules story =
-    case story of
-        Story { rules } ->
-            rules
+decodePassage : Decoder Passage
+decodePassage =
+    Decode.succeed Passage
+        |> required "id" string
+        |> required "interaction" decodeInteraction
+        |> required "conditions" (list decodeCondition)
+        |> required "changes" (list decodeChangeWorldCommand)
+        |> required "narrative" decodeNarrative
 
 
-getStartingState : Story -> List Engine.ChangeWorldCommand
-getStartingState story =
-    case story of
-        Story { startingState } ->
-            startingState
+decodeChangeWorldCommand : Decoder Engine.ChangeWorldCommand
+decodeChangeWorldCommand =
+    let
+        toChangeWorldCommand commandName =
+            case commandName of
+                "MOVE_TO" ->
+                    Decode.succeed (Engine.moveTo >> Decode.succeed)
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                "ADD_LOCATION" ->
+                    Decode.succeed (Engine.addLocation >> Decode.succeed)
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                "REMOVE_LOCATION" ->
+                    Decode.succeed (Engine.removeLocation >> Decode.succeed)
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                "MOVE_ITEM_TO_INVENTORY" ->
+                    Decode.succeed (Engine.moveItemToInventory >> Decode.succeed)
+                        |> requiredAt [ "data", "item" ] string
+                        |> resolve
+
+                "MOVE_CHARACTER_TO_LOCATION" ->
+                    Decode.succeed (composeBinaryDecoder Engine.moveCharacterToLocation)
+                        |> requiredAt [ "data", "character" ] string
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                "MOVE_CHARACTER_OFF_SCREEN" ->
+                    Decode.succeed (Engine.moveCharacterOffScreen >> Decode.succeed)
+                        |> requiredAt [ "data", "character" ] string
+                        |> resolve
+
+                "MOVE_ITEM_TO_LOCATION" ->
+                    Decode.succeed (composeBinaryDecoder Engine.moveItemToLocation)
+                        |> requiredAt [ "data", "item" ] string
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                "MOVE_ITEM_TO_LOCATION_FIXED" ->
+                    Decode.succeed (composeBinaryDecoder Engine.moveItemToLocationFixed)
+                        |> requiredAt [ "data", "item" ] string
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                "MOVE_ITEM_OFF_SCREEN" ->
+                    Decode.succeed (Engine.moveItemOffScreen >> Decode.succeed)
+                        |> requiredAt [ "data", "item" ] string
+                        |> resolve
+
+                "LOAD_SCENE" ->
+                    Decode.succeed (Engine.loadScene >> Decode.succeed)
+                        |> requiredAt [ "data", "scene" ] string
+                        |> resolve
+
+                "END_STORY" ->
+                    Decode.succeed (Engine.endStory >> Decode.succeed)
+                        |> requiredAt [ "data", "endingNarrative" ] string
+                        |> resolve
+
+                _ ->
+                    Decode.fail "unrecognized change world command"
+    in
+    Decode.succeed toChangeWorldCommand
+        |> required "type" string
+        |> resolve
 
 
-getStartingNarrative : Story -> Narrative
-getStartingNarrative story =
-    case story of
-        Story { startingNarrative } ->
-            startingNarrative
+decodeCondition : Decoder Engine.Condition
+decodeCondition =
+    let
+        toCondition conditionName =
+            case conditionName of
+                "ITEM_IS_IN_INVENTORY" ->
+                    Decode.succeed (Engine.itemIsInInventory >> Decode.succeed)
+                        |> requiredAt [ "data", "item" ] string
+                        |> resolve
+
+                "CHARACTER_IS_IN_LOCATION" ->
+                    Decode.succeed (composeBinaryDecoder Engine.characterIsInLocation)
+                        |> requiredAt [ "data", "character" ] string
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                "ITEM_IS_IN_LOCATION" ->
+                    Decode.succeed (composeBinaryDecoder Engine.itemIsInLocation)
+                        |> requiredAt [ "data", "item" ] string
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                "CURRENT_LOCATION_IS" ->
+                    Decode.succeed (Engine.currentLocationIs >> Decode.succeed)
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                "ITEM_IS_NOT_IN_INVENTORY" ->
+                    Decode.succeed (Engine.itemIsNotInInventory >> Decode.succeed)
+                        |> requiredAt [ "data", "item" ] string
+                        |> resolve
+
+                "HAS_PREVIOUSLY_INTERACTED_WITH" ->
+                    Decode.succeed (Engine.hasPreviouslyInteractedWith >> Decode.succeed)
+                        |> requiredAt [ "data", "entity" ] string
+                        |> resolve
+
+                "HAS_NOT_PREVIOUSLY_INTERACTED_WITH" ->
+                    Decode.succeed (Engine.hasNotPreviouslyInteractedWith >> Decode.succeed)
+                        |> requiredAt [ "data", "entity" ] string
+                        |> resolve
+
+                "CURRENT_SCENE_IS" ->
+                    Decode.succeed (Engine.currentSceneIs >> Decode.succeed)
+                        |> requiredAt [ "data", "scene" ] string
+                        |> resolve
+
+                "CHARACTER_IS_NOT_IN_LOCATION" ->
+                    Decode.succeed (composeBinaryDecoder Engine.characterIsNotInLocation)
+                        |> requiredAt [ "data", "character" ] string
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                "ITEM_IS_NOT_IN_LOCATION" ->
+                    Decode.succeed (composeBinaryDecoder Engine.itemIsNotInLocation)
+                        |> requiredAt [ "data", "item" ] string
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                "CURRENT_LOCATION_IS_NOT" ->
+                    Decode.succeed (Engine.currentLocationIsNot >> Decode.succeed)
+                        |> requiredAt [ "data", "location" ] string
+                        |> resolve
+
+                _ ->
+                    Decode.fail "unrecognized change world command"
+    in
+    Decode.succeed toCondition
+        |> required "type" string
+        |> resolve
 
 
-getImagesToPreload : Story -> List String
-getImagesToPreload story =
-    case story of
-        Story { imagesToPreLoad } ->
-            imagesToPreLoad
+decodeInteraction : Decoder Engine.InteractionMatcher
+decodeInteraction =
+    let
+        toCondition conditionName =
+            case conditionName of
+                "WITH" ->
+                    Decode.succeed (Engine.with >> Decode.succeed)
+                        |> requiredAt [ "data", "entity" ] string
+                        |> resolve
+
+                "WITH_ANYTHING" ->
+                    Decode.succeed Engine.withAnything
+
+                "WITH_ANY_ITEM" ->
+                    Decode.succeed Engine.withAnyItem
+
+                "WITH_ANY_LOCATION" ->
+                    Decode.succeed Engine.withAnyLocation
+
+                "WITH_ANY_CHARACTER" ->
+                    Decode.succeed Engine.withAnyCharacter
+
+                _ ->
+                    Decode.fail "unrecognized change world command"
+    in
+    Decode.succeed toCondition
+        |> required "type" string
+        |> resolve
+
+
+
+-- Public Methods
+-- toEngine : Story -> Engine.Model
+-- toEngine story =
+--     Engine.init
+--         { characters = Dict.keys story.characters
+--         , items = Dict.keys story.items
+--         , locations = Dict.keys story.locations
+--         }
+--         (toRules story)
+--         |> Engine.changeWorld story.startingState
+-- Internal Methods
+-- toRules : Story -> Engine.Rules
+-- toRules story =
+--     [ a ]
+-- Internal Methods
+
+
+composeBinaryDecoder : (a -> b -> c) -> a -> b -> Decoder c
+composeBinaryDecoder fn fst snd =
+    Decode.succeed <| fn fst snd

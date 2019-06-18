@@ -195,10 +195,7 @@ var mockStory = story.Story{
 					},
 					Changes: []story.ChangeWorldCommand{
 						&story.EndStory{
-							EndingNarrative: story.Narrative{
-								Text:      "The End",
-								AudioLink: "--link--",
-							},
+							EndingNarrative: "The End",
 						},
 						&story.MoveToLocation{Location: "forest"},
 					},

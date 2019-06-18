@@ -20,7 +20,7 @@ build-api:
 fmt-api:
 	go fmt github.com/cmarfia/stories-by-iot/...
 
-build: clean build-ui-prod
+build: clean build-ui
 	make build-api
 
 run: build

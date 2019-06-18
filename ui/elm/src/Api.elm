@@ -1,23 +1,19 @@
-module API exposing (getStory)
+module API exposing (getStoryById)
 
 import Json.Decode exposing (Decoder)
+import RemoteData exposing (RemoteData(..), WebData)
+import RemoteData.Http exposing (defaultConfig, getWithConfig)
+import Story as Story exposing (Story)
 import Url exposing (Url)
 import Url.Builder exposing (absolute)
-import RemoteData exposing (RemoteData(..), WebData)
-import RemoteData.Http
-import Story as Story exposing (Story)
-
-getStory : String -> (WebData Story -> msg) -> Cmd msg
-getStory storyId toMsg =
-    get ["stories", storyId] toMsg Story.decode
 
 
-get : List String -> (WebData a -> msg) -> Decoder a -> Cmd msg
-get urlParts toMsg decoder =
-    let
-        url =
-            Url.Builder.absolute ("api" :: "v1" :: urlParts) []
-    in
-    RemoteData.Http.getWithConfig RemoteData.Http.defaultConfig url toMsg decoder
+getStoryById : String -> (WebData Story -> msg) -> Cmd msg
+getStoryById storyId toMsg =
+    absolute [ "api", "v1", "stories", storyId ] []
+        |> get toMsg Story.decode
 
 
+get : (WebData a -> msg) -> Decoder a -> String -> Cmd msg
+get toMsg decoder url =
+    getWithConfig defaultConfig url toMsg decoder
