@@ -6,6 +6,7 @@ module Story exposing
     , Passage
     , Story
     , decode
+    , toEngine
     )
 
 import Dict exposing (Dict)
@@ -13,7 +14,6 @@ import Engine
 import Flags exposing (Flags)
 import Json.Decode as Decode exposing (Decoder, bool, list, maybe, nullable, string)
 import Json.Decode.Pipeline exposing (custom, optional, required, requiredAt, resolve)
-import Story.Components exposing (Components, Entity)
 
 
 
@@ -31,7 +31,8 @@ type alias Story =
     , characters : Dict String Character
     , items : Dict String Item
     , locations : Dict String Location
-    , scenes : Dict String (List Passage)
+    , scenes : Dict String (List String)
+    , passages : Dict String Passage
     }
 
 
@@ -104,6 +105,7 @@ decode =
         |> custom decodeItems
         |> custom decodeLocations
         |> custom decodeScenes
+        |> custom decodePassages
 
 
 decodeNarrative : Decoder Narrative
@@ -183,7 +185,7 @@ decodeConnectingLocation =
         |> required "conditions" (list decodeCondition)
 
 
-decodeScenes : Decoder (Dict String (List Passage))
+decodeScenes : Decoder (Dict String (List String))
 decodeScenes =
     let
         decodeScene =
@@ -193,7 +195,27 @@ decodeScenes =
 
         toScenes scenes =
             scenes
-                |> List.map (\scene -> ( scene.id, scene.passages ))
+                |> List.map (\scene -> ( scene.id, List.map .id scene.passages ))
+                |> Dict.fromList
+                |> Decode.succeed
+    in
+    Decode.succeed toScenes
+        |> required "scenes" (list decodeScene)
+        |> resolve
+
+
+decodePassages : Decoder (Dict String Passage)
+decodePassages =
+    let
+        decodeScene =
+            Decode.succeed Scene
+                |> required "id" string
+                |> required "passages" (list decodePassage)
+
+        toScenes scenes =
+            scenes
+                |> List.concatMap (\scene -> scene.passages)
+                |> List.map (\passage -> ( passage.id, passage ))
                 |> Dict.fromList
                 |> Decode.succeed
     in
@@ -387,22 +409,54 @@ decodeInteraction =
 
 
 -- Public Methods
--- toEngine : Story -> Engine.Model
--- toEngine story =
---     Engine.init
---         { characters = Dict.keys story.characters
---         , items = Dict.keys story.items
---         , locations = Dict.keys story.locations
---         }
---         (toRules story)
---         |> Engine.changeWorld story.startingState
--- Internal Methods
--- toRules : Story -> Engine.Rules
--- toRules story =
---     [ a ]
+
+
+toEngine : Story -> Engine.Model
+toEngine story =
+    Engine.init
+        { characters = Dict.keys story.characters
+        , items = Dict.keys story.items
+        , locations = Dict.keys story.locations
+        }
+        (getRules story)
+        |> Engine.changeWorld story.startingState
+
+
+
 -- Internal Methods
 
 
 composeBinaryDecoder : (a -> b -> c) -> a -> b -> Decoder c
 composeBinaryDecoder fn fst snd =
     Decode.succeed <| fn fst snd
+
+
+getRules : Story -> Dict String Engine.Rule
+getRules story =
+    let
+        addSceneCondition sceneId passage =
+            { passage | conditions = Engine.currentSceneIs sceneId :: passage.conditions }
+
+
+        toRuleEntry passage =
+            ( passage.id
+            , { interaction = passage.interaction
+            , conditions = passage.conditions
+            , changes = passage.changes
+            }
+            )
+
+        passageToRule sceneId passageId =
+            Dict.get passageId story.passages
+                |> Maybe.map (addSceneCondition sceneId)
+                |> Maybe.map toRuleEntry
+
+        scenesToRules ( sceneId, passageIds ) =
+            passageIds
+                |> List.filterMap (passageToRule sceneId)
+    in
+    story.scenes
+        |> Dict.toList
+        |> List.map scenesToRules
+        |> List.concat
+        |> Dict.fromList
