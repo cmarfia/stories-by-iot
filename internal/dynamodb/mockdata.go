@@ -173,28 +173,47 @@ var mockStory = story.Story{
 						AudioLink: ptrString(""),
 					},
 				},
+				{
+					ID:          "passage_6",
+					Interaction: &story.With{Entity: "continue"},
+					Conditions: []story.Condition{
+						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
+						&story.CurrentLocationIs{Location: "plains"},
+						&story.HasPreviouslyInteractedWith{Entity: "laz"},
+					},
+					Changes: []story.ChangeWorldCommand{
+						&story.MoveItemOffScreen{Item: "continue"},
+						&story.MoveCharacterOffScreen{Character: "laz"},
+						&story.LoadScene{Scene: "ending"},
+					},
+					Narrative: story.Narrative{
+						Text:      "passage 6 clicked continue",
+						AudioLink: ptrString(""),
+					},
+				},
 			},
 		},
 		{
 			ID: "ending",
 			Passages: []story.Passage{
 				{
-					ID:          "passage_6",
+					ID:          "passage_7",
 					Interaction: &story.With{Entity: "laz"},
 					Conditions: []story.Condition{
 						&story.CharacterIsInLocation{Character: "laz", Location: "plains"},
 						&story.CurrentLocationIs{Location: "plains"},
+						&story.HasNotPreviouslyInteractedWith{Entity: "laz"},
 					},
 					Changes: []story.ChangeWorldCommand{
 						&story.MoveCharacterOffScreen{Character: "laz"},
 					},
 					Narrative: story.Narrative{
-						Text:      "passage 6 Talking with laz for the first time",
+						Text:      "passage 7 Talking with laz for the first time",
 						AudioLink: ptrString(""),
 					},
 				},
 				{
-					ID:          "passage_7",
+					ID:          "passage_8",
 					Interaction: &story.With{Entity: "forest"},
 					Conditions: []story.Condition{
 						&story.CurrentLocationIs{Location: "plains"},
@@ -206,7 +225,7 @@ var mockStory = story.Story{
 						&story.MoveToLocation{Location: "forest"},
 					},
 					Narrative: story.Narrative{
-						Text:      "passage 7 moving to the forest",
+						Text:      "passage 8 moving to the forest",
 						AudioLink: ptrString(""),
 					},
 				},

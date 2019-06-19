@@ -66,7 +66,7 @@ view model =
 
 viewLayout : Story -> Engine.Model -> String -> Html Msg
 viewLayout story engine currentPassageId =
-    case Dict.get story.startingPassageId story.passages of
+    case Dict.get currentPassageId story.passages of
         Just currentPassage ->
             div [ class "page page__story clearfix" ]
                 [ div [ class "container" ]
@@ -285,16 +285,16 @@ update navKey flags msg model =
                 Err error ->
                     ( Failure error, Cmd.none )
 
-        ( Interact interactableId, Success { story, engine, currentPassageId } ) ->
+        ( Interact interactedWithId, Success { story, engine, currentPassageId } ) ->
             let
                 ( newEngine, maybePassageId ) =
-                    Engine.update interactableId engine
+                    Engine.update interactedWithId engine
             in
-            ( Success {
-                story = story
+            ( Success
+                { story = story
                 , engine = newEngine
                 , currentPassageId = Maybe.withDefault currentPassageId maybePassageId
-              }
+                }
             , Port.toJavaScript <| Port.encode <| Port.Speak ""
             )
 
