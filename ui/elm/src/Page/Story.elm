@@ -77,7 +77,7 @@ viewLayout story engine currentPassageId =
                             [ viewLocation <| Dict.get (Engine.getCurrentLocation engine) story.locations
                             , viewCharacters <| List.filterMap (\characterId -> Dict.get characterId story.characters) <| Engine.getCharactersInCurrentLocation engine
                             ]
-                        , viewStoryLine currentPassage.narrative
+                        , viewStoryLine currentPassage.narrative (Engine.getEnding engine)
                         ]
                     , div [ class "story__actions" ]
                         [ case Engine.getEnding engine of
@@ -171,10 +171,16 @@ markdownOptions =
     }
 
 
-viewStoryLine : Story.Narrative -> Html Msg
-viewStoryLine narrative =
+viewStoryLine : Story.Narrative -> Maybe String -> Html Msg
+viewStoryLine narrative maybeEnding =
     div [ class "story__narrative" ]
         [ section [] [ Markdown.toHtmlWith markdownOptions [ class "markdown-body" ] narrative.text ]
+        , case maybeEnding of
+            Just ending ->
+                section [ class "story__ending" ] [ text ending ]
+                
+            Nothing
+                text ""
         ]
 
 

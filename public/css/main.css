@@ -218,6 +218,10 @@ img {
   margin-top: 1em;
 }
 
+.page__story .story__ending {
+  text-align: center;
+}
+
 .page__story .story__action button {
   background: transparent;
   border: 2px solid #5aa6e9;
