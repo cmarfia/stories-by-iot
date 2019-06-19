@@ -1,14 +1,12 @@
 module Page.Home exposing (Model, Msg(..), init, update, view)
 
 import Browser.Navigation as Nav
-import Flags exposing (Flags)
+import Flags exposing (Flags, StoryInfo)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Port
 import Route
-import Story.Components exposing (..)
-import Story.Info exposing (Info)
 import Url exposing (Url)
 
 
@@ -17,7 +15,7 @@ import Url exposing (Url)
 
 
 type alias Model =
-    { library : List Info
+    { library : List StoryInfo
     }
 
 
@@ -25,7 +23,7 @@ init : Flags -> ( Model, Cmd Msg )
 init { library } =
     let
         loadImagesMsg =
-            Port.PreloadImages ("img/logo.png" :: List.map .cover library)
+            Port.PreloadImages ("img/logo.png" :: List.map .coverImage library)
     in
     ( { library = library }, Port.toJavaScript (Port.encode loadImagesMsg) )
 
@@ -59,10 +57,10 @@ viewHeader =
         ]
 
 
-viewStory : Info -> Html Msg
-viewStory { cover, title, slug } =
+viewStory : StoryInfo -> Html Msg
+viewStory { coverImage, title, slug } =
     div [ class "one-half column story" ]
-        [ img [ src cover, alt title, onClick <| SelectedStory slug ] []
+        [ img [ src coverImage, alt title, onClick <| SelectedStory slug ] []
         ]
 
 

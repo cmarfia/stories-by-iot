@@ -11,8 +11,7 @@ type Story struct {
 	Title             string               `json:"title"`
 	Slug              string               `json:"slug"`
 	CoverImage        string               `json:"cover"`
-	StartingNarrative Narrative            `json:"startingNarrative"`
-	StartingState     []ChangeWorldCommand `json:"startingState"`
+	StartingPassageID string 			   `json:"startingPassageId"`
 	ImagesToPreload   []string             `json:"images"`
 	Characters        []Character          `json:"characters"`
 	Items             []Item               `json:"items"`

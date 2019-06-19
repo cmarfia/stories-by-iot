@@ -9,7 +9,7 @@ build-ui-prod:
 build-ui:
 	cp -R public/ dist/
 	./node_modules/.bin/babel ui/js --out-dir dist/js
-	elm make ui/elm/src/Main.elm --output=dist/js/elm.js --debug
+	elm make ui/elm/src/Main.elm --output=dist/js/elm.js
 
 watch-ui: build-ui
 	chokidar 'ui/**/*.elm' 'ui/**/*.js' -c 'make build-ui'
@@ -20,7 +20,7 @@ build-api:
 fmt-api:
 	go fmt github.com/cmarfia/stories-by-iot/...
 
-build: clean build-ui-prod
+build: clean build-ui
 	make build-api
 
 run: build

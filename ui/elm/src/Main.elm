@@ -7,9 +7,10 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Json.Decode
 import Json.Encode
-import Page.Home as Home
-import Page.NotFound as NotFound
-import Page.Story as Story
+import Page exposing (Page)
+import Page.Home
+import Page.NotFound
+import Page.Story
 import Port
 import Route exposing (Route)
 import Tuple
@@ -18,12 +19,6 @@ import Url exposing (Url)
 
 
 -- MODEL
-
-
-type Page
-    = NotFound NotFound.Model
-    | Home Home.Model
-    | Story Story.Model
 
 
 type Model
@@ -38,7 +33,7 @@ init flagsValue url navKey =
         Ok flags ->
             let
                 ( page, cmds ) =
-                    initPageFromRoute flags (Route.fromUrl url)
+                    initPageFromRoute flags (Route.fromUrl flags url)
             in
             ( Loading navKey flags page, cmds )
 
@@ -59,19 +54,20 @@ view model =
             { title = title
             , body = [ Html.map toMsg content ]
             }
-
-        viewError error =
+    in
+    case model of
+        InitializationError error ->
             { title = "Stories By Iot"
             , body =
                 [ div [ class "page page__error" ]
                     [ div [ class "container" ]
-                        [ p [ class "" ] [ text error ]
+                        [ p [ ] [ text error ]
                         ]
                     ]
                 ]
             }
 
-        viewLoading =
+        Loading _ _ _ ->
             { title = "Stories By Iot"
             , body =
                 [ div [ class "page page__loading" ]
@@ -86,24 +82,17 @@ view model =
                     ]
                 ]
             }
-    in
-    case model of
-        InitializationError error ->
-            viewError error
-
-        Loading _ _ _ ->
-            viewLoading
 
         Viewing navKey flags page ->
             case page of
-                NotFound notFoundModel ->
-                    viewPage (NotFound.view notFoundModel) GotNotFoundMsg
+                Page.NotFound notFoundModel ->
+                    viewPage (Page.NotFound.view notFoundModel) GotNotFoundMsg
 
-                Home homeModel ->
-                    viewPage (Home.view homeModel) GotHomeMsg
+                Page.Home homeModel ->
+                    viewPage (Page.Home.view homeModel) GotHomeMsg
 
-                Story storyModel ->
-                    viewPage (Story.view True storyModel) GotStoryMsg
+                Page.Story storyModel ->
+                    viewPage (Page.Story.view storyModel) GotStoryMsg
 
 
 
@@ -114,9 +103,9 @@ type Msg
     = Loaded Bool
     | RequestedUrl Browser.UrlRequest
     | ChangedUrl Url.Url
-    | GotNotFoundMsg NotFound.Msg
-    | GotHomeMsg Home.Msg
-    | GotStoryMsg Story.Msg
+    | GotNotFoundMsg Page.NotFound.Msg
+    | GotHomeMsg Page.Home.Msg
+    | GotStoryMsg Page.Story.Msg
     | GotSubscription Json.Encode.Value
 
 
@@ -128,8 +117,8 @@ update msg model =
             ( model, Cmd.none )
 
         Loading navKey flags page ->
-            case msg of
-                RequestedUrl urlRequest ->
+            case ( msg, page ) of
+                ( RequestedUrl urlRequest, _ ) ->
                     case urlRequest of
                         Browser.Internal url ->
                             case url.fragment of
@@ -142,14 +131,14 @@ update msg model =
                         Browser.External href ->
                             ( model, Nav.load href )
 
-                ChangedUrl url ->
+                ( ChangedUrl url, _ ) ->
                     let
                         ( updatedPage, cmds ) =
-                            initPageFromRoute flags (Route.fromUrl url)
+                            initPageFromRoute flags (Route.fromUrl flags url)
                     in
                     ( Loading navKey flags updatedPage, cmds )
 
-                GotSubscription json ->
+                ( GotSubscription json, _ ) ->
                     case Json.Decode.decodeValue Port.decode json of
                         Ok portMsg ->
                             case portMsg of
@@ -158,6 +147,30 @@ update msg model =
 
                         Err _ ->
                             ( model, Cmd.none )
+
+                ( GotNotFoundMsg subMsg, Page.NotFound notFoundModel ) ->
+                    let
+                        ( updatedPage, cmds ) =
+                            Page.NotFound.update navKey flags subMsg notFoundModel
+                                |> updatePageWith Page.NotFound GotNotFoundMsg
+                    in
+                    ( Viewing navKey flags updatedPage, cmds )
+
+                ( GotHomeMsg subMsg, Page.Home homeModel ) ->
+                    let
+                        ( updatedPage, cmds ) =
+                            Page.Home.update navKey flags subMsg homeModel
+                                |> updatePageWith Page.Home GotHomeMsg
+                    in
+                    ( Viewing navKey flags updatedPage, cmds )
+
+                ( GotStoryMsg subMsg, Page.Story storyModel ) ->
+                    let
+                        ( updatedPage, cmds ) =
+                            Page.Story.update navKey flags subMsg storyModel
+                                |> updatePageWith Page.Story GotStoryMsg
+                    in
+                    ( Viewing navKey flags updatedPage, cmds )
 
                 _ ->
                     -- Disregard messages when the page is currently loading.
@@ -181,31 +194,31 @@ update msg model =
                 ( ChangedUrl url, _ ) ->
                     let
                         ( updatedPage, cmds ) =
-                            initPageFromRoute flags (Route.fromUrl url)
+                            initPageFromRoute flags (Route.fromUrl flags url)
                     in
                     ( Loading navKey flags updatedPage, cmds )
 
-                ( GotNotFoundMsg subMsg, NotFound notFoundModel ) ->
+                ( GotNotFoundMsg subMsg, Page.NotFound notFoundModel ) ->
                     let
                         ( updatedPage, cmds ) =
-                            NotFound.update navKey flags subMsg notFoundModel
-                                |> updatePageWith NotFound GotNotFoundMsg
+                            Page.NotFound.update navKey flags subMsg notFoundModel
+                                |> updatePageWith Page.NotFound GotNotFoundMsg
                     in
                     ( Viewing navKey flags updatedPage, cmds )
 
-                ( GotHomeMsg subMsg, Home homeModel ) ->
+                ( GotHomeMsg subMsg, Page.Home homeModel ) ->
                     let
                         ( updatedPage, cmds ) =
-                            Home.update navKey flags subMsg homeModel
-                                |> updatePageWith Home GotHomeMsg
+                            Page.Home.update navKey flags subMsg homeModel
+                                |> updatePageWith Page.Home GotHomeMsg
                     in
                     ( Viewing navKey flags updatedPage, cmds )
 
-                ( GotStoryMsg subMsg, Story storyModel ) ->
+                ( GotStoryMsg subMsg, Page.Story storyModel ) ->
                     let
                         ( updatedPage, cmds ) =
-                            Story.update navKey flags subMsg storyModel
-                                |> updatePageWith Story GotStoryMsg
+                            Page.Story.update navKey flags subMsg storyModel
+                                |> updatePageWith Page.Story GotStoryMsg
                     in
                     ( Viewing navKey flags updatedPage, cmds )
 
@@ -218,16 +231,16 @@ initPageFromRoute : Flags -> Maybe Route -> ( Page, Cmd Msg )
 initPageFromRoute flags maybeRoute =
     case maybeRoute of
         Nothing ->
-            NotFound.init flags
-                |> updatePageWith NotFound GotNotFoundMsg
+            Page.NotFound.init flags
+                |> updatePageWith Page.NotFound GotNotFoundMsg
 
         Just Route.Home ->
-            Home.init flags
-                |> updatePageWith Home GotHomeMsg
+            Page.Home.init flags
+                |> updatePageWith Page.Home GotHomeMsg
 
         Just (Route.Story story) ->
-            Story.init flags story
-                |> updatePageWith Story GotStoryMsg
+            Page.Story.init flags story
+                |> updatePageWith Page.Story GotStoryMsg
 
 
 updatePageWith : (subModel -> Page) -> (subMsg -> Msg) -> ( subModel, Cmd subMsg ) -> ( Page, Cmd Msg )
