@@ -1,5 +1,6 @@
 module Story exposing
     ( Character
+    , ConnectionLocation
     , Item
     , Location
     , Narrative
@@ -25,8 +26,7 @@ type alias Story =
     , title : String
     , slug : String
     , coverImage : String
-    , startingNarrative : Narrative
-    , startingState : List Engine.ChangeWorldCommand
+    , startingPassageId : String
     , imagesToPreLoad : List String
     , characters : Dict String Character
     , items : Dict String Item
@@ -98,8 +98,7 @@ decode =
         |> required "title" string
         |> required "slug" string
         |> required "cover" string
-        |> required "startingNarrative" decodeNarrative
-        |> required "startingState" (list decodeChangeWorldCommand)
+        |> required "startingPassageId" string
         |> required "images" (list string)
         |> custom decodeCharacters
         |> custom decodeItems
@@ -112,7 +111,7 @@ decodeNarrative : Decoder Narrative
 decodeNarrative =
     Decode.succeed Narrative
         |> required "text" string
-        |> required "audio" (nullable string)
+        |> optional "audio" (maybe string) Nothing
 
 
 decodeCharacters : Decoder (Dict String Character)
@@ -411,17 +410,21 @@ decodeInteraction =
 -- Public Methods
 
 
-toEngine : Story -> Engine.Model
+toEngine : Story -> Result String Engine.Model
 toEngine story =
-    Engine.init
-        { characters = Dict.keys story.characters
-        , items = Dict.keys story.items
-        , locations = Dict.keys story.locations
-        }
-        (getRules story)
-        |> Engine.changeWorld story.startingState
+    case Dict.get story.startingPassageId story.passages of
+        Just { changes } ->
+            Ok <| Engine.changeWorld changes <|
+                Engine.init
+                    { characters = Dict.keys story.characters
+                    , items = Dict.keys story.items
+                    , locations = Dict.keys story.locations
+                    }
+                    ( getRules story)
 
-
+        Nothing ->
+            Err "unable to find starting passage"
+    
 
 -- Internal Methods
 
@@ -437,13 +440,12 @@ getRules story =
         addSceneCondition sceneId passage =
             { passage | conditions = Engine.currentSceneIs sceneId :: passage.conditions }
 
-
         toRuleEntry passage =
             ( passage.id
             , { interaction = passage.interaction
-            , conditions = passage.conditions
-            , changes = passage.changes
-            }
+              , conditions = passage.conditions
+              , changes = passage.changes
+              }
             )
 
         passageToRule sceneId passageId =

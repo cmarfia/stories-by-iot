@@ -21,16 +21,7 @@ var mockStory = story.Story{
 	Title:      "Example Story",
 	Slug:       "example-story",
 	CoverImage: "img/laz_01_cover.png",
-	StartingNarrative: story.Narrative{
-		Text:      "Intro",
-		AudioLink: "--link--",
-	},
-	StartingState: []story.ChangeWorldCommand{
-		&story.MoveToLocation{Location: "plains"},
-		&story.MoveItemToLocation{Item: "continue", Location: "plains"},
-		&story.MoveCharacterToLocation{Character: "laz", Location: "plains"},
-		&story.LoadScene{Scene: "intro"},
-	},
+	StartingPassageID: "passage_intro",
 	ImagesToPreload: []string{
 		"img/plains.png",
 		"img/forest.png",
@@ -65,7 +56,7 @@ var mockStory = story.Story{
 						&story.CurrentSceneIs{Scene: "ending"},
 					},
 				},
-			},
+			}, 
 		},
 		{
 			ID:                  "forest",
@@ -80,6 +71,21 @@ var mockStory = story.Story{
 			ID: "intro",
 			Passages: []story.Passage{
 				{
+					ID:          "passage_intro",
+					Interaction: &story.WithAnything{},
+					Conditions: []story.Condition{},
+					Changes: []story.ChangeWorldCommand{
+						&story.MoveToLocation{Location: "plains"},
+						&story.MoveItemToLocation{Item: "continue", Location: "plains"},
+						&story.MoveCharacterToLocation{Character: "laz", Location: "plains"},
+						&story.LoadScene{Scene: "intro"},
+					},
+					Narrative: story.Narrative{
+						Text:      "Intro",
+						AudioLink: ptrString(""),
+					},
+				},
+				{
 					ID:          "passage_1",
 					Interaction: &story.With{Entity: "continue"},
 					Conditions: []story.Condition{
@@ -91,7 +97,7 @@ var mockStory = story.Story{
 					},
 					Narrative: story.Narrative{
 						Text:      "entered passage 1 after clicking continue",
-						AudioLink: "--link--",
+						AudioLink: ptrString(""),
 					},
 				},
 				{
@@ -106,7 +112,7 @@ var mockStory = story.Story{
 					},
 					Narrative: story.Narrative{
 						Text:      "talked with laz entering passage 2",
-						AudioLink: "--link--",
+						AudioLink: ptrString(""),
 					},
 				},
 			},
@@ -128,7 +134,7 @@ var mockStory = story.Story{
 					},
 					Narrative: story.Narrative{
 						Text:      "passage 3 continuing on",
-						AudioLink: "--link--",
+						AudioLink: ptrString(""),
 					},
 				},
 				{
@@ -146,7 +152,7 @@ var mockStory = story.Story{
 					},
 					Narrative: story.Narrative{
 						Text:      "passage 4 talking with laz",
-						AudioLink: "--link--",
+						AudioLink: ptrString(""),
 					},
 				},
 				{
@@ -164,7 +170,7 @@ var mockStory = story.Story{
 					},
 					Narrative: story.Narrative{
 						Text:      "passage 5 talking with laz again",
-						AudioLink: "--link--",
+						AudioLink: ptrString(""),
 					},
 				},
 			},
@@ -184,7 +190,7 @@ var mockStory = story.Story{
 					},
 					Narrative: story.Narrative{
 						Text:      "passage 6 Talking with laz for the first time",
-						AudioLink: "--link--",
+						AudioLink: ptrString(""),
 					},
 				},
 				{
@@ -193,7 +199,7 @@ var mockStory = story.Story{
 					Conditions: []story.Condition{
 						&story.CurrentLocationIs{Location: "plains"},
 					},
-					Changes: []story.ChangeWorldCommand{
+					Changes: []story.ChangeWorldCommand{ 
 						&story.EndStory{
 							EndingNarrative: "The End",
 						},
@@ -201,7 +207,7 @@ var mockStory = story.Story{
 					},
 					Narrative: story.Narrative{
 						Text:      "passage 7 moving to the forest",
-						AudioLink: "--link--",
+						AudioLink: ptrString(""),
 					},
 				},
 			},
