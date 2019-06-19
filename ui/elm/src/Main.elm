@@ -57,19 +57,17 @@ view model =
     in
     case model of
         InitializationError error ->
-            -- TODO better error page
             { title = "Stories By Iot"
             , body =
                 [ div [ class "page page__error" ]
                     [ div [ class "container" ]
-                        [ p [ class "" ] [ text error ]
+                        [ p [ ] [ text error ]
                         ]
                     ]
                 ]
             }
 
         Loading _ _ _ ->
-            -- TODO better loading page
             { title = "Stories By Iot"
             , body =
                 [ div [ class "page page__loading" ]

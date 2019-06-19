@@ -41,7 +41,6 @@ view : Model -> { title : String, content : Html Msg }
 view model =
     case model of
         Loading ->
-            -- todo creating loading page
             { title = "Story Page"
             , content = text "Loading..."
             }
@@ -52,15 +51,13 @@ view model =
             }
 
         Failure error ->
-            -- todo create error page
             { title = "Story Page"
-            , content = text <| Debug.toString error
+            , content = text error
             }
 
         NotAsked ->
-            -- todo render loading page
             { title = "Story Page"
-            , content = text "Not loaded"
+            , content = text "Not Asked"
             }
 
 
@@ -96,7 +93,7 @@ viewLayout story engine currentPassageId =
 
         Nothing ->
             div [ class "page page__story clearfix" ]
-                [ div [ class "container" ] [ text "todo could not find current passage" ]
+                [ div [ class "container" ] [ text "could not find current passage" ]
                 ]
 
 
@@ -178,8 +175,8 @@ viewStoryLine narrative maybeEnding =
         , case maybeEnding of
             Just ending ->
                 section [ class "story__ending" ] [ text ending ]
-                
-            Nothing
+
+            Nothing ->
                 text ""
         ]
 
