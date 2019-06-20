@@ -11,7 +11,22 @@ import (
 )
 
 func registerStoriesRoutes(e *echo.Group) {
+	e.GET("/stories", fetchStories)
 	e.GET("/stories/:id", fetchStory)
+}
+
+func fetchStories(c echo.Context) error {
+	apiContext, ok := c.(*server.APIContext)
+	if !ok {
+		return errors.New("routes: could not get API context for route /stories")
+	}
+
+	l, err := apiContext.DynamoService.GetLibrary()
+	if err != nil {
+		return errors.Wrap(err, "routes: error fetching library")
+	}
+
+	return c.JSON(http.StatusOK, l)
 }
 
 func fetchStory(c echo.Context) error {

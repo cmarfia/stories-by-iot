@@ -1,8 +1,9 @@
-module Flags exposing (Flags, StoryInfo, decode)
+module Flags exposing (Flags, decode)
 
 import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (required)
 import Json.Encode as Encode
+import Story
 
 
 
@@ -10,15 +11,7 @@ import Json.Encode as Encode
 
 
 type alias Flags =
-    { library : List StoryInfo
-    }
-
-
-type alias StoryInfo =
-    { id : String
-    , title : String
-    , slug : String
-    , coverImage : String
+    { stories : List Story.Info
     }
 
 
@@ -29,13 +22,4 @@ type alias StoryInfo =
 decode : Decoder Flags
 decode =
     Decode.succeed Flags
-        |> required "library" (list decodeStoryInfo)
-
-
-decodeStoryInfo : Decoder StoryInfo
-decodeStoryInfo =
-    Decode.succeed StoryInfo
-        |> required "id" string
-        |> required "title" string
-        |> required "slug" string
-        |> required "cover" string
+        |> required "library" (list Story.decodeInfo)

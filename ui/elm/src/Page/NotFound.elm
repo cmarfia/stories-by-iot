@@ -5,7 +5,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Port
-import Flags exposing (Flags)
+import Route
+import Story
 
 
 
@@ -16,13 +17,11 @@ type alias Model =
     {}
 
 
-init : Flags -> ( Model, Cmd Msg )
+init : List Story.Info -> ( Model, Cmd Msg )
 init _ =
-    let
-        loadImagesMsg =
-            Port.PreloadImages [ "img/logo.png" ]
-    in
-    ( {}, Port.toJavaScript (Port.encode loadImagesMsg) )
+    ( {}
+    , Port.toJavaScript <| Port.encode <| Port.PreloadImages [ "img/logo.png" ]
+    )
 
 
 
@@ -64,8 +63,8 @@ type Msg
     = GoHome
 
 
-update : Nav.Key -> Flags -> Msg -> Model -> ( Model, Cmd Msg )
-update navKey _ msg model =
+update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey msg model =
     case msg of
         GoHome ->
-            ( model, Nav.pushUrl navKey "/" )
+            ( model, Nav.pushUrl navKey <| Route.routeToString Route.Home )

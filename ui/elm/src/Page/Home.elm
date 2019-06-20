@@ -1,12 +1,13 @@
 module Page.Home exposing (Model, Msg(..), init, update, view)
 
 import Browser.Navigation as Nav
-import Flags exposing (Flags, StoryInfo)
+import Flags exposing (Flags)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Port
 import Route
+import Story
 import Url exposing (Url)
 
 
@@ -15,17 +16,17 @@ import Url exposing (Url)
 
 
 type alias Model =
-    { library : List StoryInfo
+    { stories : List Story.Info
     }
 
 
-init : Flags -> ( Model, Cmd Msg )
-init { library } =
+init : List Story.Info -> ( Model, Cmd Msg )
+init stories =
     let
         loadImagesMsg =
-            Port.PreloadImages ("img/logo.png" :: List.map .coverImage library)
+            Port.PreloadImages ("img/logo.png" :: List.map .coverImage stories)
     in
-    ( { library = library }, Port.toJavaScript (Port.encode loadImagesMsg) )
+    ( { stories = stories }, Port.toJavaScript (Port.encode loadImagesMsg) )
 
 
 
@@ -39,7 +40,12 @@ view model =
         div [ class "page page__home clearfix" ]
             [ div [ class "container" ]
                 [ viewHeader
-                , div [ class "row" ] (List.map viewStory model.library)
+                , div [ class "row" ]
+                    [ div [ class "story__icon story__icon--cogs" ]
+                        [ button [ onClick GoToDashboard ] [ i [ class "icon-cogs" ] [] ]
+                        ]
+                    ]
+                , div [ class "row" ] (List.map viewStory model.stories)
                 ]
             ]
     }
@@ -57,10 +63,10 @@ viewHeader =
         ]
 
 
-viewStory : StoryInfo -> Html Msg
-viewStory { coverImage, title, slug } =
+viewStory : Story.Info -> Html Msg
+viewStory storyInfo =
     div [ class "one-half column story" ]
-        [ img [ src coverImage, alt title, onClick <| SelectedStory slug ] []
+        [ img [ src storyInfo.coverImage, alt storyInfo.title, onClick <| SelectedStory storyInfo ] []
         ]
 
 
@@ -69,15 +75,15 @@ viewStory { coverImage, title, slug } =
 
 
 type Msg
-    = SelectedStory String
+    = SelectedStory Story.Info
+    | GoToDashboard
 
 
-update : Nav.Key -> Flags -> Msg -> Model -> ( Model, Cmd Msg )
-update navKey _ msg model =
+update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey msg model =
     case msg of
-        SelectedStory slug ->
-            let
-                url =
-                    "#/" ++ slug
-            in
-            ( model, Nav.pushUrl navKey url )
+        SelectedStory storyInfo ->
+            ( model, Nav.pushUrl navKey <| Route.routeToString <| Route.Story storyInfo )
+
+        GoToDashboard ->
+            ( model, Nav.pushUrl navKey <| Route.routeToString Route.Dashboard )
