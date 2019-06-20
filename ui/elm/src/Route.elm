@@ -1,10 +1,11 @@
 module Route exposing (Route(..), fromUrl, routeToString, toHref)
 
-import Flags exposing (Flags, StoryInfo)
+import Flags exposing (Flags)
 import Html exposing (Attribute)
 import Html.Attributes exposing (href)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, string)
+import Story
 
 
 
@@ -13,7 +14,7 @@ import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, string)
 
 type Route
     = Home
-    | Story StoryInfo
+    | Story Story.Info
     | Dashboard
     | EditStory String
 
@@ -23,10 +24,10 @@ toHref targetRoute =
     href (routeToString targetRoute)
 
 
-fromUrl : Flags -> Url -> Maybe Route
-fromUrl flags url =
+fromUrl : List Story.Info -> Url -> Maybe Route
+fromUrl stories url =
     { url | path = Maybe.withDefault "" url.fragment, fragment = Nothing }
-        |> Parser.parse (parser flags)
+        |> Parser.parse (parser stories)
 
 
 routeToString : Route -> String
@@ -53,20 +54,20 @@ routeToString page =
 -- Internal Helpers
 
 
-parser : Flags -> Parser (Route -> a) a
-parser flags =
+parser : List Story.Info -> Parser (Route -> a) a
+parser stories =
     oneOf
         [ Parser.map Home Parser.top
         , Parser.map Dashboard (s "admin" </> s "dashboard")
         , Parser.map EditStory (s "admin" </> s "edit" </> string)
-        , Parser.map Story <| storyParser flags
+        , Parser.map Story <| storyParser stories
         ]
 
 
-storyParser : Flags -> Parser (StoryInfo -> a) a
-storyParser flags =
+storyParser : List Story.Info -> Parser (Story.Info -> a) a
+storyParser stories =
     let
         toParser story =
             Parser.map story (s story.slug)
     in
-    oneOf (List.map toParser flags.library)
+    oneOf (List.map toParser stories)

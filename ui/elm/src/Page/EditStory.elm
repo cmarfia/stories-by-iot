@@ -1,12 +1,12 @@
 module Page.EditStory exposing (Model, Msg(..), init, update, view)
 
 import Browser.Navigation as Nav
-import Flags exposing (Flags)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Port
 import Route
+import Story
 
 
 
@@ -17,7 +17,7 @@ type alias Model =
     {}
 
 
-init : Flags -> String -> ( Model, Cmd Msg )
+init : List Story.Info -> String -> ( Model, Cmd Msg )
 init _ _ =
     ( {}, Cmd.none )
 
@@ -53,8 +53,8 @@ type Msg
     = GoHome
 
 
-update : Nav.Key -> Flags -> Msg -> Model -> ( Model, Cmd Msg )
-update navKey _ msg model =
+update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey msg model =
     case msg of
         GoHome ->
             ( model, Nav.pushUrl navKey <| Route.routeToString Route.Home )

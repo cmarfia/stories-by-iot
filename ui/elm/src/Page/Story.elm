@@ -5,7 +5,6 @@ import Browser
 import Browser.Navigation as Nav
 import Dict exposing (Dict)
 import Engine exposing (..)
-import Flags exposing (Flags, StoryInfo)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -28,7 +27,7 @@ type alias Model =
 -- Init
 
 
-init : Flags -> StoryInfo -> ( Model, Cmd Msg )
+init : List Story.Info -> Story.Info -> ( Model, Cmd Msg )
 init _ story =
     ( Loading, API.getStoryById story.id HandleStoryResponse )
 
@@ -235,8 +234,8 @@ type Msg
     | Interact String
 
 
-update : Nav.Key -> Flags -> Msg -> Model -> ( Model, Cmd Msg )
-update navKey flags msg model =
+update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey msg model =
     case ( msg, model ) of
         ( HandleStoryResponse response, _ ) ->
             case response of

@@ -1,18 +1,19 @@
 module Story exposing
     ( Character
     , ConnectionLocation
+    , Info
     , Item
     , Location
     , Narrative
     , Passage
     , Story
     , decode
+    , decodeInfo
     , toEngine
     )
 
 import Dict exposing (Dict)
 import Engine
-import Flags exposing (Flags)
 import Json.Decode as Decode exposing (Decoder, bool, list, maybe, nullable, string)
 import Json.Decode.Pipeline exposing (custom, optional, required, requiredAt, resolve)
 
@@ -87,8 +88,25 @@ type alias Passage =
     }
 
 
+type alias Info =
+    { id : String
+    , title : String
+    , slug : String
+    , coverImage : String
+    }
+
+
 
 -- Decoders
+
+
+decodeInfo : Decoder Info
+decodeInfo =
+    Decode.succeed Info
+        |> required "id" string
+        |> required "title" string
+        |> required "slug" string
+        |> required "cover" string
 
 
 decode : Decoder Story
@@ -414,17 +432,19 @@ toEngine : Story -> Result String Engine.Model
 toEngine story =
     case Dict.get story.startingPassageId story.passages of
         Just { changes } ->
-            Ok <| Engine.changeWorld changes <|
-                Engine.init
-                    { characters = Dict.keys story.characters
-                    , items = Dict.keys story.items
-                    , locations = Dict.keys story.locations
-                    }
-                    ( getRules story)
+            Ok <|
+                Engine.changeWorld changes <|
+                    Engine.init
+                        { characters = Dict.keys story.characters
+                        , items = Dict.keys story.items
+                        , locations = Dict.keys story.locations
+                        }
+                        (getRules story)
 
         Nothing ->
             Err "unable to find starting passage"
-    
+
+
 
 -- Internal Methods
 

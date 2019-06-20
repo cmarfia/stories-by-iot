@@ -7,6 +7,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Port
 import Route
+import Story
 
 
 
@@ -17,7 +18,7 @@ type alias Model =
     {}
 
 
-init : Flags -> ( Model, Cmd Msg )
+init : List Story.Info -> ( Model, Cmd Msg )
 init _ =
     ( {}, Cmd.none )
 
@@ -59,8 +60,8 @@ type Msg
     | GoToEdit String
 
 
-update : Nav.Key -> Flags -> Msg -> Model -> ( Model, Cmd Msg )
-update navKey _ msg model =
+update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
+update navKey msg model =
     case msg of
         GoToEdit storyId ->
             ( model, Nav.pushUrl navKey <| Route.routeToString <| Route.EditStory storyId )

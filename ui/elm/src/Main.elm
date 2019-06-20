@@ -15,6 +15,7 @@ import Page.NotFound
 import Page.Story
 import Port
 import Route exposing (Route)
+import Story
 import Tuple
 import Url exposing (Url)
 
@@ -25,7 +26,7 @@ import Url exposing (Url)
 
 type Model
     = InitializationError String
-    | Viewing Nav.Key Flags Page
+    | Viewing Nav.Key (List Story.Info) Page
 
 
 init : Json.Decode.Value -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -34,9 +35,9 @@ init flagsValue url navKey =
         Ok flags ->
             let
                 ( page, cmds ) =
-                    initPageFromRoute flags (Route.fromUrl flags url)
+                    initPageFromRoute flags.stories (Route.fromUrl flags.stories url)
             in
-            ( Viewing navKey flags page, cmds )
+            ( Viewing navKey flags.stories page, cmds )
 
         Err error ->
             ( InitializationError "An error occurred loading the page."
@@ -82,7 +83,7 @@ view model =
         --         ]
         --     ]
         -- }
-        Viewing navKey flags page ->
+        Viewing navKey stories page ->
             case page of
                 Page.NotFound notFoundModel ->
                     viewPage (Page.NotFound.view notFoundModel) GotNotFoundMsg
@@ -123,7 +124,7 @@ update msg model =
             -- Disregard all messages when an initialization error happens
             ( model, Cmd.none )
 
-        Viewing navKey flags page ->
+        Viewing navKey stories page ->
             case ( msg, page ) of
                 ( RequestedUrl urlRequest, _ ) ->
                     case urlRequest of
@@ -141,76 +142,76 @@ update msg model =
                 ( ChangedUrl url, _ ) ->
                     let
                         ( updatedPage, cmds ) =
-                            initPageFromRoute flags (Route.fromUrl flags url)
+                            initPageFromRoute stories (Route.fromUrl stories url)
                     in
-                    ( Viewing navKey flags updatedPage, cmds )
+                    ( Viewing navKey stories updatedPage, cmds )
 
                 ( GotNotFoundMsg subMsg, Page.NotFound notFoundModel ) ->
                     let
                         ( updatedPage, cmds ) =
-                            Page.NotFound.update navKey flags subMsg notFoundModel
+                            Page.NotFound.update navKey subMsg notFoundModel
                                 |> updatePageWith Page.NotFound GotNotFoundMsg
                     in
-                    ( Viewing navKey flags updatedPage, cmds )
+                    ( Viewing navKey stories updatedPage, cmds )
 
                 ( GotHomeMsg subMsg, Page.Home homeModel ) ->
                     let
                         ( updatedPage, cmds ) =
-                            Page.Home.update navKey flags subMsg homeModel
+                            Page.Home.update navKey subMsg homeModel
                                 |> updatePageWith Page.Home GotHomeMsg
                     in
-                    ( Viewing navKey flags updatedPage, cmds )
+                    ( Viewing navKey stories updatedPage, cmds )
 
                 ( GotStoryMsg subMsg, Page.Story storyModel ) ->
                     let
                         ( updatedPage, cmds ) =
-                            Page.Story.update navKey flags subMsg storyModel
+                            Page.Story.update navKey subMsg storyModel
                                 |> updatePageWith Page.Story GotStoryMsg
                     in
-                    ( Viewing navKey flags updatedPage, cmds )
+                    ( Viewing navKey stories updatedPage, cmds )
 
                 ( GotDashboardMsg subMsg, Page.Dashboard dashboardModel ) ->
                     let
                         ( updatedPage, cmds ) =
-                            Page.Dashboard.update navKey flags subMsg dashboardModel
+                            Page.Dashboard.update navKey subMsg dashboardModel
                                 |> updatePageWith Page.Dashboard GotDashboardMsg
                     in
-                    ( Viewing navKey flags updatedPage, cmds )
+                    ( Viewing navKey stories updatedPage, cmds )
 
                 ( GotEditStoryMsg subMsg, Page.EditStory editStoryModel ) ->
                     let
                         ( updatedPage, cmds ) =
-                            Page.EditStory.update navKey flags subMsg editStoryModel
+                            Page.EditStory.update navKey subMsg editStoryModel
                                 |> updatePageWith Page.EditStory GotEditStoryMsg
                     in
-                    ( Viewing navKey flags updatedPage, cmds )
+                    ( Viewing navKey stories updatedPage, cmds )
 
                 ( _, _ ) ->
                     -- Disregard messages that arrived for the wrong page.
                     ( model, Cmd.none )
 
 
-initPageFromRoute : Flags -> Maybe Route -> ( Page, Cmd Msg )
-initPageFromRoute flags maybeRoute =
+initPageFromRoute : List Story.Info -> Maybe Route -> ( Page, Cmd Msg )
+initPageFromRoute stories maybeRoute =
     case maybeRoute of
         Nothing ->
-            Page.NotFound.init flags
+            Page.NotFound.init stories
                 |> updatePageWith Page.NotFound GotNotFoundMsg
 
         Just Route.Home ->
-            Page.Home.init flags
+            Page.Home.init stories
                 |> updatePageWith Page.Home GotHomeMsg
 
         Just (Route.Story story) ->
-            Page.Story.init flags story
+            Page.Story.init stories story
                 |> updatePageWith Page.Story GotStoryMsg
 
         Just Route.Dashboard ->
-            Page.Dashboard.init flags
+            Page.Dashboard.init stories
                 |> updatePageWith Page.Dashboard GotDashboardMsg
 
         Just (Route.EditStory storyId) ->
-            Page.EditStory.init flags storyId
+            Page.EditStory.init stories storyId
                 |> updatePageWith Page.EditStory GotEditStoryMsg
 
 
