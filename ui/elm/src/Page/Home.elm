@@ -39,6 +39,11 @@ view model =
         div [ class "page page__home clearfix" ]
             [ div [ class "container" ]
                 [ viewHeader
+                , div [ class "row" ]
+                    [ div [ class "story__icon story__icon--cogs" ]
+                        [ button [ onClick GoToDashboard ] [ i [ class "icon-cogs" ] [] ]
+                        ]
+                    ]
                 , div [ class "row" ] (List.map viewStory model.library)
                 ]
             ]
@@ -58,9 +63,9 @@ viewHeader =
 
 
 viewStory : StoryInfo -> Html Msg
-viewStory { coverImage, title, slug } =
+viewStory storyInfo =
     div [ class "one-half column story" ]
-        [ img [ src coverImage, alt title, onClick <| SelectedStory slug ] []
+        [ img [ src storyInfo.coverImage, alt storyInfo.title, onClick <| SelectedStory storyInfo ] []
         ]
 
 
@@ -69,15 +74,15 @@ viewStory { coverImage, title, slug } =
 
 
 type Msg
-    = SelectedStory String
+    = SelectedStory StoryInfo
+    | GoToDashboard
 
 
 update : Nav.Key -> Flags -> Msg -> Model -> ( Model, Cmd Msg )
 update navKey _ msg model =
     case msg of
-        SelectedStory slug ->
-            let
-                url =
-                    "#/" ++ slug
-            in
-            ( model, Nav.pushUrl navKey url )
+        SelectedStory storyInfo ->
+            ( model, Nav.pushUrl navKey <| Route.routeToString <| Route.Story storyInfo )
+
+        GoToDashboard ->
+            ( model, Nav.pushUrl navKey <| Route.routeToString Route.Dashboard )
