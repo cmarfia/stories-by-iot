@@ -1,11 +1,13 @@
 module Page.Dashboard exposing (Model, Msg(..), init, update, view)
 
+import API
 import Browser.Navigation as Nav
 import Flags exposing (Flags)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Port
+import RemoteData exposing (RemoteData(..), WebData)
 import Route
 import Story
 
@@ -15,12 +17,16 @@ import Story
 
 
 type alias Model =
-    {}
+    RemoteData String { stories : List Story.Info }
 
 
 init : List Story.Info -> ( Model, Cmd Msg )
-init _ =
-    ( {}, Cmd.none )
+init stories =
+    let
+        _ =
+            Debug.log "in init" stories
+    in
+    ( Loading, API.getStories HandleStoriesResponse )
 
 
 
@@ -29,26 +35,46 @@ init _ =
 
 view : Model -> { title : String, content : Html Msg }
 view model =
-    { title = "Not Found | Stories By Iot"
-    , content =
-        div [ class "page page_dashboard clearfix" ]
-            [ div [ class "container" ]
-                [ div [ class "row" ]
-                    [ div [ class "column" ] [ text "admin dashboard" ]
+    case model of
+        Loading ->
+            { title = "Story Page"
+            , content = text "Loading..."
+            }
+
+        Success { stories } ->
+            { title = "Dashboard | Stories By Iot"
+            , content =
+                div [ class "page page__dashboard clearfix" ]
+                    [ div [ class "container" ]
+                        [ div [ class "row" ]
+                            [ div [ class "column" ] [ text "admin dashboard" ]
+                            ]
+                        ]
+                    , div [ class "clearfix" ]
+                        [ div [ class "story__icon story__icon--home" ]
+                            [ button [ onClick GoHome ] [ i [ class "icon-home" ] [] ]
+                            ]
+                        ]
+                    , div [ class "row" ] (List.map viewStory stories)
                     ]
-                ]
-            , div [ class "clearfix" ]
-                [ div [ class "story__icon story__icon--home" ]
-                    [ button [ onClick GoHome ] [ i [ class "icon-home" ] [] ]
-                    ]
-                ]
-            , div [ class "clearfix" ]
-                [ div [ class "story__icon story__icon--edit" ]
-                    [ button [ onClick <| GoToEdit "storyId" ] [ i [ class "icon-edit" ] [] ]
-                    ]
-                ]
-            ]
-    }
+            }
+
+        Failure error ->
+            { title = "Story Page"
+            , content = text error
+            }
+
+        NotAsked ->
+            { title = "Story Page"
+            , content = text "Not Asked"
+            }
+
+
+viewStory : Story.Info -> Html Msg
+viewStory storyInfo =
+    div [ class "one-half column story" ]
+        [ img [ src storyInfo.coverImage, alt storyInfo.title, onClick <| GoToEdit storyInfo.id ] []
+        ]
 
 
 
@@ -58,6 +84,7 @@ view model =
 type Msg
     = GoHome
     | GoToEdit String
+    | HandleStoriesResponse (WebData (List Story.Info))
 
 
 update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
@@ -68,3 +95,17 @@ update navKey msg model =
 
         GoHome ->
             ( model, Nav.pushUrl navKey <| Route.routeToString Route.Home )
+
+        HandleStoriesResponse response ->
+            case response of
+                NotAsked ->
+                    ( NotAsked, Cmd.none )
+
+                Loading ->
+                    ( Loading, Cmd.none )
+
+                Failure _ ->
+                    ( Failure "error loading stories", Cmd.none )
+
+                Success stories ->
+                    ( Success { stories = stories }, Cmd.none )

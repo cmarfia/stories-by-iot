@@ -1,4 +1,4 @@
-module API exposing (getStoryById)
+module API exposing (getStories, getStoryById)
 
 import Json.Decode exposing (Decoder, list)
 import RemoteData exposing (RemoteData(..), WebData)
@@ -9,7 +9,7 @@ import Url.Builder exposing (absolute)
 
 
 
--- API Methods
+-- API Methods 
 
 
 getStoryById : String -> (WebData Story -> msg) -> Cmd msg
