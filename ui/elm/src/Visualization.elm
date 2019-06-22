@@ -29,7 +29,18 @@ defaultConfig =
     }
 
 
-view : Config -> Story.Story -> (String -> msg) -> Html msg
+type alias Model =
+    { storyProgression : Dict String (List String)
+    , levelsByPassage : Dict String Int
+    , passagesByLevel : Dict Int (List String)
+    , story : Story
+    , config : Config
+    , numberOfLevels : Int
+    , maxLevelSize : Int
+    }
+
+
+view : Config -> Story -> (String -> msg) -> Html msg
 view config story selectPassage =
     let
         storyProgression =
@@ -51,14 +62,31 @@ view config story selectPassage =
             levelsByPassage
                 |> Dict.toList
                 |> List.foldl convertToLevels Dict.empty
-    in
-    svg [ width "1300", height "500" ]
-        ([ Svg.style [] [ text ".passage > * {cursor: pointer;} .link {fill: none;}" ]
 
-         {- , viewLines config -}
-         ]
-            ++ viewPassages config story selectPassage storyProgression levelsByPassage passagesByLevel
-        )
+        model =
+            { storyProgression = storyProgression
+            , levelsByPassage = levelsByPassage
+            , passagesByLevel = passagesByLevel
+            , story = story
+            , config = config
+            , numberOfLevels = Dict.size passagesByLevel
+            , maxLevelSize =
+                Dict.toList passagesByLevel
+                    |> List.map (Tuple.second >> List.length)
+                    |> List.maximum
+                    |> Maybe.withDefault 0
+            }
+
+        height_ =
+            800
+    in
+    svg [ width "100%", height <| String.fromInt height_ ]
+        (viewStyles :: viewPassages model selectPassage)
+
+
+viewStyles : Html msg
+viewStyles =
+    Svg.style [] [ text ".passage > * {cursor: pointer;} .link {fill: none;}" ]
 
 
 
@@ -78,52 +106,96 @@ viewLines config =
         ]
 
 
-viewPassages : Config -> Story.Story -> (String -> msg) -> Dict String (List String) -> Dict String Int -> Dict Int (List String) -> List (Html msg)
-viewPassages config story selectPassage storyProgression levelsByPassage passagesByLevel =
+viewPassages : Model -> (String -> msg) -> List (Html msg)
+viewPassages model selectPassage =
     let
-        toSvg : Int -> Int -> String -> Int -> Html msg
-        toSvg index level id levelSize =
-            Dict.get id story.passages
-                |> Maybe.map (\passage -> viewPassage config selectPassage { x = (level * config.passage.width) + (8 + ((config.passage.width // 2) * level)), y = config.passage.height + ((config.passage.height + 16) * index) + (config.passage.height // 2), text = id })
+        passagesToSVG : Int -> Int -> Int -> String -> Html msg
+        passagesToSVG level levelSize index id =
+            Dict.get id model.story.passages
+                |> Maybe.map (viewPassage model selectPassage level levelSize index id)
                 |> Maybe.withDefault (text "")
+
+        levelsToSVG : ( Int, List String ) -> List (Html msg)
+        levelsToSVG ( level, passages ) =
+            passages
+                |> List.reverse
+                |> List.indexedMap (passagesToSVG level (List.length passages))
     in
-    passagesByLevel
+    model.passagesByLevel
         |> Dict.toList
-        |> List.concatMap (\( level, passages ) -> List.indexedMap (\index id -> toSvg index level id (List.length passages)) <| List.reverse passages)
+        |> List.concatMap levelsToSVG
 
 
-viewPassage : Config -> (String -> msg) -> { x : Int, y : Int, text : String } -> Html msg
-viewPassage config selectPassage passage =
+viewPassage : Model -> (String -> msg) -> Int -> Int -> Int -> String -> Story.Passage -> Html msg
+viewPassage model selectPassage level levelSize index id passage =
     let
+        padding =
+            50
+
+        borderWidth =
+            2
+
+        itemHeight =
+            (model.config.passage.height + borderWidth) + (padding * 2)
+
+        maxHeight =
+            itemHeight * model.maxLevelSize
+
+        emptyCells =
+            model.maxLevelSize - levelSize
+
+        emptySpace =
+            emptyCells * itemHeight
+
+        paddingPerCell =
+            toFloat emptySpace / toFloat levelSize
+
+        heightPerItem =
+            (paddingPerCell / 2) + toFloat itemHeight
+
+        y_ =
+            heightPerItem * toFloat (index + 1)
+
+        x_ =
+            toFloat (level * model.config.passage.width) + ((toFloat padding + (toFloat model.config.passage.width / 2)) * toFloat level) + toFloat padding
+
+        -- + (8 + ((model.config.passage.width // 2) * level)) + 8
+        -- model.config.passage.height + ((model.config.passage.height + 16) * index) + (model.config.passage.height // 2)
+        hasFutureProgressions =
+            Dict.get id model.storyProgression
+                |> Maybe.withDefault []
+                |> List.isEmpty
+                |> not
+
         trianglePoints =
             String.join ", "
-                [ (String.fromInt <| passage.x + config.passage.width) ++ " " ++ (String.fromInt <| passage.y + (config.passage.height // 3))
-                , (String.fromInt <| passage.x + config.passage.width + (config.passage.height // 3)) ++ " " ++ (String.fromInt <| passage.y + (config.passage.height // 2))
-                , (String.fromInt <| passage.x + config.passage.width) ++ " " ++ (String.fromInt <| passage.y + (config.passage.height // 3) * 2)
+                [ (String.fromFloat <| x_ + toFloat model.config.passage.width) ++ " " ++ (String.fromFloat <| y_ + (toFloat model.config.passage.height / 3))
+                , (String.fromFloat <| x_ + toFloat model.config.passage.width + (toFloat model.config.passage.height / 3)) ++ " " ++ (String.fromFloat <| y_ + (toFloat model.config.passage.height / 2))
+                , (String.fromFloat <| x_ + toFloat model.config.passage.width) ++ " " ++ (String.fromFloat <| y_ + (toFloat model.config.passage.height / 3) * 2)
                 ]
     in
     g [ onClick <| selectPassage "hello", class "passage" ]
-        [ polygon
-            [ points trianglePoints
-            , fill "black"
-            ]
-            []
+        [ if hasFutureProgressions then
+            polygon [ points trianglePoints, fill "black" ] []
+
+          else
+            text ""
         , rect
-            [ x <| String.fromInt passage.x
-            , y <| String.fromInt passage.y
-            , width <| String.fromInt config.passage.width
-            , height <| String.fromInt config.passage.height
-            , rx <| String.fromInt config.passage.cornerRadius
+            [ x <| String.fromFloat x_
+            , y <| String.fromFloat y_
+            , width <| String.fromInt model.config.passage.width
+            , height <| String.fromInt model.config.passage.height
+            , rx <| String.fromInt model.config.passage.cornerRadius
             , fill "white"
             , stroke "black"
             , strokeWidth "2"
             ]
             []
         , text_
-            [ x <| String.fromInt <| passage.x + (round <| toFloat config.passage.width * 0.05)
-            , y <| String.fromInt <| passage.y + (round <| toFloat config.passage.height * 0.58)
+            [ x <| String.fromFloat <| x_ + (toFloat model.config.passage.width * 0.05)
+            , y <| String.fromFloat <| y_ + (toFloat model.config.passage.height * 0.58)
             ]
-            [ text <| truncateString 22 passage.text ]
+            [ text <| truncateString 23 id ]
         ]
 
 

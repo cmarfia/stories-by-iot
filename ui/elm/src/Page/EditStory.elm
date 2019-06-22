@@ -62,10 +62,8 @@ view model =
                         , div [ class "row" ]
                             [ h1 [] [ text story.title ]
                             ]
-                        , div [ class "row" ]
-                            [ Visualization.view Visualization.defaultConfig story Log
-                            ]
                         ]
+                    , Visualization.view Visualization.defaultConfig story Log
                     ]
             }
 
