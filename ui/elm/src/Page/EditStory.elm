@@ -2,6 +2,8 @@ module Page.EditStory exposing (Model, Msg(..), init, update, view)
 
 import API
 import Browser.Navigation as Nav
+import Dict as Dict exposing (Dict)
+import Engine exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -9,6 +11,9 @@ import Port
 import RemoteData exposing (RemoteData(..), WebData)
 import Route
 import Story as Story exposing (Story)
+import Svg
+import Svg.Attributes
+import Visualization
 
 
 
@@ -57,6 +62,9 @@ view model =
                         , div [ class "row" ]
                             [ h1 [] [ text story.title ]
                             ]
+                        , div [ class "row" ]
+                            [ Visualization.view Visualization.defaultConfig story Log
+                            ]
                         ]
                     ]
             }
@@ -80,6 +88,7 @@ type Msg
     = GoHome
     | GoToDashboard
     | HandleStoryResponse (WebData Story)
+    | Log String
 
 
 update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
@@ -104,3 +113,10 @@ update navKey msg model =
 
                 Success story ->
                     ( Success { story = story }, Cmd.none )
+
+        Log str ->
+            let
+                _ =
+                    Debug.log "Log" str
+            in
+            ( model, Cmd.none )
