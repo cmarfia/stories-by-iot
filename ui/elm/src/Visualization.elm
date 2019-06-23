@@ -1,4 +1,16 @@
-module Visualization exposing (Config, defaultConfig, view)
+module Visualization exposing
+    ( Config
+    , Model
+    , Msg
+    , Node
+    , defaultConfig
+    , getSelectedNode
+    , init
+    , update
+    , updateNodes
+    , updateSelectedNode
+    , view
+    )
 
 import Dict exposing (Dict)
 import Engine
@@ -10,78 +22,89 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
 
+
+-- Types
+
+
 type alias Config =
-    { passage :
-        { width : Int
-        , height : Int
-        , cornerRadius : Int
-        }
+    { width : Int
+    , height : Int
+    , borderRadius : Int
+    , borderWidth : Int
+    , padding : Int
+    , maxTextSize : Int
     }
 
 
 defaultConfig : Config
 defaultConfig =
-    { passage =
-        { width = 200
-        , height = 50
-        , cornerRadius = 15
+    { width = 200
+    , height = 50
+    , borderRadius = 15
+    , borderWidth = 2
+    , padding = 50
+    , maxTextSize = 23
+    }
+
+
+type alias Node =
+    { text : String
+    , connections : List String
+    }
+
+
+type alias Coords a =
+    { a
+        | x : Float
+        , y : Float
+    }
+
+
+type Model
+    = Model
+        { config : Config
+        , nodes : Dict String (Coords Node)
+        , startingNode : String
+        , selectedNode : Maybe String
+        , height : Float
+        , width : Float
         }
-    }
 
 
-type alias Model =
-    { storyProgression : Dict String (List String)
-    , levelsByPassage : Dict String Int
-    , passagesByLevel : Dict Int (List String)
-    , story : Story
-    , config : Config
-    , numberOfLevels : Int
-    , maxLevelSize : Int
-    }
+
+-- Init
 
 
-view : Config -> Story -> (String -> msg) -> Html msg
-view config story selectPassage =
+init : Config -> Dict String Node -> String -> Model
+init config nodes startingNode =
     let
-        storyProgression =
-            getStoryProgression story
-
-        levelsByPassage =
-            getVisualizationLevels storyProgression story.startingPassageId
-
-        convertToLevels : ( String, Int ) -> Dict Int (List String) -> Dict Int (List String)
-        convertToLevels ( id, level ) totalLevels =
-            case Dict.get level totalLevels of
-                Just passages ->
-                    Dict.insert level (id :: passages) totalLevels
-
-                Nothing ->
-                    Dict.insert level [ id ] totalLevels
-
-        passagesByLevel =
-            levelsByPassage
-                |> Dict.toList
-                |> List.foldl convertToLevels Dict.empty
-
-        model =
-            { storyProgression = storyProgression
-            , levelsByPassage = levelsByPassage
-            , passagesByLevel = passagesByLevel
-            , story = story
-            , config = config
-            , numberOfLevels = Dict.size passagesByLevel
-            , maxLevelSize =
-                Dict.toList passagesByLevel
-                    |> List.map (Tuple.second >> List.length)
-                    |> List.maximum
-                    |> Maybe.withDefault 0
-            }
-
-        height_ =
-            800
+        columns =
+            relateColumnsToNodes nodes startingNode
     in
-    svg [ width "100%", height <| String.fromInt height_ ]
-        (viewStyles :: viewPassages model selectPassage)
+    Model
+        { config = config
+        , nodes = addCoords config columns nodes startingNode
+        , startingNode = startingNode
+        , selectedNode = Nothing
+        , height = (itemHeight config * maxRowSize columns) + itemHeight config
+        , width = 0
+        }
+
+
+
+-- View
+
+
+view : Model -> Html Msg
+view (Model model) =
+    let
+        svgNodes =
+            model.nodes
+                |> Dict.toList
+                |> List.map (viewNode model.config model.nodes)
+    in
+    svg [ width "100%", height <| String.fromFloat model.height, viewBox <| "0 0 1300 " ++ String.fromFloat model.height ]
+        (viewStyles :: svgNodes)
 
 
 viewStyles : Html msg
@@ -99,104 +122,95 @@ viewStyles =
 -- ]
 
 
-viewLines : Config -> Html msg
+viewLines : Config -> Html Msg
 viewLines config =
     g []
         [ line [ class "node", stroke "black", strokeWidth "2", x1 "301", y1 "125", x2 "416", y2 "125" ] []
         ]
 
 
-viewPassages : Model -> (String -> msg) -> List (Html msg)
-viewPassages model selectPassage =
+viewNode : Config -> Dict String (Coords Node) -> ( String, Coords Node ) -> Html Msg
+viewNode config nodes ( nodeId, node ) =
     let
-        passagesToSVG : Int -> Int -> Int -> String -> Html msg
-        passagesToSVG level levelSize index id =
-            Dict.get id model.story.passages
-                |> Maybe.map (viewPassage model selectPassage level levelSize index id)
-                |> Maybe.withDefault (text "")
-
-        levelsToSVG : ( Int, List String ) -> List (Html msg)
-        levelsToSVG ( level, passages ) =
-            passages
-                |> List.reverse
-                |> List.indexedMap (passagesToSVG level (List.length passages))
-    in
-    model.passagesByLevel
-        |> Dict.toList
-        |> List.concatMap levelsToSVG
-
-
-viewPassage : Model -> (String -> msg) -> Int -> Int -> Int -> String -> Story.Passage -> Html msg
-viewPassage model selectPassage level levelSize index id passage =
-    let
-        padding =
-            50
-
-        borderWidth =
-            2
-
-        itemHeight =
-            (model.config.passage.height + borderWidth) + (padding * 2)
-
-        maxHeight =
-            itemHeight * model.maxLevelSize
-
-        emptyCells =
-            model.maxLevelSize - levelSize
-
-        emptySpace =
-            emptyCells * itemHeight
-
-        paddingPerCell =
-            toFloat emptySpace / toFloat levelSize
-
-        heightPerItem =
-            (paddingPerCell / 2) + toFloat itemHeight
-
-        y_ =
-            heightPerItem * toFloat (index + 1)
-
-        x_ =
-            toFloat (level * model.config.passage.width) + ((toFloat padding + (toFloat model.config.passage.width / 2)) * toFloat level) + toFloat padding
-
-        -- + (8 + ((model.config.passage.width // 2) * level)) + 8
-        -- model.config.passage.height + ((model.config.passage.height + 16) * index) + (model.config.passage.height // 2)
         hasFutureProgressions =
-            Dict.get id model.storyProgression
+            Dict.get nodeId nodes
+                |> Maybe.map .connections
                 |> Maybe.withDefault []
                 |> List.isEmpty
                 |> not
 
         trianglePoints =
             String.join ", "
-                [ (String.fromFloat <| x_ + toFloat model.config.passage.width) ++ " " ++ (String.fromFloat <| y_ + (toFloat model.config.passage.height / 3))
-                , (String.fromFloat <| x_ + toFloat model.config.passage.width + (toFloat model.config.passage.height / 3)) ++ " " ++ (String.fromFloat <| y_ + (toFloat model.config.passage.height / 2))
-                , (String.fromFloat <| x_ + toFloat model.config.passage.width) ++ " " ++ (String.fromFloat <| y_ + (toFloat model.config.passage.height / 3) * 2)
+                [ (String.fromFloat <| node.x + toFloat config.width) ++ " " ++ (String.fromFloat <| node.y + (toFloat config.height / 3))
+                , (String.fromFloat <| node.x + toFloat config.width + (toFloat config.height / 3)) ++ " " ++ (String.fromFloat <| node.y + (toFloat config.height / 2))
+                , (String.fromFloat <| node.x + toFloat config.width) ++ " " ++ (String.fromFloat <| node.y + (toFloat config.height / 3) * 2)
                 ]
     in
-    g [ onClick <| selectPassage "hello", class "passage" ]
+    g [ onClick <| SelectNode <| Just nodeId, class "passage" ]
         [ if hasFutureProgressions then
             polygon [ points trianglePoints, fill "black" ] []
 
           else
             text ""
         , rect
-            [ x <| String.fromFloat x_
-            , y <| String.fromFloat y_
-            , width <| String.fromInt model.config.passage.width
-            , height <| String.fromInt model.config.passage.height
-            , rx <| String.fromInt model.config.passage.cornerRadius
+            [ x <| String.fromFloat node.x
+            , y <| String.fromFloat node.y
+            , width <| String.fromInt config.width
+            , height <| String.fromInt config.height
+            , rx <| String.fromInt config.borderRadius
             , fill "white"
             , stroke "black"
-            , strokeWidth "2"
+            , strokeWidth <| String.fromInt <| config.borderWidth
             ]
             []
         , text_
-            [ x <| String.fromFloat <| x_ + (toFloat model.config.passage.width * 0.05)
-            , y <| String.fromFloat <| y_ + (toFloat model.config.passage.height * 0.58)
+            [ x <| String.fromFloat <| node.x + (toFloat config.width * 0.05)
+            , y <| String.fromFloat <| node.y + (toFloat config.height * 0.58)
             ]
-            [ text <| truncateString 23 id ]
+            [ text <| truncateString config.maxTextSize node.text ]
         ]
+
+
+
+-- Update
+
+
+type Msg
+    = SelectNode (Maybe String)
+    | UpdateNodes (Dict String Node)
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg (Model model) =
+    case msg of
+        SelectNode maybeNodeId ->
+            ( Model { model | selectedNode = maybeNodeId }, Cmd.none )
+
+        UpdateNodes nodes ->
+            Debug.todo "implement this"
+
+
+
+-- Public Helpers
+
+
+getSelectedNode : Model -> Maybe String
+getSelectedNode model =
+    Nothing
+
+
+updateSelectedNode : String -> Msg
+updateSelectedNode id =
+    SelectNode <| Just id
+
+
+updateNodes : Dict String Node -> Msg
+updateNodes nodes =
+    UpdateNodes nodes
+
+
+
+-- Private Helpers
 
 
 truncateString : Int -> String -> String
@@ -208,106 +222,123 @@ truncateString maxChars str =
         str
 
 
+itemHeight : Config -> Float
+itemHeight config =
+    toFloat <| (config.height + config.borderWidth) + (config.padding * 2)
 
--- Story Progression Graph
+
+itemWidth : Config -> Float
+itemWidth config =
+    toFloat <| (config.width + config.borderWidth)
 
 
-getStoryProgression : Story -> Dict String (List String)
-getStoryProgression story =
+maxRowSize : List ( Int, List String ) -> Float
+maxRowSize columns =
+    List.map (Tuple.second >> List.length) columns
+        |> List.maximum
+        |> Maybe.withDefault 0
+        |> toFloat
+
+
+addCoords : Config -> List ( Int, List String ) -> Dict String Node -> String -> Dict String (Coords Node)
+addCoords config columns nodes startingNode =
     let
-        possibleEngineUpdate : Engine.Model -> String -> Maybe ( String, Engine.Model )
-        possibleEngineUpdate engine interactionId =
+        itemHeight_ =
+            itemHeight config
+
+        maxRowSize_ =
+            maxRowSize columns
+
+        mapRowIndex rowIndex nodeId =
+            Dict.get nodeId nodes
+                |> Maybe.map (\node -> { text = node.text, connections = node.connections, rowIndex = rowIndex, nodeId = nodeId })
+
+        addCoords_ node_ ( columnIndex, rowSize, nodes_ ) =
             let
-                ( newEngine, maybePassageId ) =
-                    Engine.update interactionId engine
+                emptySpaceInColumn =
+                    (maxRowSize_ - rowSize) * itemHeight_
+
+                verticalPadding =
+                    ((emptySpaceInColumn / rowSize) / 2) + itemHeight_
+
+                newNode =
+                    { text = node_.text
+                    , connections = node_.connections
+                    , nodeId = node_.nodeId
+                    , y = verticalPadding * toFloat (node_.rowIndex + 1)
+                    , x = toFloat ((columnIndex + 1) * config.width) + ((toFloat config.padding + (toFloat config.width / 2)) * toFloat (columnIndex + 1)) + toFloat config.padding
+                    }
             in
-            case maybePassageId of
-                Just passageId ->
-                    Just ( passageId, newEngine )
+            ( columnIndex, rowSize, newNode :: nodes_ )
+
+        mapColumn ( columnIndex, connections ) =
+            connections
+                |> List.indexedMap mapRowIndex
+                |> List.filterMap identity
+                |> List.foldl addCoords_ ( columnIndex, toFloat <| List.length connections, [] )
+                |> (\( _, _, nodes_ ) -> nodes_)
+
+        toNodeWithCoords node =
+            ( node.nodeId, { text = node.text, connections = node.connections, x = node.x, y = node.y } )
+    in
+    columns
+        |> List.concatMap mapColumn
+        |> List.map toNodeWithCoords
+        |> Dict.fromList
+
+
+relateColumnsToNodes : Dict String Node -> String -> List ( Int, List String )
+relateColumnsToNodes nodes startingNode =
+    let
+        relateColumnsToNodes_ ( nodeId, columnIndex ) columns =
+            case Dict.get columnIndex columns of
+                Just nodeIds ->
+                    Dict.insert columnIndex (nodeId :: nodeIds) columns
 
                 Nothing ->
-                    Nothing
-
-        generate : ( String, Engine.Model ) -> Dict String (List String) -> Dict String (List String)
-        generate ( currentPassageId, engine ) progressions =
-            let
-                futureProgressions =
-                    getInteractions story engine
-                        |> List.filterMap (possibleEngineUpdate engine)
-            in
-            futureProgressions
-                |> List.foldl generate (Dict.insert currentPassageId (List.map Tuple.first futureProgressions) progressions)
+                    Dict.insert columnIndex [ nodeId ] columns
     in
-    case Story.toEngine story of
-        Ok engine ->
-            generate ( story.startingPassageId, engine ) <| Dict.map (\_ _ -> []) story.passages
-
-        Err _ ->
-            Dict.empty
+    relateNodesToColumns nodes startingNode
+        |> List.foldl relateColumnsToNodes_ Dict.empty
+        |> Dict.toList
+        |> List.map (\( columnIndex, connections ) -> ( columnIndex, List.reverse connections ))
 
 
-getInteractions : Story -> Engine.Model -> List String
-getInteractions story engine =
+relateNodesToColumns : Dict String Node -> String -> List ( String, Int )
+relateNodesToColumns nodes initialNodeId =
     let
-        characters =
-            Engine.getCharactersInCurrentLocation engine
-                |> List.filterMap (\id -> Dict.get id story.characters)
-                |> List.filter (\{ interactable } -> interactable)
-                |> List.map .id
-
-        items =
-            Engine.getItemsInCurrentLocation engine
-                |> List.append (Engine.getItemsInInventory engine)
-                |> List.filterMap (\id -> Dict.get id story.items)
-                |> List.map .id
-
-        locations =
-            Dict.get (Engine.getCurrentLocation engine) story.locations
-                |> Maybe.map .connectingLocations
-                |> Maybe.withDefault []
-                |> List.filterMap (List.singleton >> Engine.chooseFrom engine)
-                |> List.filterMap (\{ id } -> Dict.get id story.locations)
-                |> List.map .id
-    in
-    characters ++ items ++ locations
-
-
-getVisualizationLevels : Dict String (List String) -> String -> Dict String Int
-getVisualizationLevels storyProgression startingPassageId =
-    let
-        generate : Int -> String -> Dict String Int -> Dict String Int
-        generate currentLevel passageId levels =
+        relateNodesToColumns_ currentLevel nodeId levels =
             let
-                findAllChildren : String -> List String
                 findAllChildren id =
-                    Dict.get id storyProgression
+                    Dict.get id nodes
+                        |> Maybe.map .connections
                         |> Maybe.withDefault []
                         |> List.concatMap findAllChildren
 
-                isAncestor : String -> Bool
-                isAncestor childPassageId =
-                    findAllChildren childPassageId
-                        |> List.member passageId
+                isAncestor childNodeId =
+                    findAllChildren childNodeId
+                        |> List.member nodeId
 
                 updatedLevels =
-                    case Dict.get passageId levels of
+                    case Dict.get nodeId levels of
                         Just level ->
                             if currentLevel > level then
-                                Dict.insert passageId currentLevel levels
+                                Dict.insert nodeId currentLevel levels
 
                             else
                                 levels
 
                         Nothing ->
-                            Dict.insert passageId currentLevel levels
+                            Dict.insert nodeId currentLevel levels
             in
-            case Dict.get passageId storyProgression of
-                Just progressions ->
-                    progressions
+            case Dict.get nodeId nodes of
+                Just { connections } ->
+                    connections
                         |> List.filter (isAncestor >> not)
-                        |> List.foldl (generate (currentLevel + 1)) updatedLevels
+                        |> List.foldl (relateNodesToColumns_ (currentLevel + 1)) updatedLevels
 
                 Nothing ->
                     updatedLevels
     in
-    generate 0 startingPassageId Dict.empty
+    relateNodesToColumns_ 0 initialNodeId Dict.empty
+        |> Dict.toList

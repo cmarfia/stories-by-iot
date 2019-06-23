@@ -21,7 +21,7 @@ import Visualization
 
 
 type alias Model =
-    RemoteData String { story : Story }
+    RemoteData String { story : Story, visualizationModel : Visualization.Model }
 
 
 init : List Story.Info -> String -> ( Model, Cmd Msg )
@@ -41,7 +41,7 @@ view model =
             , content = text "Loading..."
             }
 
-        Success { story } ->
+        Success { story, visualizationModel } ->
             { title = "Edit Story | Stories By Iot"
             , content =
                 div [ class "page page__edit-story clearfix" ]
@@ -63,7 +63,7 @@ view model =
                             [ h1 [] [ text story.title ]
                             ]
                         ]
-                    , Visualization.view Visualization.defaultConfig story Log
+                    , Html.map GotVisualizationMsg <| Visualization.view visualizationModel
                     ]
             }
 
@@ -86,19 +86,19 @@ type Msg
     = GoHome
     | GoToDashboard
     | HandleStoryResponse (WebData Story)
-    | Log String
+    | GotVisualizationMsg Visualization.Msg
 
 
 update : Nav.Key -> Msg -> Model -> ( Model, Cmd Msg )
 update navKey msg model =
-    case msg of
-        GoHome ->
+    case ( msg, model ) of
+        ( GoHome, _ ) ->
             ( model, Nav.pushUrl navKey <| Route.routeToString Route.Home )
 
-        GoToDashboard ->
+        ( GoToDashboard, _ ) ->
             ( model, Nav.pushUrl navKey <| Route.routeToString Route.Dashboard )
 
-        HandleStoryResponse response ->
+        ( HandleStoryResponse response, _ ) ->
             case response of
                 NotAsked ->
                     ( NotAsked, Cmd.none )
@@ -110,11 +110,89 @@ update navKey msg model =
                     ( Failure "error loading story", Cmd.none )
 
                 Success story ->
-                    ( Success { story = story }, Cmd.none )
+                    ( Success
+                        { story = story
+                        , visualizationModel = Visualization.init Visualization.defaultConfig (toNodes story) story.startingPassageId
+                        }
+                    , Cmd.none
+                    )
 
-        Log str ->
+        ( GotVisualizationMsg subMsg, Success { story, visualizationModel } ) ->
             let
-                _ =
-                    Debug.log "Log" str
+                ( updatedModel, cmds ) =
+                    Visualization.update subMsg visualizationModel
             in
+            ( Success { story = story, visualizationModel = updatedModel }
+            , Cmd.map GotVisualizationMsg cmds
+            )
+
+        ( _, _ ) ->
+            -- ignore other possibilities
             ( model, Cmd.none )
+
+
+
+-- Helpers
+
+
+toNodes : Story -> Dict String Visualization.Node
+toNodes story =
+    let
+        toNode id connections =
+            Dict.get id story.passages
+                |> Maybe.map (\{ narrative } -> { text = narrative.text, connections = connections })
+                |> Maybe.withDefault { text = id, connections = connections }
+
+        possibleEngineUpdate engine interactionId =
+            let
+                ( newEngine, maybePassageId ) =
+                    Engine.update interactionId engine
+            in
+            maybePassageId
+                |> Maybe.map (Tuple.pair newEngine)
+
+        generate ( engine, currentPassageId ) progressions =
+            let
+                futureProgressions =
+                    getInteractions story engine
+                        |> List.filterMap (possibleEngineUpdate engine)
+
+                updatedProgressions : Dict String Visualization.Node
+                updatedProgressions =
+                    Dict.insert currentPassageId (toNode currentPassageId <| List.map Tuple.second futureProgressions) progressions
+            in
+            futureProgressions
+                |> List.foldl generate updatedProgressions
+    in
+    case Story.toEngine story of
+        Ok engine ->
+            generate ( engine, story.startingPassageId ) <| Dict.map (\_ { id } -> { text = id, connections = [] }) story.passages
+
+        Err _ ->
+            Dict.empty
+
+
+getInteractions : Story -> Engine.Model -> List String
+getInteractions story engine =
+    let
+        characters =
+            Engine.getCharactersInCurrentLocation engine
+                |> List.filterMap (\id -> Dict.get id story.characters)
+                |> List.filter (\{ interactable } -> interactable)
+                |> List.map .id
+
+        items =
+            Engine.getItemsInCurrentLocation engine
+                |> List.append (Engine.getItemsInInventory engine)
+                |> List.filterMap (\id -> Dict.get id story.items)
+                |> List.map .id
+
+        locations =
+            Dict.get (Engine.getCurrentLocation engine) story.locations
+                |> Maybe.map .connectingLocations
+                |> Maybe.withDefault []
+                |> List.filterMap (List.singleton >> Engine.chooseFrom engine)
+                |> List.filterMap (\{ id } -> Dict.get id story.locations)
+                |> List.map .id
+    in
+    characters ++ items ++ locations
