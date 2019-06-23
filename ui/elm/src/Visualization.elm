@@ -240,7 +240,7 @@ getStoryProgression story =
     in
     case Story.toEngine story of
         Ok engine ->
-            generate ( story.startingPassageId, engine ) Dict.empty
+            generate ( story.startingPassageId, engine ) <| Dict.map (\_ _ -> []) story.passages
 
         Err _ ->
             Dict.empty
@@ -277,22 +277,37 @@ getVisualizationLevels storyProgression startingPassageId =
     let
         generate : Int -> String -> Dict String Int -> Dict String Int
         generate currentLevel passageId levels =
+            let
+                findAllChildren : String -> List String
+                findAllChildren id =
+                    Dict.get id storyProgression
+                        |> Maybe.withDefault []
+                        |> List.concatMap findAllChildren
+
+                isAncestor : String -> Bool
+                isAncestor childPassageId =
+                    findAllChildren childPassageId
+                        |> List.member passageId
+
+                updatedLevels =
+                    case Dict.get passageId levels of
+                        Just level ->
+                            if currentLevel > level then
+                                Dict.insert passageId currentLevel levels
+
+                            else
+                                levels
+
+                        Nothing ->
+                            Dict.insert passageId currentLevel levels
+            in
             case Dict.get passageId storyProgression of
                 Just progressions ->
-                    let
-                        updatedLevel =
-                            case Dict.get passageId levels of
-                                Just level ->
-                                    -- todo look up parent dependencies
-                                    level
-
-                                Nothing ->
-                                    currentLevel
-                    in
                     progressions
-                        |> List.foldl (generate (currentLevel + 1)) (Dict.insert passageId updatedLevel levels)
+                        |> List.filter (isAncestor >> not)
+                        |> List.foldl (generate (currentLevel + 1)) updatedLevels
 
                 Nothing ->
-                    levels
+                    updatedLevels
     in
     generate 0 startingPassageId Dict.empty
