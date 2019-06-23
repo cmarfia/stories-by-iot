@@ -63,7 +63,9 @@ view model =
                             [ h1 [] [ text story.title ]
                             ]
                         ]
-                    , Html.map GotVisualizationMsg <| Visualization.view visualizationModel
+                    , div [ style "background" "white" ]
+                        [ Html.map GotVisualizationMsg <| Visualization.view visualizationModel
+                        ]
                     ]
             }
 

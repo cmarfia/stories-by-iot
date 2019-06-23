@@ -80,14 +80,20 @@ init config nodes startingNode =
     let
         columns =
             relateColumnsToNodes nodes startingNode
+
+        itemHeight_ =
+            itemHeight config
+
+        itemWidth_ =
+            itemWidth config
     in
     Model
         { config = config
         , nodes = addCoords config columns nodes startingNode
         , startingNode = startingNode
         , selectedNode = Nothing
-        , height = (itemHeight config * maxRowSize columns) + itemHeight config
-        , width = 0
+        , height = (itemHeight_ * maxRowSize columns) + itemHeight_
+        , width = (itemWidth_ * (toFloat <| List.length columns)) + itemWidth_
         }
 
 
@@ -102,8 +108,13 @@ view (Model model) =
             model.nodes
                 |> Dict.toList
                 |> List.map (viewNode model.config model.nodes)
+
+        viewBox_ =
+            [ toFloat <| negate model.config.padding, (model.height / 8) * 3, model.width / 2, model.height / 4 ]
+                |> List.map String.fromFloat
+                |> String.join " "
     in
-    svg [ width "100%", height <| String.fromFloat model.height, viewBox <| "0 0 1300 " ++ String.fromFloat model.height ]
+    svg [ width "100%", height "350", viewBox viewBox_ ]
         (viewStyles :: svgNodes)
 
 
@@ -229,7 +240,7 @@ itemHeight config =
 
 itemWidth : Config -> Float
 itemWidth config =
-    toFloat <| (config.width + config.borderWidth)
+    (toFloat config.padding * 1.5) + (toFloat config.width * 2)
 
 
 maxRowSize : List ( Int, List String ) -> Float
@@ -245,6 +256,9 @@ addCoords config columns nodes startingNode =
     let
         itemHeight_ =
             itemHeight config
+
+        itemWidth_ =
+            itemWidth config
 
         maxRowSize_ =
             maxRowSize columns
@@ -266,7 +280,7 @@ addCoords config columns nodes startingNode =
                     , connections = node_.connections
                     , nodeId = node_.nodeId
                     , y = verticalPadding * toFloat (node_.rowIndex + 1)
-                    , x = toFloat ((columnIndex + 1) * config.width) + ((toFloat config.padding + (toFloat config.width / 2)) * toFloat (columnIndex + 1)) + toFloat config.padding
+                    , x = itemWidth_ * toFloat columnIndex
                     }
             in
             ( columnIndex, rowSize, newNode :: nodes_ )
