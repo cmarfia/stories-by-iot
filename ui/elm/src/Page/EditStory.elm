@@ -1,4 +1,11 @@
-module Page.EditStory exposing (Model, Msg(..), init, update, view)
+module Page.EditStory exposing
+    ( Model
+    , Msg(..)
+    , init
+    , subscriptions
+    , update
+    , view
+    )
 
 import API
 import Browser.Navigation as Nav
@@ -198,3 +205,12 @@ getInteractions story engine =
                 |> List.map .id
     in
     characters ++ items ++ locations
+
+
+
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none

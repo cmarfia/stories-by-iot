@@ -1,4 +1,11 @@
-module Page.Home exposing (Model, Msg(..), init, update, view)
+module Page.Home exposing
+    ( Model
+    , Msg(..)
+    , init
+    , subscriptions
+    , update
+    , view
+    )
 
 import Browser.Navigation as Nav
 import Flags exposing (Flags)
@@ -87,3 +94,12 @@ update navKey msg model =
 
         GoToDashboard ->
             ( model, Nav.pushUrl navKey <| Route.routeToString Route.Dashboard )
+
+
+
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none

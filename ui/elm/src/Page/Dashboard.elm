@@ -1,4 +1,11 @@
-module Page.Dashboard exposing (Model, Msg(..), init, update, view)
+module Page.Dashboard exposing
+    ( Model
+    , Msg(..)
+    , init
+    , subscriptions
+    , update
+    , view
+    )
 
 import API
 import Browser.Navigation as Nav
@@ -109,3 +116,12 @@ update navKey msg model =
 
                 Success stories ->
                     ( Success { stories = stories }, Cmd.none )
+
+
+
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
