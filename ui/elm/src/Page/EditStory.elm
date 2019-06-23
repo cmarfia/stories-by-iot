@@ -212,5 +212,10 @@ getInteractions story engine =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
+subscriptions model =
+    case model of
+        Success { visualizationModel } ->
+            Sub.map GotVisualizationMsg <| Visualization.subscriptions visualizationModel
+
+        _ ->
+            Sub.none

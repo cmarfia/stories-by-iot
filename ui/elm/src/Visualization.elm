@@ -6,6 +6,7 @@ module Visualization exposing
     , defaultConfig
     , getSelectedNode
     , init
+    , subscriptions
     , update
     , updateNodes
     , updateSelectedNode
@@ -13,9 +14,11 @@ module Visualization exposing
     )
 
 import Dict exposing (Dict)
+import Draggable
 import Engine
 import Html exposing (Html)
 import Html.Events exposing (onClick)
+import Math.Vector2 as Vector2 exposing (Vec2, getX, getY)
 import Story as Story exposing (Story)
 import String
 import Svg exposing (..)
@@ -68,7 +71,14 @@ type Model
         , selectedNode : Maybe String
         , height : Float
         , width : Float
+        , drag : Draggable.State ()
+        , position : Vec2
         }
+
+
+dragConfig : Draggable.Config () Msg
+dragConfig =
+    Draggable.basicConfig (\( dx, dy ) -> DragBy <| Vector2.vec2 dx dy)
 
 
 
@@ -86,14 +96,36 @@ init config nodes startingNode =
 
         itemWidth_ =
             itemWidth config
+
+        height =
+            (itemHeight_ * maxRowSize columns) + itemHeight_
+
+        nodes_ =
+            addCoords config columns nodes startingNode
+
+        width =
+            (itemWidth_ * (toFloat <| List.length columns)) + itemWidth_
+
+        x_ =
+            negate (width / 4) + itemWidth_
+
+        y_ =
+            case Dict.get startingNode nodes_ of
+                Just { y } ->
+                    y - (itemHeight_ / 2)
+
+                Nothing ->
+                    height / 2
     in
     Model
         { config = config
-        , nodes = addCoords config columns nodes startingNode
+        , nodes = nodes_
         , startingNode = startingNode
         , selectedNode = Nothing
-        , height = (itemHeight_ * maxRowSize columns) + itemHeight_
-        , width = (itemWidth_ * (toFloat <| List.length columns)) + itemWidth_
+        , height = height / 4
+        , width = width / 2
+        , drag = Draggable.init
+        , position = Vector2.vec2 x_ y_
         }
 
 
@@ -110,11 +142,11 @@ view (Model model) =
                 |> List.map (viewNode model.config model.nodes)
 
         viewBox_ =
-            [ toFloat <| negate model.config.padding, (model.height / 8) * 3, model.width / 2, model.height / 4 ]
+            [ getX model.position, getY model.position, model.width, model.height ]
                 |> List.map String.fromFloat
                 |> String.join " "
     in
-    svg [ width "100%", height "350", viewBox viewBox_ ]
+    svg [ width "100%", height "350", viewBox viewBox_, Draggable.mouseTrigger () GotDragMsg ]
         (viewStyles :: svgNodes)
 
 
@@ -189,6 +221,8 @@ viewNode config nodes ( nodeId, node ) =
 type Msg
     = SelectNode (Maybe String)
     | UpdateNodes (Dict String Node)
+    | GotDragMsg (Draggable.Msg ())
+    | DragBy Vec2
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -199,6 +233,16 @@ update msg (Model model) =
 
         UpdateNodes nodes ->
             Debug.todo "implement this"
+
+        GotDragMsg dragMsg ->
+            let
+                ( updatedModel, cmds ) =
+                    Draggable.update dragConfig dragMsg model
+            in
+            ( Model updatedModel, cmds )
+
+        DragBy rawDelta ->
+            ( Model { model | position = model.position |> Vector2.add (Vector2.scale -1 rawDelta) }, Cmd.none )
 
 
 
@@ -356,3 +400,12 @@ relateNodesToColumns nodes initialNodeId =
     in
     relateNodesToColumns_ 0 initialNodeId Dict.empty
         |> Dict.toList
+
+
+
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Msg
+subscriptions (Model { drag }) =
+    Draggable.subscriptions GotDragMsg drag

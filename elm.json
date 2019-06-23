@@ -15,15 +15,18 @@
             "elm/svg": "1.0.1",
             "elm/url": "1.0.0",
             "elm-community/list-extra": "8.1.0",
+            "elm-explorations/linear-algebra": "1.0.3",
             "elm-explorations/markdown": "1.0.0",
             "jschomay/elm-narrative-engine": "3.0.1",
             "krisajenkins/remotedata": "5.0.0",
             "ohanhi/remotedata-http": "3.0.0",
-            "wernerdegroot/listzipper": "3.1.1"
+            "wernerdegroot/listzipper": "3.1.1",
+            "zaboco/elm-draggable": "4.0.5"
         },
         "indirect": {
             "elm/time": "1.0.0",
-            "elm/virtual-dom": "1.0.2"
+            "elm/virtual-dom": "1.0.2",
+            "mpizenberg/elm-pointer-events": "3.1.0"
         }
     },
     "test-dependencies": {
