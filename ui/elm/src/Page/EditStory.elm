@@ -18,8 +18,6 @@ import Port
 import RemoteData exposing (RemoteData(..), WebData)
 import Route
 import Story as Story exposing (Story)
-import Svg
-import Svg.Attributes
 import Visualization
 
 
@@ -72,11 +70,6 @@ view model =
                         ]
                     , div [ style "background" "white" ]
                         [ Html.map GotVisualizationMsg <| Visualization.view visualizationModel
-                        ]
-                    , div [ class "container" ]
-                        [ h3 []
-                            [ text <| Debug.toString <| Visualization.getSelectedNode visualizationModel
-                            ]
                         ]
                     ]
             }
