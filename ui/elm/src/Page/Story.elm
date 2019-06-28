@@ -1,4 +1,11 @@
-module Page.Story exposing (Model, Msg(..), init, update, view)
+module Page.Story exposing
+    ( Model
+    , Msg(..)
+    , init
+    , subscriptions
+    , update
+    , view
+    )
 
 import API
 import Browser
@@ -303,3 +310,12 @@ update navKey msg model =
         _ ->
             -- ignore all other possibilities
             ( model, Cmd.none )
+
+
+
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none

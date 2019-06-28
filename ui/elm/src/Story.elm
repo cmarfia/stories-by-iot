@@ -9,6 +9,7 @@ module Story exposing
     , Story
     , decode
     , decodeInfo
+    , getRules
     , toEngine
     )
 

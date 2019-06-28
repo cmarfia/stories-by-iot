@@ -114,7 +114,7 @@ type Msg
     | GotStoryMsg Page.Story.Msg
     | GotDashboardMsg Page.Dashboard.Msg
     | GotEditStoryMsg Page.EditStory.Msg
-    | GotSubscription Json.Encode.Value
+    | GotPortMsg Json.Encode.Value
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -223,8 +223,34 @@ updatePageWith toPage toMsg ( subModel, subCmd ) =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Port.fromJavaScript GotSubscription
+subscriptions model =
+    case model of
+        InitializationError _ ->
+            Sub.none
+
+        Viewing _ _ page ->
+            let
+                pageSubscriptions =
+                    case page of
+                        Page.NotFound notFoundModel ->
+                            Sub.map GotNotFoundMsg <| Page.NotFound.subscriptions notFoundModel
+
+                        Page.Home homeModel ->
+                            Sub.map GotHomeMsg <| Page.Home.subscriptions homeModel
+
+                        Page.Story storyModel ->
+                            Sub.map GotStoryMsg <| Page.Story.subscriptions storyModel
+
+                        Page.Dashboard dashboardModel ->
+                            Sub.map GotDashboardMsg <| Page.Dashboard.subscriptions dashboardModel
+
+                        Page.EditStory editStoryModel ->
+                            Sub.map GotEditStoryMsg <| Page.EditStory.subscriptions editStoryModel
+            in
+            Sub.batch
+                [ Port.fromJavaScript GotPortMsg
+                , pageSubscriptions
+                ]
 
 
 main : Program Json.Decode.Value Model Msg

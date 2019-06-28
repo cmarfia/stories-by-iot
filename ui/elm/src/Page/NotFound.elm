@@ -1,4 +1,11 @@
-module Page.NotFound exposing (Model, Msg(..), init, update, view)
+module Page.NotFound exposing
+    ( Model
+    , Msg(..)
+    , init
+    , subscriptions
+    , update
+    , view
+    )
 
 import Browser.Navigation as Nav
 import Html exposing (..)
@@ -68,3 +75,12 @@ update navKey msg model =
     case msg of
         GoHome ->
             ( model, Nav.pushUrl navKey <| Route.routeToString Route.Home )
+
+
+
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
