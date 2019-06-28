@@ -17,7 +17,7 @@ import Dict exposing (Dict)
 import Draggable
 import Engine
 import Html exposing (Html)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Math.Vector2 as Vector2 exposing (Vec2, getX, getY)
 import Story as Story exposing (Story)
 import String
@@ -43,7 +43,7 @@ defaultConfig : Config
 defaultConfig =
     { width = 200
     , height = 50
-    , borderRadius = 15
+    , borderRadius = 16
     , borderWidth = 2
     , padding = 50
     , maxTextSize = 23
@@ -69,6 +69,7 @@ type Model
         , nodes : Dict String (Coords Node)
         , startingNode : String
         , selectedNode : Maybe String
+        , hoveringNode : Maybe String
         , height : Float
         , width : Float
         , drag : Draggable.State ()
@@ -122,6 +123,7 @@ init config nodes startingNode =
         , nodes = nodes_
         , startingNode = startingNode
         , selectedNode = Nothing
+        , hoveringNode = Nothing
         , height = height / 4
         , width = width / 2
         , drag = Draggable.init
@@ -139,15 +141,15 @@ view (Model model) =
         svgNodes =
             model.nodes
                 |> Dict.toList
-                |> List.map (viewNode model.config model.nodes)
+                |> List.map (viewNode model.config model.nodes model.selectedNode model.hoveringNode)
 
         viewBox_ =
             [ getX model.position, getY model.position, model.width, model.height ]
                 |> List.map String.fromFloat
                 |> String.join " "
     in
-    svg [ width "100%", height "350", viewBox viewBox_, Draggable.mouseTrigger () GotDragMsg ]
-        (viewStyles :: svgNodes)
+    svg [ width "100%", height "500", viewBox viewBox_, Draggable.mouseTrigger () GotDragMsg ]
+        (viewStyles :: viewLines model.config model.nodes model.selectedNode model.hoveringNode ++ svgNodes)
 
 
 viewStyles : Html msg
@@ -155,26 +157,117 @@ viewStyles =
     Svg.style [] [ text ".passage > * {cursor: pointer;} .link {fill: none;}" ]
 
 
-
--- [ Svg.style [] [ text " text { font-family: sans-serif; font-size: 10px; } .node { stroke-linecap: round; } .link { fill: none; } " ]
--- , Svg.path [ class "link", d " M8 46 L62 46 A16 16 90 0 1 78 62 L78 78 A16 16 90 0 0 94 94 L92 94", stroke "#1b9e77", strokeWidth "2" ] []
--- , line [ class "node", stroke "black", strokeWidth "8", x1 "8", y1 "46", x2 "8", y2 "46" ] []
--- , text_ [ x "12", y "42" ] [ text "Chaos" ]
--- , line [ class "node", stroke "black", strokeWidth "8", x1 "92", y1 "94", x2 "92", y2 "94" ] []
--- , text_ [ x "96", y "90" ] [ text "Gaea" ]
--- ]
-
-
-viewLines : Config -> Html Msg
-viewLines config =
-    g []
-        [ line [ class "node", stroke "black", strokeWidth "2", x1 "301", y1 "125", x2 "416", y2 "125" ] []
-        ]
-
-
-viewNode : Config -> Dict String (Coords Node) -> ( String, Coords Node ) -> Html Msg
-viewNode config nodes ( nodeId, node ) =
+viewLines : Config -> Dict String (Coords Node) -> Maybe String -> Maybe String -> List (Html Msg)
+viewLines config nodes maybeSelectedNode maybeHoveringNode =
     let
+        itemHeight_ =
+            toFloat config.height + toFloat config.borderWidth / 2
+
+        itemWidth_ =
+            toFloat config.width + toFloat config.borderWidth / 2
+
+        moveTo x y =
+            "M" ++ String.fromFloat x ++ " " ++ String.fromFloat y
+
+        lineTo x y =
+            "L" ++ String.fromFloat x ++ " " ++ String.fromFloat y
+
+        arcTo radius largeArc sweep x y =
+            "A" ++ String.fromFloat radius ++ " " ++ String.fromFloat radius ++ " 0 " ++ String.fromFloat largeArc ++ " " ++ String.fromFloat sweep ++ " " ++ String.fromFloat x ++ " " ++ String.fromFloat y
+
+        viewArc nodeId sourceX sourceY { x, y } =
+            let
+                targetX =
+                    x
+
+                targetY =
+                    y
+
+                midX =
+                    (sourceX + itemWidth_) + (targetX - (sourceX + itemWidth_)) / 2
+
+                commands =
+                    if sourceX < targetX then
+                        if sourceY < targetY then
+                            [ moveTo (sourceX + itemWidth_) (sourceY + itemHeight_ / 2)
+                            , lineTo (midX - toFloat config.borderRadius) (sourceY + itemHeight_ / 2)
+                            , arcTo (toFloat config.borderRadius) 0 1 midX (sourceY + (itemHeight_ / 2) + toFloat config.borderRadius)
+                            , lineTo midX (targetY + (itemHeight_ / 2) - toFloat config.borderRadius)
+                            , arcTo (toFloat config.borderRadius) 0 0 (midX + toFloat config.borderRadius) (targetY + (itemHeight_ / 2))
+                            , lineTo targetX (targetY + (itemHeight_ / 2))
+                            ]
+
+                        else if sourceY > targetY then
+                            [ moveTo (sourceX + itemWidth_) (sourceY + itemHeight_ / 2)
+                            , lineTo (midX - toFloat config.borderRadius) (sourceY + itemHeight_ / 2)
+                            , arcTo (toFloat config.borderRadius) 0 0 midX (sourceY + (itemHeight_ / 2) - toFloat config.borderRadius)
+                            , lineTo midX (targetY + (itemHeight_ / 2) + toFloat config.borderRadius)
+                            , arcTo (toFloat config.borderRadius) 0 1 (midX + toFloat config.borderRadius) (targetY + (itemHeight_ / 2))
+                            , lineTo targetX (targetY + (itemHeight_ / 2))
+                            ]
+
+                        else
+                            [ moveTo (sourceX + itemWidth_) (sourceY + itemHeight_ / 2)
+                            , lineTo targetX (targetY + itemHeight_ / 2)
+                            ]
+
+                    else if sourceX > targetX then
+                        if sourceY < targetY then
+                            Debug.todo "need to implement connections to nodes < x && > y"
+
+                        else if sourceY > targetY then
+                            Debug.todo "need to implement connections to nodes < x && < y"
+
+                        else
+                            Debug.todo "need to implement connections to nodes < x && ()==) y"
+
+                    else
+                        Debug.todo "need to implement connections to nodes in the same column"
+            in
+            ( isSelectedNode maybeSelectedNode nodeId
+            , isHoveringNode maybeHoveringNode nodeId
+            , Svg.path
+                [ class "link"
+                , d <| String.join " " commands
+                , stroke <| strokeColor maybeSelectedNode maybeHoveringNode nodeId
+                , strokeWidth <| String.fromInt config.borderWidth
+                ]
+                []
+            )
+
+        linkNode ( nodeId, { x, y, connections } ) =
+            connections
+                |> List.filterMap (\id -> Dict.get id nodes)
+                |> List.map (viewArc nodeId x y)
+
+        selectionComparison ( prevSelected, prevHovered, _ ) ( nextSelected, nextHovered, _ ) =
+            if prevSelected && nextSelected then
+                EQ
+            else if prevSelected then 
+                GT
+            else if nextSelected then
+                LT
+            else if prevHovered && nextHovered then
+                EQ
+            else if prevHovered then 
+                GT
+            else
+                LT
+
+    in
+    nodes
+        |> Dict.toList
+        |> List.concatMap linkNode
+        |> List.sortWith selectionComparison
+        |> List.map (\( _, _, svg_ ) -> svg_)
+
+
+viewNode : Config -> Dict String (Coords Node) -> Maybe String -> Maybe String -> ( String, Coords Node ) -> Html Msg
+viewNode config nodes maybeSelectedNode maybeHoveringNode ( nodeId, node ) =
+    let
+        strokeColor_ =
+            strokeColor maybeSelectedNode maybeHoveringNode nodeId
+
         hasFutureProgressions =
             Dict.get nodeId nodes
                 |> Maybe.map .connections
@@ -189,9 +282,14 @@ viewNode config nodes ( nodeId, node ) =
                 , (String.fromFloat <| node.x + toFloat config.width) ++ " " ++ (String.fromFloat <| node.y + (toFloat config.height / 3) * 2)
                 ]
     in
-    g [ onClick <| SelectNode <| Just nodeId, class "passage" ]
+    g
+        [ onClick <| SelectNode <| Just nodeId
+        , class "passage"
+        , onMouseEnter <| EnteringNode nodeId
+        , onMouseLeave LeavingNode
+        ]
         [ if hasFutureProgressions then
-            polygon [ points trianglePoints, fill "black" ] []
+            polygon [ points trianglePoints, fill strokeColor_ ] []
 
           else
             text ""
@@ -202,7 +300,7 @@ viewNode config nodes ( nodeId, node ) =
             , height <| String.fromInt config.height
             , rx <| String.fromInt config.borderRadius
             , fill "white"
-            , stroke "black"
+            , stroke strokeColor_
             , strokeWidth <| String.fromInt <| config.borderWidth
             ]
             []
@@ -214,6 +312,38 @@ viewNode config nodes ( nodeId, node ) =
         ]
 
 
+strokeColor : Maybe String -> Maybe String -> String -> String
+strokeColor maybeSelectedNode maybeHoveringNode nodeId =
+    if isSelectedNode maybeSelectedNode nodeId then
+        "blue"
+
+    else if isHoveringNode maybeHoveringNode nodeId then
+        "orange"
+
+    else
+        "black"
+
+
+isSelectedNode : Maybe String -> String -> Bool
+isSelectedNode maybeSelectedNode nodeId =
+    case maybeSelectedNode of
+        Just selectedId ->
+            selectedId == nodeId
+
+        Nothing ->
+            False
+
+
+isHoveringNode : Maybe String -> String -> Bool
+isHoveringNode maybeHoveringNode nodeId =
+    case maybeHoveringNode of
+        Just hoverId ->
+            hoverId == nodeId
+
+        Nothing ->
+            False
+
+
 
 -- Update
 
@@ -223,6 +353,8 @@ type Msg
     | UpdateNodes (Dict String Node)
     | GotDragMsg (Draggable.Msg ())
     | DragBy Vec2
+    | EnteringNode String
+    | LeavingNode
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -244,14 +376,20 @@ update msg (Model model) =
         DragBy rawDelta ->
             ( Model { model | position = model.position |> Vector2.add (Vector2.scale -1 rawDelta) }, Cmd.none )
 
+        EnteringNode nodeId ->
+            ( Model { model | hoveringNode = Just nodeId }, Cmd.none )
+
+        LeavingNode ->
+            ( Model { model | hoveringNode = Nothing }, Cmd.none )
+
 
 
 -- Public Helpers
 
 
 getSelectedNode : Model -> Maybe String
-getSelectedNode model =
-    Nothing
+getSelectedNode (Model model) =
+    model.selectedNode
 
 
 updateSelectedNode : String -> Msg

@@ -73,6 +73,11 @@ view model =
                     , div [ style "background" "white" ]
                         [ Html.map GotVisualizationMsg <| Visualization.view visualizationModel
                         ]
+                    , div [ class "container" ]
+                        [ h3 []
+                            [ text <| Debug.toString <| Visualization.getSelectedNode visualizationModel
+                            ]
+                        ]
                     ]
             }
 
